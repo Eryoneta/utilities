@@ -1,0 +1,190 @@
+* MindSort:
+
++ Comandos:
+- Módulo = M
+- N - Press
+- N - Release
+- B - Left
+- B - Middle
+- B - Right
+- T - Shift
+- T - Ctrl
+- M - Drag
+- M - Move
+- Combinações:
+
++ Permissões:
+- Excluir:
+. Ativado/Desativado com Ctrl + D.
+. Deseleciona todos os Ms.
+. Ao (Move) sem nada (Press), em um M = O destaca. Ignora Mestre.
+. Se (Press/Release|Left), ignorando (Ts), em um M = O deleta e desativa.
+. Se (Release|Left) no nada ou em um M, mas sem (Press|Left) = Desativa.
+. Se (Drag|Middle) = Arrasta a tela.
+. Qualquer outra opção = Nada.
+- Conexão:
+. Ativado/Desativado com Ctrl + R.
+. Deseleciona todos os Ms.
+. Ao (Move) sem nada (Press), em um M = O destaca. Ignora Mestre.
+. Se (Drag|Left) de um M = Arrasta uma conexão.
+  Se (Release|Left), ignorando (Ts) e (Bs), no nada = Desativa.
+  Se (Release|Left), ignorando (Ts) e (Bs), em um M = O conecta.
+. Se (Release|Left) no nada ou em um M, mas sem (Press|Left) = Desativa.
+. Se (Press/Release|Left) em um M = Move uma conexão.
+  Se (Press/Release|Left) no nada = Desativa.
+  Se (Press/Release|Left) em um M = O conecta.
+. Se (Drag|Middle) = Arrasta a tela.
+. Qualquer outra opção = Nada.
+- Criar:
+. Ativado/Desativado com Ctrl + G.
+. Deseleciona todos os Ms.
+. Ao (Move) sem nada (Press), em um M = O destaca.
+. Se (Release|Left)  = Cria um novo M.
+. Se (Drag|Left) de um M = Arrasta um novo M.
+  Se (Release|Left), ignorando (Ts) e (Bs), em um M = O deseleciona.
+. Se (Press/Release|Left) em um M = Move um novo M.
+  Se (Press/Release|Left) = Cria um novo M.
+. Se (Drag|Middle) = Arrasta a tela.
+. Qualquer outra opção = Nada.
+- Basicamente:
+. Criar - Click no nada/Click em um M, click no nada/Drag de um M.
+. Conectar - Click no M-son, click no M-pai/Drag do M-son para o M-pai.
+. Deletar - Click em um M.
+
++ Idéias:
+- Opção de exportar como imagem.
+- Inserir imagens no texto.
+- Inserir icones no texto.
+- Várias abas para vários .mind?
+- Opção de focar em qualquer M não ligado aos filhos do pai.
+
++ UndoRedo:
+- M.local - Grupo.
+- M.titulo.
+- M.texto.
+. O texto é ativado quando um mod é focado. E desativado quando o mod é desfocado.
+. Guarda a info do mod quando é focado. E setUndo quando desfocado se foi modificado.
+. SetUndo quando o texto for desfocado e seu undoManager foi ativado.
+- M.cor - Grupo.
+- M.icone - Grupo.
+- New M.
+- Del M - Grupo.
+- New Cox.
+- Del Cox - Grupo com Del M.
+
++ Operações:
+- Abrir:
+. Abre .mind.
+. Caso haja *, pergunta: Salva(Salvar) ou não? Abre .mind.
+- Salvar:
+. Caso haja *, salva.
+. Caso haja * e link==null, choose, cria .mind e salva.
+- Novo:
+. Cria .mind.
+. Caso haja *, pergunta: Salva(Salvar) ou não? Cria .mind.
+- Fechar:
+. Caso haja *, pergunta: Salva(Salvar) ou não? Fecha.
+
++ Pesquisar:
+- Escopo:
+. Tudo.
+. Módulos selecionados.
+- Opções:
+. Palavra inteira.
+. Diferenciar maiúscula de minúscula.
+- Procurar.
+- Fechar.
+- Status:
+. Achado.
+. Palavra não encontrada.
+
++ To do:
+- Bug:	Ao resize no dialog, as janelas fricam com o focus(Conflito entre autoFocus e resize).
+- Ctrl+F no JanelaTexto: Search no texto.
+- Bug:	Search atrás não funciona...
+- Implementar imagem integrada(Cada mod tem uma galeria).
+- Integrar os ícones(Salvando link como o nome e o incluindo no tabela ao abrir o .mind)?
+. Permitir criar ícones, um editor de ícones.
+. Modo copiar cor: Permite copiar uma cor na tela.
+- Autosave?
+- Quando selecionar um mod, seus mod-pais brilham(Ficam mais claros/escuros).
+- Update das imagens:
+. O Texto suporta html(Pesado), e possúi links para imagens.
+  Junto com isso, links podem ser encurtados em uma palavra, que se clicado abre o navegador(Pode ser dropado).
+. As imagens são guardadas juntas com o arquivo em um .zip disfarçado de .mind.
+. É possível guardar sons e até videos.
+
++ Versão 2.0:
+
+- É possível selecionar a cox, acessando sua descrição, mas não movê-la.
+. Os nods são selecionáveis como mods. Selecionar um cox não seleciona seus nods, apenas os destaca.
+. Selecionar uma cox e shift_down seleciona todos os nods dele.
+  É possível usar shift_down para selecionar vários mods e nods ao mesmo tempo.
+  Os mods selecionam os coxs, que selecionam os nods.
+. O titulo de um cox é o "titulo do modPai -> titulo do modSon".
+- Ao escolher fontes, mostrar qual é a atual.
+- Ele consegue impedir que o arquivo que está editando seja modificado por outro?
+- Ao selecionar um mod, em vez de inverter sua cor, ele ganha uma borda, um brilho branco, assim como seus coxs.
+
+- nods:
+. TO_DELETE:
+  Deletando o modPai ou modSon, deleta o cox e seus nods.
+  Deletando o cox, deleta o seus nods.
+  Deletando o nod, apenas ele é deletado.
+. SELECTED:
+  Ao clicar em um mod, ele é selecionado e seus coxs são destacados(Não selecionados).
+    A Descrição recebe o Texto do mod.
+  Ao clicar em um cox, ele e seus nods são selecionados, e seus mods são destacados(Não selecionados).
+    A Descrição recebe o Texto do cox.
+    Selecionar mod & cox deixa a Descrição vazia, assim como mod & mod.
+    Para mover os nods, se press em um deles e drag.
+  Ao clicar em um nod, ele é selecionado e seu cox é destacado(Não selecionado).
+  O selecArea seleciona apenas mods.
+    Mas se vazio, selec coxs.
+. Em um cox, não pode haver mais de um nod em um ponto.
+
+- Ao pré-desenhar, criar uma List de todos os segmentos para definir qual desenhar, evitando desenhar coisas que não aparecerão.
+. Pode ser uma Hash<Point,Hash<Point,Cox>>, onde se o segmento possuir as mesmas pontas, seu cox automaticamente substitui o cox do outro segmento. No fim, desenha-se apenas os segmentos com as cores de seus coxs.
+- Se middle-click, auto-drag.
+. Uma âncora é ligada ao cursor, que aponta a direção.
+- A cor dos destacados é uma variação para um lado no especto de brilho(Escuro para claro e vice-versa).
+
+- Cores:
+. New: Verde com contorno verde.
+. Son: Amarelo com contorno amarelo.
+. Pai: Azul com contorno azul.
+. Del: Vermelho com contorno vermelho.
+. Selec: Invertido com contorno brilhante.
+. High: Brilhante.
+
+- Os coxs passam no meio dos units, o que permite passar entre mods com 1 unit de espaço.
+
+- Nome dos cursores: CursorDelMove, CursorNormal, CursorRelSonMove, etc.
+. Ter icones separados e os juntar conforme necessário: Cursor, Move, Son, New, etc.
+
+- Território:
+. Uma série de nods define a área que ocupa.
+. Deve haver no mínimo 3 nods.
+. Ações:
+  Mudar sua cor com right-click.
+  Adicionar mais nods no modo Create, clicando na linha da borda.
+  Selecionar todos os mods, coxs e nods dentro.
+  Deletar.
+  Deletar nods.
+. As linhas da grade permanecem visíveis.
+
+- Uma cox é um elemento completamente separado.
+. Pode dobrar em curvas retas, passando por pontos.
+- Bug:	AreaSelec não deseleciona mods!
+. Bug:	Ctrl(Selec vários mods) com click no nada, deseleciona tudo!
+. Bug:	Se ctrl+clicar sem drag a seleção em área deseleciona tudo.
+- Bug:	Quando shift em uma tree em loop, não consegue selecionar todos os mods.
+. Bug:	Após o shift entrar em loop, existem mods que nunca são deselecionados. O tree em shift deve ser esvaziado no shift_release.
+- Atualizar o tamanho dos mods quando mudar a fonte!
+- Bug:	Ao sair do Texto, se estiver salvo, é marcado como modificado.
+- Bug:	Se drag logo após abrir o menu, o centro é o mouseReleased e não o mousePressed.
+- Optimização:	A grade se salva em um Image, mudando apenas quando o zoom ou screenSize muda.
+- Optimização:	Cada Mod se salva em um Image, mudando apenas quando o zoom muda.
+- Optimização:	Ao mudar a posição da tela, apenas arrastar a imagem já existente e, com a área vazia resultante(2 áreas), achar quais são os mods e coxs a serem redesenhados.
+- Ao mover a tela, animar o movimento e considerar a posição da JanelaTexto em sua frente.
+- Ctrl+D deseleciona tudo.
