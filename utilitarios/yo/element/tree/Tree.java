@@ -12,6 +12,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,11 +56,12 @@ import element.tree.popup.Popup;
 import element.tree.texto.ObjetoSetListener;
 import element.tree.texto.Texto;
 import element.tree.undoRedo.UndoRedo;
+import utilitarios.ferramenta.language.LanguagePackage;
 @SuppressWarnings("serial")
 public class Tree extends Elemento{
 //LOCAL
 	private static int X=0;
-	public static int getLocalX(){return X;}
+		public static int getLocalX(){return X;}
 	private static int Y=0;
 		public static int getLocalY(){return Y;}
 	public static Point getLocal(){return new Point(X,Y);}
@@ -67,15 +69,16 @@ public class Tree extends Elemento{
 //VAR GLOBAIS
 	public static int UNIT=8;
 	public static float getBordaValue(){return UNIT*0.3f;}
+//LANG
+	private static LanguagePackage LANG=new LanguagePackage();
+		public static LanguagePackage getLang(){return LANG;}
+		public static void addLanguage(File link,String idiomaFiltro,String prefixFiltro){
+			LANG.add(link,idiomaFiltro,prefixFiltro);
+		}
 //MÓDULOS ESPECIAIS
-	private static Modulo MESTRE=new Modulo(0,0,"Novo Mind"){{
-		setCor(new Cor(0,255,255));
-	}};
+	private static Modulo MESTRE;
 		public static Modulo getMestre(){return MESTRE;}
-	private static Modulo GHOST=new Modulo(0,0,""){{
-		setTexto("Texto");
-		setCor(new Cor(0,0,0));
-	}};
+	private static Modulo GHOST;
 		public static Modulo getGhost(){return GHOST;}
 //FONTE
 	public static class Fonte{
@@ -739,9 +742,6 @@ public class Tree extends Elemento{
 		Modulo.addBoundsListener(boundsListener);
 		Conexao.addBoundsListener(boundsListener);
 		Nodulo.addBoundsListener(boundsListener);
-		Tree.MESTRE=new Modulo(0,0,"Novo Mind");
-		getMestre().setCor(new Cor(0,255,255));
-		Tree.GHOST=new Modulo(0,0,"Texto");
 		undoRedo=new UndoRedo(this);
 		popup=new Popup(this);
 		popup.update();
@@ -765,9 +765,9 @@ public class Tree extends Elemento{
 		getVisibleNods().clear();
 		getChunks().clear();
 		objsListaMaxSize=0;
-		Tree.MESTRE=new Modulo(0,0,"Novo Mind");
+		Tree.MESTRE=new Modulo(0,0,Tree.getLang().get("T_M","New Mind Map"));
 		getMestre().setCor(new Cor(0,255,255));
-		Tree.GHOST=new Modulo(0,0,"Texto");
+		Tree.GHOST=new Modulo(0,0,Tree.getLang().get("T_G","Text"));
 		add(getMestre());
 		setTitulo(getGhost());
 		setTexto(getGhost());
@@ -1093,7 +1093,7 @@ public class Tree extends Elemento{
 					.replaceAll("\n    (<mod|<cox|</mod|</cox)","\t$1")				//TROCA ESPAÇOS POR TAB
 					.replaceAll("\n        (<nod|<text|</nod|</text)","\t\t$1");	//TROCA ESPAÇOS POR TAB
 		}catch(TransformerException|TransformerFactoryConfigurationError|ParserConfigurationException erro){
-			mensagem("Erro ao traduzir para string!\n"+erro,Options.ERRO);
+			Tree.mensagem(Tree.getLang().get("T_Err1","Error: Couldn't build .mind file!")+"\n"+erro,Tree.Options.ERRO);
 		}
 		return null;
 	}
@@ -1105,8 +1105,8 @@ public class Tree extends Elemento{
 	public static void mensagem(String mensagem,Options tipo){
 		Toolkit.getDefaultToolkit().beep();
 		switch(tipo){
-			case AVISO:	JOptionPane.showMessageDialog(null,mensagem,"Aviso!",JOptionPane.WARNING_MESSAGE);break;
-			case ERRO:	JOptionPane.showMessageDialog(null,mensagem,"Erro...!",JOptionPane.ERROR_MESSAGE);break;
+			case AVISO:	JOptionPane.showMessageDialog(null,mensagem,Tree.getLang().get("T_Av","Warning!"),JOptionPane.WARNING_MESSAGE);break;
+			case ERRO:	JOptionPane.showMessageDialog(null,mensagem,Tree.getLang().get("T_Err","Error...!"),JOptionPane.ERROR_MESSAGE);break;
 		}
 	}
 }

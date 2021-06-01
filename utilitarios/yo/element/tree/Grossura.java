@@ -22,10 +22,10 @@ public class Grossura{
 //NOME
 	public String getNome(){
 		switch(index){
-			case MEDIUM:default:	return "Médio";
-			case THIN:				return "Fino";
-			case WIDE:				return "Grosso";
-			case ULTRA_WIDE:		return "Extra Grosso";
+			case MEDIUM:default:	return Tree.getLang().get("T_Pop_G_M","Medium");
+			case THIN:				return Tree.getLang().get("T_Pop_G_F","Thin");
+			case WIDE:				return Tree.getLang().get("T_Pop_G_G","Thin");
+			case ULTRA_WIDE:		return Tree.getLang().get("T_Pop_G_EG","Extra Wide");
 		}
 	}
 //MAIN

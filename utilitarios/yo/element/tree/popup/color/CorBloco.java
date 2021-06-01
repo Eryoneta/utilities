@@ -9,9 +9,12 @@ import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+
 import javax.swing.JColorChooser;
+
 import element.tree.Cor;
 import element.tree.Cursor;
+import element.tree.Tree;
 import element.tree.objeto.modulo.Modulo;
 import element.tree.popup.Bloco;
 import element.tree.popup.Popup;
@@ -72,7 +75,9 @@ public class CorBloco extends Bloco{
 					pick.getTree().draw();
 				}else if(Cursor.match(m,Cursor.RIGHT)){
 					if(!getBounds().contains(mouse))return;
-					final Color cor=JColorChooser.showDialog(null,"Escolha uma cor",getCor());
+					final Color cor=JColorChooser.showDialog(null,
+							Tree.getLang().get("T_Pop_C_Es","Choose a color"),
+							getCor());
 					if(cor==null)return;
 					if(bloco==pick.getBlocoPrincipal()){
 						pick.getBlocoPrincipal().setCor(cor);

@@ -19,11 +19,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.swing.JFrame;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+
 import element.tree.objeto.ListaObjeto;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
@@ -3347,7 +3350,7 @@ public class Actions{
 				final List<Objeto>lista=tree.addTree(mindTag,false);
 				for(Objeto obj:lista)tree.select(obj);
 			}catch(Exception erro){
-				Tree.mensagem("Erro ao colar tree!\n"+erro,Tree.Options.ERRO);
+				Tree.mensagem(Tree.getLang().get("T_Err2","Error: Couldn't paste objects!")+"\n"+erro,Tree.Options.ERRO);
 			}
 			Tree.Fonte.FONTE=fonte;
 			if(tree.getSelectedObjetos().isEmpty())return;

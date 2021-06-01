@@ -44,7 +44,7 @@ public class Popup{
 //OBJETO
 	private Objeto obj;
 //PASTA DE ICONES
-	private File iconesPasta=new File(System.getProperty("user.dir")+"/Icones");
+	private File iconesPasta=new File(System.getProperty("user.dir")+"/Icons");
 		public File getIconePasta(){return iconesPasta;}
 		public void setIconePasta(File link){
 			iconesPasta=link;
@@ -92,7 +92,9 @@ public class Popup{
 		try{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}catch(ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException erro){
-			Tree.mensagem("Erro ao configurar toolbox!\n"+erro,Tree.Options.ERRO);
+			Tree.mensagem(
+					Tree.getLang().get("T_Err3","Error: Couldn't configure toolbox!")+"\n"+erro,
+					Tree.Options.ERRO);
 		}
 		update();
 	}
@@ -170,7 +172,7 @@ public class Popup{
 		}};
 	//TREE
 		treePopup=new JPopupMenu(){{
-			add(new Item("Novo Módulo",tree){{
+			add(new Item(Tree.getLang().get("T_Pop_Tree_NM","New Module"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						final Modulo newMod=new Modulo(local.x-Tree.getLocalX(),local.y-Tree.getLocalY(),"");
@@ -191,20 +193,20 @@ public class Popup{
 	//MODS
 		modPopup=new JPopupMenu(){{
 			add(getMenuIcon(iconesPasta));
-			add(new Menu("Cores"){{
+			add(new Menu(Tree.getLang().get("T_Pop_C","Colors")){{
 				add(mod_corPick);
 			}});
-			add(mod_menuBordas=new Menu("Bordas"){{
+			add(mod_menuBordas=new Menu(Tree.getLang().get("T_Pop_B","Borders")){{
 				add(mod_bordaPick);
 			}});
-			add(mod_editTitle=new Item("Editar Título",tree){{
+			add(mod_editTitle=new Item(Tree.getLang().get("T_Pop_Mod_ET","Edit Title"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						tree.getActions().editTitulo();
 					}
 				});
 			}});
-			add(new Item("Novo Relacionado",tree){{
+			add(new Item(Tree.getLang().get("T_Pop_Mod_NMR","New Related"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						final Modulo newMod=tree.getActions().createModRelacionado(
@@ -214,7 +216,7 @@ public class Popup{
 					}
 				});
 			}});
-			add(mod_newCox=new Item("Nova Relação",tree){{
+			add(mod_newCox=new Item(Tree.getLang().get("T_Pop_Mod_NR","New Relation"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						Tree.getGhost().setLocationIndex(local.x-Tree.getLocalX()-2,local.y-Tree.getLocalY()-1);
@@ -223,7 +225,7 @@ public class Popup{
 					}
 				});
 			}});
-			add(del=new Item("Deletar",tree){{
+			add(del=new Item(Tree.getLang().get("T_Pop_Mod_D","Delete"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						tree.getActions().delete();
@@ -238,20 +240,20 @@ public class Popup{
 		}};
 	//COXS
 		coxPopup=new JPopupMenu(){{
-			add(new Menu("Bordas"){{
+			add(new Menu(Tree.getLang().get("T_Pop_B","Borders")){{
 				add(cox_bordaPick);
 			}});
-			add(new Menu("Grossuras"){{
+			add(new Menu(Tree.getLang().get("T_Pop_G","Thickness")){{
 				add(cox_grossuraPick);
 			}});
-			add(new Item("Inverter Relação",tree){{
+			add(new Item(Tree.getLang().get("T_Pop_Cox_IR","Invert Relation"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						tree.getActions().invertCox();
 					}
 				});
 			}});
-			add(cox_newNod=new Item("Novo Nodo",tree){{
+			add(cox_newNod=new Item(Tree.getLang().get("T_Pop_Cox_NN","New Nodule"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						if(!obj.getTipo().is(Objeto.Tipo.SEGMENTO))return;
@@ -260,7 +262,7 @@ public class Popup{
 					}
 				});
 			}});
-			add(new Item("Deletar",tree){{
+			add(new Item(Tree.getLang().get("T_Pop_Cox_D","Delete"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						tree.getActions().delete();
@@ -275,7 +277,7 @@ public class Popup{
 		}};
 	//NODS
 		nodPopup=new JPopupMenu(){{
-			add(new Item("Deletar",tree){{
+			add(new Item(Tree.getLang().get("T_Pop_Nod_D","Delete"),tree){{
 				addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent a){
 						tree.getActions().delete();
@@ -291,14 +293,14 @@ public class Popup{
 	}
 	//UPDATE ICONES
 		private Menu getMenuIcon(File pastaIcon){
-			final Menu menu=new Menu("Icones");
+			final Menu menu=new Menu(Tree.getLang().get("T_Pop_I","Icons"));
 			setMenuIcon(menu,pastaIcon,"");
 			return menu;
 		}
 			private void setMenuIcon(Menu menu,File pasta,String subPasta){
 				final File pastaAbsLink=new File(pasta.toString()+"/"+subPasta);	//LINK ABS+REL
 				if(!pastaAbsLink.exists()||pastaAbsLink.listFiles().length==0){		//NÃO EXISTE OU ESTÁ VAZIO
-					menu.add(new JMenuItem("Vazio"){{
+					menu.add(new JMenuItem(Tree.getLang().get("T_Pop_I_V","Empty")){{
 						setEnabled(false);
 					}});
 					return;
