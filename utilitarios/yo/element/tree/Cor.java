@@ -54,7 +54,7 @@ public class Cor extends Color{
 				Integer.valueOf(hexes.group(3),16),
 				Integer.valueOf(hexes.group(4).isEmpty()?"FF":hexes.group(4),16)
 		);
-		throw new Exception("A cor hex está irregular!");
+		throw new Exception("Hex color is irregular!");
 	}
 	public static int getBrightness(Color cor){
 	    return (int)Math.sqrt((cor.getRed()*cor.getRed()*0.241)+(cor.getGreen()*cor.getGreen()*0.691)+(cor.getBlue()*cor.getBlue()*0.068));

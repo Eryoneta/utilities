@@ -47,18 +47,18 @@ public class Borda{
 //NOME
 	public String getNome(){
 		switch(index){
-			case SOLID:default:				return "Sólido";
-			case TRACED:					return "Tracejado";
-			case LONG_TRACED:				return "Tracejado longo";
-			case DOTTED:					return "Pontilhado";
-			case DOTTED_1_TRACED_1:			return "1 ponto e 1 traço";
-			case DOTTED_2_TRACED_1:			return "2 pontos e 1 traço";
-			case DOTTED_1_TRACED_2:			return "1 ponto e 2 traços";
-			case DOTTED_2_TRACED_2:			return "2 pontos e 2 traços";
-			case DOTTED_1_LONG_TRACED_1:	return "1 ponto e 1 traço longo";
-			case DOTTED_2_LONG_TRACED_1:	return "2 pontos e 1 traço longo";
-			case DOTTED_1_LONG_TRACED_2:	return "1 ponto e 2 traços longos";
-			case DOTTED_2_LONG_TRACED_2:	return "2 pontos e 2 traços longos";
+			case SOLID:default:				return Tree.getLang().get("T_Pop_B_S","Solid");
+			case TRACED:					return Tree.getLang().get("T_Pop_B_T","Dash");
+			case LONG_TRACED:				return Tree.getLang().get("T_Pop_B_Tl","Long Dash");
+			case DOTTED:					return Tree.getLang().get("T_Pop_B_P","Dot");
+			case DOTTED_1_TRACED_1:			return Tree.getLang().get("T_Pop_B_PT","1 dot e 1 dash");
+			case DOTTED_2_TRACED_1:			return Tree.getLang().get("T_Pop_B_PPT","2 dots e 1 dash");
+			case DOTTED_1_TRACED_2:			return Tree.getLang().get("T_Pop_B_PTT","1 dot e 2 dashes");
+			case DOTTED_2_TRACED_2:			return Tree.getLang().get("T_Pop_B_PPTT","2 dots e 2 dashes");
+			case DOTTED_1_LONG_TRACED_1:	return Tree.getLang().get("T_Pop_B_PTl","1 dot e 1 long dash");
+			case DOTTED_2_LONG_TRACED_1:	return Tree.getLang().get("T_Pop_B_PPTl","2 dots e 1 long dash");
+			case DOTTED_1_LONG_TRACED_2:	return Tree.getLang().get("T_Pop_B_PTlTl","1 dot e 2 long dashes");
+			case DOTTED_2_LONG_TRACED_2:	return Tree.getLang().get("T_Pop_B_PPTlTl","2 dots e 2 long dashes");
 		}
 	}
 //MAIN
