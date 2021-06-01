@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
-import element.tree.Cor;
+import element.tree.propriedades.Cor;
 import element.tree.popup.Item;
 import element.tree.popup.Popup;
 import element.tree.popup.color.CorBloco;

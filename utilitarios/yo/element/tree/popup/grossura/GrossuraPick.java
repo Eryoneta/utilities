@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import element.tree.Grossura;
+import element.tree.propriedades.Grossura;
 import element.tree.Tree;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.popup.Item;

@@ -14,7 +14,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import element.tree.Cor;
+import element.tree.propriedades.Cor;
 import element.tree.Cursor;
 import element.tree.objeto.modulo.Modulo;
 import element.tree.popup.Bloco;

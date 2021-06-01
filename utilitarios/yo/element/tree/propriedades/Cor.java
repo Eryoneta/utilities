@@ -1,4 +1,4 @@
-package element.tree;
+package element.tree.propriedades;
 import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

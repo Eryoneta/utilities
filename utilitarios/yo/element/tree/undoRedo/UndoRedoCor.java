@@ -1,5 +1,5 @@
 package element.tree.undoRedo;
-import element.tree.Cor;
+import element.tree.propriedades.Cor;
 import element.tree.objeto.modulo.Modulo;
 public class UndoRedoCor extends UndoRedoNodo{
 //CORES

@@ -1,7 +1,8 @@
-package element.tree;
+package element.tree.propriedades;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
+import element.tree.Tree;
 public class Icone{
 //ICONE
 	private Image icone;

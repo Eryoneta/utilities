@@ -9,11 +9,11 @@ import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.objeto.conexao.Nodulo;
 import element.tree.objeto.modulo.Modulo;
-import element.tree.Borda;
-import element.tree.Grossura;
+import element.tree.propriedades.Borda;
+import element.tree.propriedades.Grossura;
 import element.tree.Tree;
-import element.tree.Cor;
-import element.tree.Icone;
+import element.tree.propriedades.Cor;
+import element.tree.propriedades.Icone;
 public class UndoRedo{
 //TREE
 	private Tree tree;

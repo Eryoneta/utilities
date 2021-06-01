@@ -3,7 +3,7 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Path2D;
-import element.tree.Cor;
+import element.tree.propriedades.Cor;
 import element.tree.objeto.modulo.Modulo;
 public class Selecao{
 //STATES

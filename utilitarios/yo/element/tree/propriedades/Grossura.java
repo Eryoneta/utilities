@@ -1,4 +1,5 @@
-package element.tree;
+package element.tree.propriedades;
+import element.tree.Tree;
 public class Grossura{
 //GROSSURAS
 	public static final int MEDIUM=0;

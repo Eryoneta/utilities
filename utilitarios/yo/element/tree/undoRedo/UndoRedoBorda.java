@@ -1,5 +1,5 @@
 package element.tree.undoRedo;
-import element.tree.Borda;
+import element.tree.propriedades.Borda;
 import element.tree.objeto.Objeto;
 public class UndoRedoBorda extends UndoRedoNodo{
 //BORDA

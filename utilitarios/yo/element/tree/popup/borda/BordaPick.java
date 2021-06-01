@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import element.tree.Borda;
+import element.tree.propriedades.Borda;
 import element.tree.Tree;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;

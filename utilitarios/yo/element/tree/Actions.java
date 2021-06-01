@@ -19,17 +19,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.swing.JFrame;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
-
 import element.tree.objeto.ListaObjeto;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
+import element.tree.propriedades.Icone;
 import element.tree.objeto.conexao.Nodulo;
 import element.tree.objeto.conexao.Segmento;
 import element.tree.objeto.modulo.Modulo;

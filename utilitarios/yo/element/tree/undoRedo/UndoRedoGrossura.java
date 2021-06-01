@@ -1,5 +1,5 @@
 package element.tree.undoRedo;
-import element.tree.Grossura;
+import element.tree.propriedades.Grossura;
 import element.tree.objeto.conexao.Conexao;
 public class UndoRedoGrossura extends UndoRedoNodo{
 //GROSSURA

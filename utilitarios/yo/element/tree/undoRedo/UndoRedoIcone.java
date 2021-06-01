@@ -1,5 +1,5 @@
 package element.tree.undoRedo;
-import element.tree.Icone;
+import element.tree.propriedades.Icone;
 import element.tree.objeto.modulo.Modulo;
 public class UndoRedoIcone extends UndoRedoNodo{
 //MODO

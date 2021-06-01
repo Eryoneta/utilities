@@ -41,8 +41,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import element.tree.Cor;
-import element.tree.Icone;
+import element.tree.propriedades.Cor;
+import element.tree.propriedades.Icone;
 import element.Elemento;
 import element.Painel;
 import element.tree.objeto.ListaObjeto;

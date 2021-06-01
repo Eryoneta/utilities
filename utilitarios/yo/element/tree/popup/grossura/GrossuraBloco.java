@@ -9,9 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 
-import element.tree.Cor;
+import element.tree.propriedades.Cor;
 import element.tree.Cursor;
-import element.tree.Grossura;
+import element.tree.propriedades.Grossura;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.objeto.modulo.Modulo;
 import element.tree.popup.Bloco;

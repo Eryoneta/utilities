@@ -20,9 +20,9 @@ import element.tree.objeto.Objeto;
 import element.tree.objeto.ObjetoBoundsListener;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.popup.icon.IconePick;
-import element.tree.Borda;
-import element.tree.Cor;
-import element.tree.Icone;
+import element.tree.propriedades.Borda;
+import element.tree.propriedades.Cor;
+import element.tree.propriedades.Icone;
 import element.tree.Tree;
 public class Modulo extends Objeto{
 //STATES

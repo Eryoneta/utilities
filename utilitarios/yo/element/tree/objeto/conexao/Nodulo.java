@@ -9,8 +9,8 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import element.tree.Cor;
-import element.tree.Grossura;
+import element.tree.propriedades.Cor;
+import element.tree.propriedades.Grossura;
 import element.tree.Tree;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.ObjetoBoundsListener;

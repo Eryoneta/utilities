@@ -32,7 +32,7 @@ import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 import javax.swing.undo.UndoManager;
 
-import element.tree.Cor;
+import element.tree.propriedades.Cor;
 import element.tree.Tree;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
