@@ -215,6 +215,7 @@ public class Actions{
 			});
 			setKeyPressedAction(new Action(){
 				public void run(KeyEvent k){
+					if(tree.getPopup().isShowing())return;
 					boolean ctrl=(k.isControlDown());
 					final int salto=(ctrl?8:1);
 					switch(k.getKeyCode()){
@@ -1095,21 +1096,20 @@ public class Actions{
 			setMouseReleasedAction(new Action(){
 				public void run(MouseEvent m){
 					if(Cursor.match(m,Cursor.RIGHT)){
-						final Point mouseReleased=getGridPosition(m.getPoint());
 						final Point mouse=getPosition(m.getPoint());
 						final Modulo modSelec=getModuloHover(mouse);
 						if(modSelec!=null){
 							if(!modSelec.getState().is(Modulo.State.SELECTED))tree.unSelectAll();
 							tree.unSelect(modSelec);
 							tree.select(modSelec);
-							tree.getPopup().show(mouseReleased,modSelec);
+							tree.getPopup().show(mousePressed,modSelec);
 						}else{
 							final Nodulo nodSelec=getNoduloHover(mouse);
 							if(nodSelec!=null){
 								if(!nodSelec.getState().is(Nodulo.State.SELECTED))tree.unSelectAll();
 								tree.unSelect(nodSelec);
 								tree.select(nodSelec);
-								tree.getPopup().show(mouseReleased,nodSelec);
+								tree.getPopup().show(mousePressed,nodSelec);
 							}else{
 								final Conexao coxSelec=getConexaoHover(mouse);
 								if(coxSelec!=null){
@@ -1117,10 +1117,10 @@ public class Actions{
 									tree.unSelect(coxSelec);
 									tree.select(coxSelec);
 									final Segmento segSelec=coxSelec.segmentContains(mouse);
-									tree.getPopup().show(mouseReleased,segSelec);
+									tree.getPopup().show(mousePressed,segSelec);
 								}else{
 									tree.unSelectAll();
-									tree.getPopup().show(mouseReleased,null);
+									tree.getPopup().show(mousePressed,null);
 								}
 							}
 						}
@@ -3049,7 +3049,6 @@ public class Actions{
 	public void putIntputs(){
 		janela.addMouseWheelListener(new MouseWheelListener(){
 			public void mouseWheelMoved(MouseWheelEvent w){
-				if(!tree.isEnabled())return;
 				if(!tree.getRelativeBounds().contains(getPosition(w.getPoint())))return;
 				mouseMoved=getGridPosition(w.getPoint());
 				setZoom(w.getPoint(),w.getWheelRotation());
