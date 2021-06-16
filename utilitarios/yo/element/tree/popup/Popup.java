@@ -7,6 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -15,6 +16,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+
 import element.tree.Actions;
 import element.tree.propriedades.Borda;
 import element.tree.propriedades.Cor;
@@ -107,7 +109,9 @@ public class Popup{
 		final int x=mouseScreen.x-tree.getPainel().getJanela().getX();
 		final int y=mouseScreen.y-tree.getPainel().getJanela().getY();
 		if(obj==null){
-			treePopup.show(tree.getPainel().getJanela(),x,y);
+			if(tree.getPainel().getJanela().isVisible()){
+				treePopup.show(tree.getPainel().getJanela(),x,y);
+			}
 		}else switch(obj.getTipo()){
 			case MODULO:
 				final boolean mestreAlone=(tree.getSelectedObjetos().getModulos().size()==1&&tree.getSelectedObjetos().getModulos().get(0)==Tree.getMestre());
@@ -126,16 +130,16 @@ public class Popup{
 				nodPopup.show(tree.getPainel().getJanela(),x,y);
 			break;
 		}
-		toggleTooltip(true);
+		showTooltip(true);
 	}
 	public void close(){
-		toggleTooltip(false);
+		showTooltip(false);
 		treePopup.setVisible(false);
 		modPopup.setVisible(false);
 		coxPopup.setVisible(false);
 		nodPopup.setVisible(false);
 	}
-	public static void toggleTooltip(boolean show){
+	public static void showTooltip(boolean show){
 		ToolTipManager.sharedInstance().setEnabled(false);
 		if(show)ToolTipManager.sharedInstance().setEnabled(true);
 	}
@@ -186,8 +190,8 @@ public class Popup{
 			}});
 			addPopupMenuListener(new PopupMenuListener() {
 				public void popupMenuWillBecomeVisible(PopupMenuEvent p){}
-				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){toggleTooltip(false);}
-				public void popupMenuCanceled(PopupMenuEvent p){toggleTooltip(false);}
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){showTooltip(false);}
+				public void popupMenuCanceled(PopupMenuEvent p){showTooltip(false);}
 			});
 		}};
 	//MODS
@@ -234,8 +238,8 @@ public class Popup{
 			}});
 			addPopupMenuListener(new PopupMenuListener() {
 				public void popupMenuWillBecomeVisible(PopupMenuEvent p){}
-				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){toggleTooltip(false);}
-				public void popupMenuCanceled(PopupMenuEvent p){toggleTooltip(false);}
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){showTooltip(false);}
+				public void popupMenuCanceled(PopupMenuEvent p){showTooltip(false);}
 			});
 		}};
 	//COXS
@@ -271,8 +275,8 @@ public class Popup{
 			}});
 			addPopupMenuListener(new PopupMenuListener() {
 				public void popupMenuWillBecomeVisible(PopupMenuEvent p){}
-				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){toggleTooltip(false);}
-				public void popupMenuCanceled(PopupMenuEvent p){toggleTooltip(false);}
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){showTooltip(false);}
+				public void popupMenuCanceled(PopupMenuEvent p){showTooltip(false);}
 			});
 		}};
 	//NODS
@@ -286,8 +290,8 @@ public class Popup{
 			}});
 			addPopupMenuListener(new PopupMenuListener() {
 				public void popupMenuWillBecomeVisible(PopupMenuEvent p){}
-				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){toggleTooltip(true);}
-				public void popupMenuCanceled(PopupMenuEvent p){toggleTooltip(false);}
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent p){showTooltip(false);}
+				public void popupMenuCanceled(PopupMenuEvent p){showTooltip(false);}
 			});
 		}};
 	}
@@ -338,4 +342,10 @@ public class Popup{
 			CorPick.PALETA_DEFAULT=coresPaleta;
 			update();
 		}
+	public boolean isShowing(){
+		return (treePopup.isShowing()||
+				modPopup.isShowing()||
+				coxPopup.isShowing()||
+				nodPopup.isShowing());
+	}
 }

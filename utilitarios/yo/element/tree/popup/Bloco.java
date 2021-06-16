@@ -6,5 +6,6 @@ public class Bloco extends Rectangle{
 	private boolean focus;
 		public void setFocus(boolean foco){focus=foco;}
 		public boolean isFocused(){return focus;}
-
+//MAIN
+	public Bloco(){}
 }

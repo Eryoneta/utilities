@@ -63,12 +63,12 @@ public class Menu extends JMenu{
 				}else setBackground(Tree.Menu.SELECT_DISABLED);
 			break;
 			case MouseEvent.MOUSE_EXITED:
-				Popup.toggleTooltip(true);
+				Popup.showTooltip(true);
 				Popup.setFocus(null);
 				setBackground(Modulo.Cores.FUNDO);
 			break;
 			default:
-				Popup.toggleTooltip(true);
+				Popup.showTooltip(true);
 				super.processMouseEvent(m);
 			break;
 		}
