@@ -41,7 +41,12 @@ public class CorPickBloco extends Bloco{
 			private final int whitePixel=Color.WHITE.getRGB();
 			private final int transparentPixel=Cor.TRANSPARENTE.getRGB();
 			public void mouseMoved(MouseEvent m){
-				final Point mouse=m.getPoint();
+				setPickerCor(m.getPoint());
+			}
+			public void mouseDragged(MouseEvent m){
+				setPickerCor(m.getPoint());
+			}
+			private void setPickerCor(Point mouse){
 				final Color cor=bot.getPixelColor(mouse.x,mouse.y);
 				final Graphics2D cursorImgEdit=(Graphics2D)cursorImg.getGraphics();
 				cursorImgEdit.setColor(cor);

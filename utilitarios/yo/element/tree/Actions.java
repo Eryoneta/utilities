@@ -3065,8 +3065,7 @@ public class Actions{
 				tree.draw();
 				updateTituloBounds();
 				if(tree.getTitulo().getObjeto()!=null){		//ATUALIZA O TAMANHO DA FONTE DE TÍTULO
-					final Modulo mod=(Modulo)tree.getTitulo().getObjeto();
-					tree.getTitulo().setFont(mod.getRelativeFont(Tree.UNIT));
+					tree.updateTituloFont();
 				}
 			}
 		});

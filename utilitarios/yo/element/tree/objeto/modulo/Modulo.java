@@ -419,9 +419,10 @@ public class Modulo extends Objeto{
 			}else{
 				imagemEdit.setFont(getRelativeFont(unit));
 				final int height=imagemEdit.getFontMetrics().getHeight();
-				int y=getY()+(isIconified()?unit*2:0)+height;
+//				final double heightUnit=((double)getHeight()/titulo.length);	//DESCENTRALIZA COM O TITULO 
+				double y=getY()+(isIconified()?unit*2:0)+height;
 				for(String linha:titulo){
-					imagemEdit.drawString(linha,getX()+(getWidth()-imagemEdit.getFontMetrics().stringWidth(linha))/2,y);
+					imagemEdit.drawString(linha,getX()+(getWidth()-imagemEdit.getFontMetrics().stringWidth(linha))/2,(int)y);
 					y+=height;
 				}
 			}
@@ -430,7 +431,9 @@ public class Modulo extends Objeto{
 			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
 			if(!isIconified())return;
 			final int iconsWidth=Icone.getSize()*getIcones().size();
-			for(int i=0,size=getIcones().size(),x=getX()+((getWidth()-iconsWidth)/2),y=getY();i<size;i++,x+=Icone.getSize())getIcones().get(i).draw(imagemEdit,x,y);
+			for(int i=0,size=getIcones().size(),x=getX()+((getWidth()-iconsWidth)/2),y=getY();i<size;i++,x+=Icone.getSize()){
+				getIcones().get(i).draw(imagemEdit,x,y);
+			}
 		}
 	public Cor getBrilhoCor(Modulo.State state){
 		final float transparency=0.4f;
