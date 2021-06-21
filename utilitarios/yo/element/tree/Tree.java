@@ -170,11 +170,16 @@ public class Tree extends Elemento{
 					mod.setTitle(getText());
 					final int iconSize=(mod.isIconified()?Icone.getSize():0);
 					titulo.setBounds(mod.getX(),mod.getY()+iconSize,mod.getWidth(),mod.getHeight()-iconSize);
-					titulo.setFont(mod.getRelativeFont(Tree.UNIT));
+//					titulo.setFont(mod.getRelativeFont(Tree.UNIT));	//CAUSA ERRO
 					draw();
 					if(!((JFrame)painel.getJanela()).getTitle().startsWith("*")){
 						((JFrame)painel.getJanela()).setTitle("*"+((JFrame)painel.getJanela()).getTitle());
 					}
+				}
+			});
+			addKeyListener(new KeyAdapter(){
+				public void keyPressed(KeyEvent k){
+					updateTituloFont();
 				}
 			});
 			addObjetoSetListener(new ObjetoSetListener(){
@@ -212,7 +217,7 @@ public class Tree extends Elemento{
 			imagemEdit.setColor(getBackground());
 			final int round=Modulo.getRoundValue();
 			imagemEdit.fillRoundRect(0,0,getWidth(),getHeight(),round,round);
-			super.paintComponent(imagemEdit);	//TODO: TEM CHANCE DE GERAR UM ERROR EM LOOP(SE O TEXTO SE DUPLICAR, NÃO O DELETE!)
+			super.paintComponent(imagemEdit);
 		}
 		protected void paintBorder(Graphics imagemEdit){
 			config(imagemEdit);
@@ -248,12 +253,25 @@ public class Tree extends Elemento{
 			final int iconSize=(mod.isIconified()?Icone.getSize():0);
 			titulo.setBounds(mod.getX(),mod.getY()+iconSize,mod.getWidth(),mod.getHeight()-iconSize);
 			titulo.setObjeto(mod);
-			titulo.setFont(mod.getRelativeFont(Tree.UNIT));
+			updateTituloFont();
 			titulo.crearUndo();
 			titulo.setVisible(true);
 			titulo.setSelectionStart(0);
 			titulo.setSelectionEnd(titulo.getText().length());
 			titulo.requestFocus();
+		}
+		public void updateTituloFont(){
+			final Modulo mod=(Modulo)titulo.getObjeto();
+			titulo.setFont(mod.getRelativeFont(Tree.UNIT));
+		//NÃO É PRECISO O BASTANTE, E NÃO ATUALIZA DE FORMA UNIFORME
+//			final Graphics imagemEdit=new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB).getGraphics();
+//			imagemEdit.setFont(titulo.getFont());
+//			final int fonteHeight=imagemEdit.getFontMetrics().getHeight();
+//			final double linhaHeight=((double)mod.getHeight()/mod.getTitle().split("\n").length);
+//			final double space=(double)((linhaHeight-fonteHeight)/linhaHeight);
+//			final MutableAttributeSet set=new SimpleAttributeSet(titulo.getParagraphAttributes());
+//			StyleConstants.setLineSpacing(set,(float)space);
+//			titulo.setParagraphAttributes(set,false);
 		}
 //TEXTO
 	private Texto texto=new Texto(){{

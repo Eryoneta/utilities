@@ -51,7 +51,7 @@ public class Texto extends JTextPane{
 	private List<ObjetoSetListener>objetoSetListeners=new ArrayList<ObjetoSetListener>();
 		public void addObjetoSetListener(ObjetoSetListener objetoSetListener){objetoSetListeners.add(objetoSetListener);}
 		public void triggerObjetoSetListener(Objeto oldObj,Objeto newObj){
-			for(ObjetoSetListener objetoSetListener:objetoSetListeners)objetoSetListener.objetoModified(this.obj,obj);
+			for(ObjetoSetListener objetoSetListener:objetoSetListeners)objetoSetListener.objetoModified(oldObj,newObj);
 		}
 //UNDO-REDO
 	private UndoManager undoManager;
