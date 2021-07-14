@@ -162,7 +162,7 @@ public class Tree extends Elemento{
 			addEditorListener(new DocumentListener(){
 				public void removeUpdate(DocumentEvent d){run();}
 				public void insertUpdate(DocumentEvent d){run();}
-				public void changedUpdate(DocumentEvent d){run();}
+				public void changedUpdate(DocumentEvent d){}
 				private void run(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
 					if(titulo.getObjeto()==null)return;
 					if(!titulo.getObjeto().getTipo().is(Objeto.Tipo.MODULO))return;
@@ -187,19 +187,20 @@ public class Tree extends Elemento{
 				private String tituloTexto=null;
 				public void objetoModified(Objeto oldObj,Objeto newObj){
 					if(oldObj!=null&&!oldObj.getTipo().is(Objeto.Tipo.MODULO))return;
-					if(oldObj!=newObj){		//MOD É MUDADO
-						if(mod!=null&&tituloTexto!=null){
-							if(getUndoManager().canUndo()){
-								undoRedo.addUndoTitulo(mod,tituloTexto);
-							}
+					if(newObj!=null&&!newObj.getTipo().is(Objeto.Tipo.MODULO))return;
+					if(oldObj==newObj)return;
+					if(mod!=null&&tituloTexto!=null){
+						if(getUndoManager().canUndo()){
+							undoRedo.addUndoTitulo(mod,tituloTexto);
 						}
-						final Modulo mod=(Modulo)newObj;
+					}
+					final Modulo mod=(Modulo)newObj;
+					if(mod==null){
+						this.mod=null;
+						tituloTexto=null;
+					}else{
 						this.mod=mod;
-						if(mod==null){
-							tituloTexto=null;
-						}else{
-							tituloTexto=mod.getTitle();
-						}
+						tituloTexto=mod.getTitle();
 					}
 				}
 			});
@@ -281,7 +282,7 @@ public class Tree extends Elemento{
 		addEditorListener(new DocumentListener(){
 			public void removeUpdate(DocumentEvent d){run();}
 			public void insertUpdate(DocumentEvent d){run();}
-			public void changedUpdate(DocumentEvent d){run();}
+			public void changedUpdate(DocumentEvent d){}
 			private void run(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
 				if(texto.getObjeto()==null)return;
 				if(!texto.getObjeto().getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
@@ -298,27 +299,28 @@ public class Tree extends Elemento{
 			}
 		});
 		addObjetoSetListener(new ObjetoSetListener(){
-			private Objeto obj;
-			private List<String>textoTexto;
+			private Objeto obj=null;
+			private List<String>textoTexto=null;
 			public void objetoModified(Objeto oldObj,Objeto newObj){
 				if(oldObj!=null&&!oldObj.getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
-				if(oldObj!=newObj){		//MOD/COX É MUDADO
-					if(obj!=null&&textoTexto!=null){
-						if(getUndoManager().canUndo()){
-							undoRedo.addUndoTexto(obj,textoTexto);
-						}
+				if(newObj!=null&&!newObj.getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
+				if(oldObj==newObj)return;
+				if(obj!=null&&textoTexto!=null){
+					if(getUndoManager().canUndo()){
+						undoRedo.addUndoTexto(obj,textoTexto);
 					}
+				}
+				if(newObj==null){
+					obj=null;
+					textoTexto=null;
+				}else{
 					obj=newObj;
-					if(newObj==null){
-						textoTexto=null;
-					}else{
-						if(newObj.getTipo().is(Objeto.Tipo.MODULO)){
-							final Modulo mod=(Modulo)newObj;
-							textoTexto=new ArrayList<String>(mod.getTexto());
-						}else if(newObj.getTipo().is(Objeto.Tipo.CONEXAO)){
-							final Conexao cox=(Conexao)newObj;
-							textoTexto=new ArrayList<String>(cox.getTexto());
-						}
+					if(newObj.getTipo().is(Objeto.Tipo.MODULO)){
+						final Modulo mod=(Modulo)newObj;
+						textoTexto=new ArrayList<String>(mod.getTexto());
+					}else if(newObj.getTipo().is(Objeto.Tipo.CONEXAO)){
+						final Conexao cox=(Conexao)newObj;
+						textoTexto=new ArrayList<String>(cox.getTexto());
 					}
 				}
 			}
@@ -1044,10 +1046,12 @@ public class Tree extends Elemento{
 	public List<Objeto>addTree(Element mindTag,boolean replaceMestre)throws Exception{
 		final List<Objeto>lista=new ArrayList<Objeto>();
 		final HashMap<Integer,Modulo>mods=new HashMap<Integer,Modulo>();
-		final String fontNome=mindTag.getAttribute("fontName");			//SET FONT
-		final int fontStyle=Integer.parseInt(mindTag.getAttribute("fontStyle"));
-		final int fontSize=Integer.parseInt(mindTag.getAttribute("fontSize"));
-		setFonte(new Font(fontNome,fontStyle,fontSize));
+		if(replaceMestre){
+			final String fontNome=mindTag.getAttribute("fontName");			//SET FONT
+			final int fontStyle=Integer.parseInt(mindTag.getAttribute("fontStyle"));
+			final int fontSize=Integer.parseInt(mindTag.getAttribute("fontSize"));
+			setFonte(new Font(fontNome,fontStyle,fontSize));
+		}
 		final NodeList modsTag=mindTag.getElementsByTagName("mod");		//SET MODS
 		for(int m=0,size=modsTag.getLength();m<size;m++){
 			final Element modTag=(Element)modsTag.item(m);

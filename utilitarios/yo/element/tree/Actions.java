@@ -1,5 +1,4 @@
 package element.tree;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -3337,7 +3336,6 @@ public class Actions{
 		public void paste(){
 			if(tree.getTitulo().isVisible())return;
 			tree.unSelectAll();
-			final Font fonte=Tree.Fonte.FONTE;
 			try{
 				final String texto=Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor).toString();
 				if(!texto.startsWith("<mind "))return;
@@ -3348,7 +3346,6 @@ public class Actions{
 			}catch(Exception erro){
 				Tree.mensagem(Tree.getLang().get("T_Err2","Error: Couldn't paste objects!")+"\n"+erro,Tree.Options.ERRO);
 			}
-			Tree.Fonte.FONTE=fonte;
 			if(tree.getSelectedObjetos().isEmpty())return;
 			final Point local=Tree.getLocal();
 			tree.setFocusOn(tree.getSelectedObjetos().getAll().values().toArray(new Objeto[0]));	//MOVE FOCO PARA O CENTRO DO GRUPO
