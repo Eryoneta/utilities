@@ -7,7 +7,7 @@ import element.tree.objeto.conexao.Nodulo;
 import element.tree.objeto.modulo.Modulo;
 public class ListaObjeto{
 //LISTAS
-	final HashMap<Integer,Objeto>listaAll=new HashMap<Integer,Objeto>();
+	private HashMap<Integer,Objeto>listaAll=new HashMap<Integer,Objeto>();
 		public HashMap<Integer,Objeto>getAll(){return listaAll;}
 		public List<Objeto>getAllOrdened(){
 			final List<Objeto>lista=new ArrayList<Objeto>();
@@ -31,6 +31,12 @@ public class ListaObjeto{
 		public List<Nodulo>getNodulos(){return listaNods;}
 //MAIN
 	public ListaObjeto(){}
+	public ListaObjeto(ListaObjeto lista){
+		listaAll=new HashMap<Integer,Objeto>(lista.getAll());
+		listaMods=new ArrayList<Modulo>(lista.getModulos());
+		listaCoxs=new ArrayList<Conexao>(lista.getConexoes());
+		listaNods=new ArrayList<Nodulo>(lista.getNodulos());
+	}
 //FUNCS
 	public boolean has(Objeto.Tipo...tipos){
 		for(Objeto.Tipo tipo:tipos){

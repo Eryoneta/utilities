@@ -114,7 +114,7 @@ public class Modulo extends Objeto{
 			}
 		}
 //VAR GLOBAIS
-	public static int getRoundValue(){return Tree.UNIT;}
+	public static int getRoundValue(int unit){return unit;}
 	public static class Cores{
 		public static Cor FUNDO=new Cor(215,215,215);
 		public static Cor SELECT=new Cor(120,120,120);
@@ -126,18 +126,18 @@ public class Modulo extends Objeto{
 //LOCAL
 	private int xIndex;
 		public int getXIndex(){return xIndex;}
-		public int getX(){return (Tree.getLocalX()+xIndex)*Tree.UNIT;}
-		public int getMeioXIndex(){return (getXIndex()+(getWidthIndex()/2))-(getWidthIndex()%2==0?0:1);}	//(X+(WIDTH/2))-(AJUSTE PARA WIDTHS ÍMPARES)
-		public int getMeioX(){return (getX()+(getWidth()/2))-(getWidthIndex()%2==0?0:Tree.UNIT/2);}			//(X+(WIDTH/2))-(AJUSTE PARA WIDTHS ÍMPARES)
+		public int getX(int unit){return (Tree.getLocalX()+xIndex)*unit;}
+		public int getMeioXIndex(){return (getXIndex()+(getWidthIndex()/2))-(getWidthIndex()%2==0?0:1);}		//(X+(WIDTH/2))-(AJUSTE PARA WIDTHS ÍMPARES)
+		public int getMeioX(int unit){return (getX(unit)+(getWidth(unit)/2))-(getWidthIndex()%2==0?0:unit/2);}	//(X+(WIDTH/2))-(AJUSTE PARA WIDTHS ÍMPARES)
 		public void setXIndex(int x){xIndex=x;}
 	private int yIndex;
 		public int getYIndex(){return yIndex;}
-		public int getY(){return (Tree.getLocalY()+yIndex)*Tree.UNIT;}
-		public int getMeioYIndex(){return (getYIndex()+(getHeightIndex()/2))-(getHeightIndex()%2==0?0:1);}	//(Y+(HEIGHT/2))-(AJUSTE PARA HEIGHTS ÍMPARES)
-		public int getMeioY(){return (getY()+(getHeight()/2))-(getHeightIndex()%2==0?0:Tree.UNIT/2);}		//(Y+(HEIGHT/2))-(AJUSTE PARA HEIGHTS ÍMPARES)
+		public int getY(int unit){return (Tree.getLocalY()+yIndex)*unit;}
+		public int getMeioYIndex(){return (getYIndex()+(getHeightIndex()/2))-(getHeightIndex()%2==0?0:1);}		//(Y+(HEIGHT/2))-(AJUSTE PARA HEIGHTS ÍMPARES)
+		public int getMeioY(int unit){return (getY(unit)+(getHeight(unit)/2))-(getHeightIndex()%2==0?0:unit/2);}//(Y+(HEIGHT/2))-(AJUSTE PARA HEIGHTS ÍMPARES)
 		public void setYIndex(int y){yIndex=y;}
 	public Point getLocationIndex(){return new Point(getXIndex(),getYIndex());}
-	public Point getLocation(){return new Point(getX(),getY());}
+	public Point getLocation(int unit){return new Point(getX(unit),getY(unit));}
 	public void justSetLocationIndex(int x,int y){
 		this.xIndex=x;
 		this.yIndex=y;
@@ -154,13 +154,13 @@ public class Modulo extends Objeto{
 //FORMA
 	private int widthIndex;
 		public int getWidthIndex(){return widthIndex;}
-		public int getWidth(){return widthIndex*Tree.UNIT;}
+		public int getWidth(int unit){return widthIndex*unit;}
 	private int heightIndex;
 		public int getHeightIndex(){return heightIndex;}
-		public int getHeight(){return heightIndex*Tree.UNIT;}
+		public int getHeight(int unit){return heightIndex*unit;}
 	public Dimension getSizeIndex(){return new Dimension(getWidthIndex(),getHeightIndex());}
 	public Rectangle getFormIndex(){return new Rectangle(getXIndex(),getYIndex(),getWidthIndex(),getHeightIndex());}
-	public Rectangle getForm(){return new Rectangle(getX(),getY(),getWidth(),getHeight());}
+	public Rectangle getForm(int unit){return new Rectangle(getX(unit),getY(unit),getWidth(unit),getHeight(unit));}
 	public void justSetSize(){
 		final int unit=8;	//O TAMANHO É FIXO, INDEPENDENTE DO ZOOM ATUAL
 		final Graphics imagemEdit=new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB).getGraphics();
@@ -178,7 +178,7 @@ public class Modulo extends Objeto{
 		heightIndex=(int)Math.ceil((float)height/unit);
 	//ADD ICONS
 		if(isIconified()){
-			final int newWidthIndex=(int)Math.ceil(((float)Icone.getRelativeSize(unit)*getIcones().size())/unit);
+			final int newWidthIndex=(int)Math.ceil(((float)Icone.getSize(unit)*getIcones().size())/unit);
 			widthIndex=Math.max(widthIndex,newWidthIndex);
 			heightIndex+=2;	//TAMANHO EM UNIT DOS ICONES
 		}
@@ -198,7 +198,7 @@ public class Modulo extends Objeto{
 		triggerBoundsListener(modOldBounds,coxsOldBounds);
 	}
 @Override
-	public boolean contains(Point mouse){return getForm().contains(mouse);}
+	public boolean contains(Point mouse){return getForm(Tree.UNIT).contains(mouse);}
 //LISTENER: DISPARA COM O MUDAR DE BOUNDS DE UM OBJETO
 	private static List<ObjetoBoundsListener>boundsListeners=new ArrayList<ObjetoBoundsListener>();
 		public static void addBoundsListener(ObjetoBoundsListener boundsListener){boundsListeners.add(boundsListener);}
@@ -305,7 +305,7 @@ public class Modulo extends Objeto{
 			width=Math.max(width,imagemEdit.getFontMetrics().stringWidth(linha));
 		}
 		int height=imagemEdit.getFontMetrics().getHeight()*titulo.length;
-		while(width>getWidth()-unit||height>getHeight()){	//DIMINÚI A FONTE ATÉ O TÍTULO FICAR MENOR QUE O MOD(COM ESPAÇO EXTRA DE 1 UNIT)
+		while(width>getWidth(unit)-unit||height>getHeight(unit)){	//DIMINÚI A FONTE ATÉ O TÍTULO FICAR MENOR QUE O MOD(COM ESPAÇO EXTRA DE 1 UNIT)
 			final Font oldFonte=imagemEdit.getFont();
 			imagemEdit.setFont(new Font(oldFonte.getName(),oldFonte.getStyle(),oldFonte.getSize()-1));
 			width=0;
@@ -358,10 +358,10 @@ public class Modulo extends Objeto{
 //DRAW
 	public void draw(Graphics2D imagemEdit,int unit){
 		if(this==Tree.getGhost())return;
-		final int round=Modulo.getRoundValue();
-		final float borda=Tree.getBordaValue();
+		final int round=Modulo.getRoundValue(unit);
+		final float borda=Tree.getBordaValue(unit);
 		drawBrilho(imagemEdit,unit,round,borda);
-		drawFundo(imagemEdit,round);
+		drawFundo(imagemEdit,unit,round);
 		drawBorda(imagemEdit,unit,round,borda);
 		if(!getTitle().isEmpty())drawTitulo(imagemEdit,unit);
 		drawIcone(imagemEdit,unit);
@@ -370,29 +370,29 @@ public class Modulo extends Objeto{
 			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
 			if(getState().equals(Modulo.State.UNSELECTED)||getState().equals(Modulo.State.HIGHLIGHTED))return;
 			imagemEdit.setColor(getBrilhoCor(getState()));
-			final float x=getX()-borda*2.6f;
-			final float y=getY()-borda*2.6f;
-			final float width=getWidth()+((borda*2.6f)*2);
-			final float height=getHeight()+((borda*2.6f)*2);
+			final float x=getX(unit)-borda*2.6f;
+			final float y=getY(unit)-borda*2.6f;
+			final float width=getWidth(unit)+((borda*2.6f)*2);
+			final float height=getHeight(unit)+((borda*2.6f)*2);
 			round*=1.6;
 			if(this==Tree.getMestre()){
 				imagemEdit.fill(new Rectangle2D.Float(x,y,width,height));
 			}else imagemEdit.fill(new RoundRectangle2D.Float(x,y,width,height,round,round));
 		}
-		private void drawFundo(Graphics2D imagemEdit,int round){
+		private void drawFundo(Graphics2D imagemEdit,int unit,int round){
 			imagemEdit.setColor(getFundoCor(getState()));
 			if(this==Tree.getMestre()){
-				imagemEdit.fill(new Rectangle2D.Float(getX(),getY(),getWidth(),getHeight()));
-			}else imagemEdit.fill(new RoundRectangle2D.Float(getX(),getY(),getWidth(),getHeight(),round,round));
+				imagemEdit.fill(new Rectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit)));
+			}else imagemEdit.fill(new RoundRectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit),round,round));
 		}
 		private void drawBorda(Graphics2D imagemEdit,int unit,int round,float borda){
 			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
-			imagemEdit.setStroke(getBorda().getVisual());
+			imagemEdit.setStroke(getBorda().getVisual(borda));
 			imagemEdit.setColor(getBordaCor(getState()));
 			if(this==Tree.getMestre()){
-				imagemEdit.setStroke(new BasicStroke(Tree.getBordaValue(),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));	//BORDAS RETAS
-				imagemEdit.draw(new Rectangle2D.Float(getX(),getY(),getWidth(),getHeight()));
-			}else imagemEdit.draw(new RoundRectangle2D.Float(getX(),getY(),getWidth(),getHeight(),round,round));
+				imagemEdit.setStroke(new BasicStroke(Tree.getBordaValue(unit),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));	//BORDAS RETAS
+				imagemEdit.draw(new Rectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit)));
+			}else imagemEdit.draw(new RoundRectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit),round,round));
 		}
 		private void drawTitulo(Graphics2D imagemEdit,int unit){
 			switch(getState()){
@@ -408,10 +408,10 @@ public class Modulo extends Objeto{
 				imagemEdit.setStroke(new BasicStroke(1));
 				final int borda=1*unit;
 				final int linhasQtd=(unit<=2?Math.max(1,titulo.length/2):titulo.length);	//LINHAS MUITO JUNTAS FORMAM BLOCOS
-				final float linhaHeight=(float)(getHeight())/linhasQtd;
-				final int width=Math.max(1,getWidth()-borda-borda);	//DEVE APARECER PELO MENOS 1 PÍXEL
-				final int x=getX()+borda;
-				float y=getY()+linhaHeight/2;
+				final float linhaHeight=(float)(getHeight(unit))/linhasQtd;
+				final int width=Math.max(1,getWidth(unit)-borda-borda);	//DEVE APARECER PELO MENOS 1 PÍXEL
+				final int x=getX(unit)+borda;
+				float y=getY(unit)+linhaHeight/2;
 				for(int i=0;i<linhasQtd;i++){
 					imagemEdit.drawLine(x,(int)Math.round(y),x+width,(int)Math.round(y));
 					y+=linhaHeight;
@@ -420,9 +420,9 @@ public class Modulo extends Objeto{
 				imagemEdit.setFont(getRelativeFont(unit));
 				final int height=imagemEdit.getFontMetrics().getHeight();
 //				final double heightUnit=((double)getHeight()/titulo.length);	//DESCENTRALIZA COM O TITULO 
-				double y=getY()+(isIconified()?unit*2:0)+height;
+				double y=getY(unit)+(isIconified()?unit*2:0)+height;
 				for(String linha:titulo){
-					imagemEdit.drawString(linha,getX()+(getWidth()-imagemEdit.getFontMetrics().stringWidth(linha))/2,(int)y);
+					imagemEdit.drawString(linha,getX(unit)+(getWidth(unit)-imagemEdit.getFontMetrics().stringWidth(linha))/2,(int)y);
 					y+=height;
 				}
 			}
@@ -430,9 +430,9 @@ public class Modulo extends Objeto{
 		private void drawIcone(Graphics2D imagemEdit,int unit){
 			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
 			if(!isIconified())return;
-			final int iconsWidth=Icone.getSize()*getIcones().size();
-			for(int i=0,size=getIcones().size(),x=getX()+((getWidth()-iconsWidth)/2),y=getY();i<size;i++,x+=Icone.getSize()){
-				getIcones().get(i).draw(imagemEdit,x,y);
+			final int iconsWidth=Icone.getSize(unit)*getIcones().size();
+			for(int i=0,size=getIcones().size(),x=getX(unit)+((getWidth(unit)-iconsWidth)/2),y=getY(unit);i<size;i++,x+=Icone.getSize(unit)){
+				getIcones().get(i).draw(imagemEdit,unit,x,y);
 			}
 		}
 	public Cor getBrilhoCor(Modulo.State state){

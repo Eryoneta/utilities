@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -12,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -68,7 +70,7 @@ public class Tree extends Elemento{
 	public static void setLocal(int x,int y){X=x;Y=y;}
 //VAR GLOBAIS
 	public static int UNIT=8;
-	public static float getBordaValue(){return UNIT*0.3f;}
+	public static float getBordaValue(int unit){return unit*0.3f;}
 //LANG
 	private static LanguagePackage LANG=new LanguagePackage();
 		public static LanguagePackage getLang(){return LANG;}
@@ -97,6 +99,7 @@ public class Tree extends Elemento{
 			texto.setFont(fonte);
 			for(Modulo mod:getObjetos().getModulos())mod.setSize();
 		};
+		public static Font getFonte(){return Fonte.FONTE;}
 //COR DE FUNDO
 	public static Cor FUNDO=new Cor(240,240,240);
 //MENU
@@ -168,8 +171,8 @@ public class Tree extends Elemento{
 					if(!titulo.getObjeto().getTipo().is(Objeto.Tipo.MODULO))return;
 					final Modulo mod=(Modulo)titulo.getObjeto();
 					mod.setTitle(getText());
-					final int iconSize=(mod.isIconified()?Icone.getSize():0);
-					titulo.setBounds(mod.getX(),mod.getY()+iconSize,mod.getWidth(),mod.getHeight()-iconSize);
+					final int iconSize=(mod.isIconified()?Icone.getSize(Tree.UNIT):0);
+					titulo.setBounds(mod.getX(Tree.UNIT),mod.getY(Tree.UNIT)+iconSize,mod.getWidth(Tree.UNIT),mod.getHeight(Tree.UNIT)-iconSize);
 //					titulo.setFont(mod.getRelativeFont(Tree.UNIT));	//CAUSA ERRO
 					draw();
 					if(!((JFrame)painel.getJanela()).getTitle().startsWith("*")){
@@ -216,7 +219,7 @@ public class Tree extends Elemento{
 		protected void paintComponent(Graphics imagemEdit){
 			config(imagemEdit);
 			imagemEdit.setColor(getBackground());
-			final int round=Modulo.getRoundValue();
+			final int round=Modulo.getRoundValue(Tree.UNIT);
 			imagemEdit.fillRoundRect(0,0,getWidth(),getHeight(),round,round);
 			super.paintComponent(imagemEdit);
 		}
@@ -225,20 +228,20 @@ public class Tree extends Elemento{
 			if(getObjeto()!=null){
 				final Modulo mod=(Modulo)getObjeto();
 				imagemEdit.setColor(Cor.getInverted(mod.getCor()));
-				((Graphics2D)imagemEdit).setStroke(mod.getBorda().getVisual());
+				((Graphics2D)imagemEdit).setStroke(mod.getBorda().getVisual(Tree.getBordaValue(Tree.UNIT)));
 			}else imagemEdit.setColor(getForeground());
-			final int round=Modulo.getRoundValue();
+			final int round=Modulo.getRoundValue(Tree.UNIT);
 			imagemEdit.drawRoundRect(0,0,getWidth(),getHeight(),round,round);
 		}
 		private void config(Graphics imagemEdit){
 			final boolean antialias=(isAntialias()&&(getObjetos().getAll().size()<getObjetosLimite()));
 			((Graphics2D)imagemEdit).setRenderingHint(RenderingHints.KEY_ANTIALIASING,(antialias?RenderingHints.VALUE_ANTIALIAS_ON:RenderingHints.VALUE_ANTIALIAS_OFF));
-			((Graphics2D)imagemEdit).setStroke(new BasicStroke(Tree.getBordaValue()));
+			((Graphics2D)imagemEdit).setStroke(new BasicStroke(Tree.getBordaValue(Tree.UNIT)));
 		}
 	};
 		public Texto getTitulo(){return titulo;}
 		public void setTitulo(Modulo mod){
-			final int borda=(int)(Tree.getBordaValue());
+			final int borda=(int)(Tree.getBordaValue(Tree.UNIT));
 			titulo.setBorder(BorderFactory.createEmptyBorder(borda,borda,borda,borda));
 			if(mod==null||mod==getGhost()){
 				triggerObjetoListener(titulo.getObjeto(),true);	//ATUALIZA TITULO DE JANELA-TEXTO
@@ -251,8 +254,8 @@ public class Tree extends Elemento{
 			}
 			titulo.clearObjeto();		//NÃO MODIFICAR MOD/COX ANTERIOR
 			titulo.setText(mod.getTitle());
-			final int iconSize=(mod.isIconified()?Icone.getSize():0);
-			titulo.setBounds(mod.getX(),mod.getY()+iconSize,mod.getWidth(),mod.getHeight()-iconSize);
+			final int iconSize=(mod.isIconified()?Icone.getSize(Tree.UNIT):0);
+			titulo.setBounds(mod.getX(Tree.UNIT),mod.getY(Tree.UNIT)+iconSize,mod.getWidth(Tree.UNIT),mod.getHeight(Tree.UNIT)-iconSize);
 			titulo.setObjeto(mod);
 			updateTituloFont();
 			titulo.crearUndo();
@@ -702,10 +705,10 @@ public class Tree extends Elemento{
 				Rectangle areaSimples=null;
 				Path2D.Float areaComplex=null;
 				switch(obj.getTipo()){
-					case MODULO:	areaSimples=((Modulo)obj).getForm();	break;
-					case CONEXAO:	areaComplex=((Conexao)obj).getForm();	break;
-					case NODULO:	areaSimples=((Nodulo)obj).getForm();	break;
-					case SEGMENTO:											break;
+					case MODULO:	areaSimples=((Modulo)obj).getForm(Tree.UNIT);	break;
+					case CONEXAO:	areaComplex=((Conexao)obj).getForm(Tree.UNIT);	break;
+					case NODULO:	areaSimples=((Nodulo)obj).getForm(Tree.UNIT);	break;
+					case SEGMENTO:													break;
 				}
 				for(int y=chunksIndexes.y;y-chunksIndexes.y<chunksIndexes.height;y++){
 					for(int x=chunksIndexes.x;x-chunksIndexes.x<chunksIndexes.width;x++){
@@ -890,6 +893,7 @@ public class Tree extends Elemento{
 @Override
 	public synchronized void draw(Graphics2D imagemEdit){
 		final int unit=Tree.UNIT;
+		final float borda=Tree.getBordaValue(unit);
 		if(((JFrame)painel.getJanela()).isUndecorated()){
 			clearDraw();
 		}
@@ -904,7 +908,7 @@ public class Tree extends Elemento{
 		if(!((JFrame)painel.getJanela()).isUndecorated()){
 			drawFundo(imagemEdit,tela,unit);
 		}
-		drawObjetos(imagemEdit,tela,unit);
+		drawObjetos(imagemEdit,tela,unit,borda);
 		drawFrente(imagemEdit);
 		imagemEdit.dispose();
 	}
@@ -936,7 +940,7 @@ public class Tree extends Elemento{
 				for(int y=0,size=getHeight()/unit;y<=size;y++)imagemEdit.drawLine(getX(),unit*y,getWidth(),unit*y);					
 			}
 		}
-		private void drawObjetos(Graphics2D imagemEdit,Rectangle tela,int unit){
+		private void drawObjetos(Graphics2D imagemEdit,Rectangle tela,int unit,float borda){
 			getVisibleMods().clear();
 			getVisibleCoxs().clear();
 			getVisibleNods().clear();
@@ -956,7 +960,7 @@ public class Tree extends Elemento{
 					}
 				}
 			}
-			imagemEdit.setStroke(new BasicStroke((int)(Tree.getBordaValue())));	//BORDA DOS OBJS
+			imagemEdit.setStroke(new BasicStroke((int)borda));	//BORDA DOS OBJS
 		//DRAW CONEXÕES
 			for(Conexao cox:getVisibleCoxs().values()){
 				if(cox.getState().is(Conexao.State.UNSELECTED))cox.draw(imagemEdit,unit);	//COXS DESELECIONADOS
@@ -966,7 +970,7 @@ public class Tree extends Elemento{
 			}
 		//DRAW NÓDULOS
 			for(Nodulo nod:getVisibleNods().values()){
-				if(nod.getState().is(Nodulo.State.UNSELECTED))nod.draw(imagemEdit,unit);		//NODS DESELECIONADOS
+				if(nod.getState().is(Nodulo.State.UNSELECTED))nod.draw(imagemEdit,unit);	//NODS DESELECIONADOS
 			}
 			for(Nodulo nod:getVisibleNods().values()){
 				if(!nod.getState().is(Nodulo.State.UNSELECTED))nod.draw(imagemEdit,unit);	//NODS SELECIONADOS FICAM NA FRENTE
@@ -993,21 +997,21 @@ public class Tree extends Elemento{
 		}
 			private void drawAutoDragLine(Graphics2D imagemEdit){
 				imagemEdit.setStroke(new BasicStroke(1));
-				//PONTOS
+			//PONTOS
 				final Point ponto1=getActions().getNonGridPosition(getActions().mouseReleased);
 				final Point ponto2=getActions().getNonGridPosition(getActions().mouseMoved);
 				final int difX=ponto2.x-ponto1.x;
 				final int difY=ponto2.y-ponto1.y;
-				//ANGLES
+			//ANGLES
 				double angle=Math.atan2(difY,difX);
 				double angleReto1=angle+Math.toRadians(90);
 				double angleReto2=angle-Math.toRadians(90);
-				//SIZES
+			//SIZES
 				final double size=(Math.abs(difX)+Math.abs(difY))/4;
 				final double pontaWidth=size/2;
 				final double pontaBaseWidth=size/4;
 				Point2D pontaBase=null;
-				//AJUSTES
+			//AJUSTES
 				if(angle>Math.toRadians(90)){			//90º -> 180º
 					angle=Math.abs(Math.toRadians(180)-angle);
 					pontaBase=new Point2D.Double(ponto2.x+(size*Math.cos(angle)),ponto2.y-(size*Math.sin(angle)));
@@ -1019,7 +1023,7 @@ public class Tree extends Elemento{
 				}else if(angle>Math.toRadians(-180)){	//-180º -> -90º
 					pontaBase=new Point2D.Double(ponto2.x-(size*Math.cos(angle)),ponto2.y-(size*Math.sin(angle)));
 				}
-				//SETA
+			//SETA
 				final Point2D arrowPonta1=new Point2D.Double(pontaBase.getX()-(pontaWidth*Math.cos(angleReto1)),pontaBase.getY()-(pontaWidth*Math.sin(angleReto1)));
 				final Point2D arrowReta1=new Point2D.Double(pontaBase.getX()-(pontaBaseWidth*Math.cos(angleReto1)),pontaBase.getY()-(pontaBaseWidth*Math.sin(angleReto1)));
 				final Point2D arrowPonta2=new Point2D.Double(pontaBase.getX()-(pontaWidth*Math.cos(angleReto2)),pontaBase.getY()-(pontaWidth*Math.sin(angleReto2)));
@@ -1032,7 +1036,7 @@ public class Tree extends Elemento{
 				seta.lineTo(arrowPonta2.getX(),arrowPonta2.getY());		//PONTA ESQUERDA
 				seta.lineTo(arrowReta2.getX(),arrowReta2.getY());		//MEIO ESQUERDO
 				seta.closePath();										//BASE
-				//DRAW
+			//DRAW
 				final int XRadius=10;
 				imagemEdit.setColor(Cor.getChanged(Modulo.Cores.FUNDO,Modulo.Cores.FUNDO.isDark()?1.1f:0.8f));
 				imagemEdit.drawLine(ponto1.x-XRadius,ponto1.y,ponto1.x+XRadius,ponto1.y);
@@ -1119,6 +1123,57 @@ public class Tree extends Elemento{
 		}
 		return null;
 	}
+//TREE -> IMAGE
+	public Image getImage(ListaObjeto lista){
+		unSelectAll();
+		if(lista.isEmpty())return null;
+	//CALC AREA
+		final int unit=8;
+		final int imgBorda=unit;
+		Rectangle area=null;
+		for(Modulo mod:lista.getModulos())
+			area=compararArea(area,unit,mod.getX(unit),mod.getY(unit),mod.getX(unit)+mod.getWidth(unit),mod.getY(unit)+mod.getHeight(unit));
+		for(Nodulo nod:lista.getNodulos())
+			area=compararArea(area,unit,nod.getX(unit),nod.getY(unit),nod.getX(unit),nod.getY(unit));
+		for(Conexao cox:lista.getConexoes())
+			area=compararArea(area,unit,cox.getX1(unit),cox.getY1(unit),cox.getX2(unit),cox.getY2(unit));
+		final Rectangle tela=new Rectangle(area.x,area.y,area.width-area.x,area.height-area.y);
+	//SET IMG
+		final BufferedImage imagem=new BufferedImage(imgBorda+tela.width+imgBorda,imgBorda+tela.height+imgBorda,BufferedImage.TYPE_INT_ARGB);
+		final Graphics2D imagemEdit=(Graphics2D)imagem.getGraphics();
+		imagemEdit.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+	//FUNDO
+		if(!((JFrame)painel.getJanela()).isUndecorated()){
+			imagemEdit.setColor(Tree.FUNDO);
+			imagemEdit.fillRect(0,0,imagem.getWidth(),imagem.getHeight());	//FUNDO
+			if(isShowingGrid()){											//GRADE
+				imagemEdit.setColor(Cor.getChanged(Tree.FUNDO,0.95f));
+				for(int x=0,size=imagem.getWidth()/unit;x<=size;x++)imagemEdit.drawLine(unit*x,0,unit*x,imagem.getHeight());
+				for(int y=0,size=imagem.getHeight()/unit;y<=size;y++)imagemEdit.drawLine(0,unit*y,imagem.getWidth(),unit*y);
+			}
+		}
+	//DRAW OBJS
+		imagemEdit.translate(-tela.x+imgBorda,-tela.y+imgBorda);
+		for(Conexao cox:lista.getConexoes())cox.draw(imagemEdit,unit);
+		for(Nodulo nod:lista.getNodulos())nod.draw(imagemEdit,unit);
+		for(Modulo mod:lista.getModulos())mod.draw(imagemEdit,unit);
+		return imagem;
+	}
+		private Rectangle compararArea(Rectangle area,int unit,int minX,int minY,int maxX,int maxY){
+			if(area==null){
+				area=new Rectangle();
+				area.x=minX;
+				area.y=minY;
+				area.width=maxX;
+				area.height=maxY;
+				return area;
+			}
+			area.x=Math.min(area.x,minX);
+			area.y=Math.min(area.y,minY);
+			area.width=Math.max(area.width,maxX);
+			area.height=Math.max(area.height,maxY);
+			return area;
+		}
 //MENSAGEM
 	public enum Options{
 		ERRO,

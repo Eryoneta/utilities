@@ -1,9 +1,12 @@
 package element.tree;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -12,6 +15,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3269,12 +3273,12 @@ public class Actions{
 	private void updateTituloBounds(){
 		if(tree.getTitulo().isVisible()){
 			final Modulo mod=(Modulo)tree.getTitulo().getObjeto();
-			final int iconSize=(mod.isIconified()?Icone.getSize():0);
+			final int iconSize=(mod.isIconified()?Icone.getSize(Tree.UNIT):0);
 			tree.getTitulo().setBounds(
-					mod.getX(),
-					mod.getY()+iconSize,
-					mod.getWidth(),
-					mod.getHeight()-iconSize
+					mod.getX(Tree.UNIT),
+					mod.getY(Tree.UNIT)+iconSize,
+					mod.getWidth(Tree.UNIT),
+					mod.getHeight(Tree.UNIT)-iconSize
 			);
 		}
 	}
@@ -3331,6 +3335,33 @@ public class Actions{
 			if(tree.getTitulo().isVisible())return;
 			final String copy=String.join("\n",tree.getText(tree.getSelectedObjetos()));
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(copy),null);
+			resetState();
+		}
+		private class TransferableImage implements Transferable{
+			private Image imagem;
+			public TransferableImage(Image img){this.imagem=img;}
+			public Object getTransferData(DataFlavor flavor)throws UnsupportedFlavorException,IOException{
+				if(flavor.equals(DataFlavor.imageFlavor)&&imagem!=null)return imagem;
+					else throw new UnsupportedFlavorException(flavor);
+			}
+			public DataFlavor[]getTransferDataFlavors(){
+				final DataFlavor[]flavors=new DataFlavor[1];
+				flavors[0]=DataFlavor.imageFlavor;
+				return flavors;
+			}
+			public boolean isDataFlavorSupported(DataFlavor flavor){
+				final DataFlavor[]flavors=getTransferDataFlavors();
+				for(int i=0;i<flavors.length;i++){
+					if(flavor.equals(flavors[i]))return true;
+				}
+				return false;
+			}
+		}
+		public void copyAsImg(){
+			if(tree.getTitulo().isVisible())return;
+			final Image imagem=tree.getImage(new ListaObjeto(tree.getSelectedObjetos()));
+			if(imagem==null)return;
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new TransferableImage(imagem),null);
 			resetState();
 		}
 		public void paste(){
@@ -3453,9 +3484,7 @@ public class Actions{
 			deleteGhostCoxs();
 			tree.getSelecao().setEmpty();
 			Tree.getGhost().setLocationIndex(mouseMoved.x-Tree.getLocalX(),mouseMoved.y-Tree.getLocalY());
-			for(Modulo mod:tree.getSelectedObjetos().getModulos()){
-				tree.add(new Conexao(Tree.getGhost(),mod));
-			}
+			relateToGhost(tree.getSelectedObjetos().getModulos());
 			tree.unSelectAll();
 			tree.draw();
 			if(!Tree.getGhost().getConexoes().isEmpty()){
@@ -3669,7 +3698,7 @@ public class Actions{
 							}
 						}else{
 							for(Modulo mod:chunk.getObjetos().getModulos()){	//SELEC MODS
-								if(tree.getSelecao().intersects(mod.getForm())){
+								if(tree.getSelecao().intersects(mod.getForm(Tree.UNIT))){
 									switch(state){
 										case TO_SELECT:default:	tree.select(mod);				break;
 										case TO_CREATE:			tree.selectToBeCreator(mod);	break;
@@ -3680,7 +3709,7 @@ public class Actions{
 								}else if(!addTo)tree.unSelect(mod);
 							}
 							for(Conexao cox:chunk.getObjetos().getConexoes()){	//SELEC COXS
-								if(tree.getSelecao().intersects(cox.getForm())){
+								if(tree.getSelecao().intersects(cox.getForm(Tree.UNIT))){
 									switch(state){
 										case TO_SELECT:default:	tree.select(cox);				break;
 										case TO_CREATE:			break;
@@ -3695,7 +3724,7 @@ public class Actions{
 								}
 							}
 							for(Nodulo nod:chunk.getObjetos().getNodulos()){	//SELEC NODS
-								if(tree.getSelecao().intersects(nod.getForm())){
+								if(tree.getSelecao().intersects(nod.getForm(Tree.UNIT))){
 									switch(state){
 										case TO_SELECT:default:	tree.select(nod);				break;
 										case TO_CREATE:			break;

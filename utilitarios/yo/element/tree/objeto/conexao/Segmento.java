@@ -49,10 +49,10 @@ public class Segmento extends Objeto{
 			case NODULO:			return ((Nodulo)getPonta1()).getXIndex();
 		}
 	}
-	public int getX1(){
+	public int getX1(int unit){
 		switch(getPonta1().getTipo()){
-			case MODULO:default:	return getConexao().getX1();	//SON
-			case NODULO:			return ((Nodulo)getPonta1()).getX();
+			case MODULO:default:	return getConexao().getX1(unit);	//SON
+			case NODULO:			return ((Nodulo)getPonta1()).getX(unit);
 		}
 	}
 	public int getY1Index(){
@@ -61,10 +61,10 @@ public class Segmento extends Objeto{
 			case NODULO:			return ((Nodulo)getPonta1()).getYIndex();
 		}
 	}
-	public int getY1(){
+	public int getY1(int unit){
 		switch(getPonta1().getTipo()){
-			case MODULO:default:	return getConexao().getY1();		//SON
-			case NODULO:			return ((Nodulo)getPonta1()).getY();
+			case MODULO:default:	return getConexao().getY1(unit);		//SON
+			case NODULO:			return ((Nodulo)getPonta1()).getY(unit);
 		}
 	}
 	public int getX2Index(){
@@ -73,10 +73,10 @@ public class Segmento extends Objeto{
 			case NODULO:			return ((Nodulo)getPonta2()).getXIndex();
 		}
 	}
-	public int getX2(){
+	public int getX2(int unit){
 		switch(getPonta2().getTipo()){
-			case MODULO:default:	return getConexao().getX2();		//PAI
-			case NODULO:			return ((Nodulo)getPonta2()).getX();
+			case MODULO:default:	return getConexao().getX2(unit);		//PAI
+			case NODULO:			return ((Nodulo)getPonta2()).getX(unit);
 		}
 	}
 	public int getY2Index(){
@@ -85,16 +85,16 @@ public class Segmento extends Objeto{
 			case NODULO:			return ((Nodulo)getPonta2()).getYIndex();
 		}
 	}
-	public int getY2(){
+	public int getY2(int unit){
 		switch(getPonta2().getTipo()){
-			case MODULO:default:	return getConexao().getY2();		//PAI
-			case NODULO:			return ((Nodulo)getPonta2()).getY();
+			case MODULO:default:	return getConexao().getY2(unit);		//PAI
+			case NODULO:			return ((Nodulo)getPonta2()).getY(unit);
 		}
 	}
 //FORMA
-	public Line2D getForm(){return new Line2D.Float(getX1(),getY1(),getX2(),getY2());}
+	public Line2D getForm(int unit){return new Line2D.Float(getX1(unit),getY1(unit),getX2(unit),getY2(unit));}
 	public boolean contains(Point mouse){
-		final Line2D forma=getForm();
+		final Line2D forma=getForm(Tree.UNIT);
 		final float raio=Tree.UNIT*0.6f;
 		final Rectangle area=new Rectangle((int)(mouse.x-raio),(int)(mouse.y-raio),(int)(raio*2),(int)(raio*2));
 		return forma.intersects(area);
