@@ -10,7 +10,6 @@ public class Grossura{
 		public int getIndex(){return index;}
 		public void setIndex(int index){this.index=index;}
 //VALOR
-	public float getValor(){return getValor(Tree.getBordaValue());}	//PARA COXS
 	public float getStaticValor(){return getValor(6*0.3f);}			//PARA POPUP
 	public float getValor(float borda){
 		switch(getIndex()){

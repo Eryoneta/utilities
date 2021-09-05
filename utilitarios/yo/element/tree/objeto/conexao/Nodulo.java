@@ -81,23 +81,23 @@ public class Nodulo extends Objeto{
 			}
 		}
 //VAR GLOBAIS
-	public float getRoundValue(){
+	public float getRoundValue(int unit){
 		switch(getConexao().getGrossura().getIndex()){
-			case Grossura.THIN:				return Tree.UNIT/4;
-			case Grossura.MEDIUM:default:	return Tree.UNIT/2;
-			case Grossura.WIDE:				return Tree.UNIT/1;
-			case Grossura.ULTRA_WIDE:		return Tree.UNIT/0.5f;
+			case Grossura.THIN:				return unit/4;
+			case Grossura.MEDIUM:default:	return unit/2;
+			case Grossura.WIDE:				return unit/1;
+			case Grossura.ULTRA_WIDE:		return unit/0.5f;
 		}
 	}
 //BOUNDS
 	private int xIndex;
 		public int getXIndex(){return xIndex;}
-		public int getX(){return ((Tree.getLocalX()+xIndex)*Tree.UNIT);}
+		public int getX(int unit){return ((Tree.getLocalX()+xIndex)*unit);}
 	private int yIndex;
 		public int getYIndex(){return yIndex;}
-		public int getY(){return ((Tree.getLocalY()+yIndex)*Tree.UNIT);}
+		public int getY(int unit){return ((Tree.getLocalY()+yIndex)*unit);}
 	public Point getLocationIndex(){return new Point(getXIndex(),getYIndex());}
-	public Point getLocation(){return new Point(getX(),getY());}
+	public Point getLocation(int unit){return new Point(getX(unit),getY(unit));}
 	public void justSetLocationIndex(int x,int y){
 		this.xIndex=x;
 		this.yIndex=y;
@@ -109,21 +109,21 @@ public class Nodulo extends Objeto{
 		triggerBoundsListener(nodOldBounds,coxOldBounds);
 	}
 //FORMA
-	public float getWidth(){
+	public float getSize(int unit){
 		switch(getConexao().getGrossura().getIndex()){
-			case Grossura.THIN:				return Tree.UNIT*0.5f;
-			case Grossura.MEDIUM:default:	return Tree.UNIT*1.0f;
-			case Grossura.WIDE:				return Tree.UNIT*2.0f;
-			case Grossura.ULTRA_WIDE:		return Tree.UNIT*3.0f;
+			case Grossura.THIN:				return unit*0.5f;
+			case Grossura.MEDIUM:default:	return unit*1.0f;
+			case Grossura.WIDE:				return unit*2.0f;
+			case Grossura.ULTRA_WIDE:		return unit*3.0f;
 		}
 	}
 	public Rectangle getFormIndex(){return new Rectangle(getXIndex(),getYIndex(),1,1);}
-	public Rectangle getForm(){
-		final float width=getWidth();
-		return new Rectangle((int)(getX()-(width/2)),(int)(getY()-(width/2)),(int)(width),(int)(width));
+	public Rectangle getForm(int unit){
+		final float size=getSize(unit);
+		return new Rectangle((int)(getX(unit)-(size/2)),(int)(getY(unit)-(size/2)),(int)(size),(int)(size));
 	}
 @Override
-	public boolean contains(Point mouse){return getForm().contains(mouse);}
+	public boolean contains(Point mouse){return getForm(Tree.UNIT).contains(mouse);}
 //LISTENER: DISPARA COM O MUDAR DE BOUNDS DE UM OBJETO
 	private static List<ObjetoBoundsListener>boundsListeners=new ArrayList<ObjetoBoundsListener>();
 		public static void addBoundsListener(ObjetoBoundsListener boundsListener){boundsListeners.add(boundsListener);}
@@ -177,33 +177,33 @@ public class Nodulo extends Objeto{
 	}
 //DRAW
 	public void draw(Graphics2D imagemEdit,int unit){
-		final float width=getWidth();
-		final float round=getRoundValue();
-		float borda=getWidth()/2;
+		final float width=getSize(unit);
+		final float round=getRoundValue(unit);
+		float borda=getSize(unit)/2;
 		switch(getConexao().getGrossura().getIndex()){
-			case Grossura.THIN:				borda=getWidth()/1;break;
-			case Grossura.MEDIUM:default:	borda=getWidth()/2;break;
-			case Grossura.WIDE:				borda=getWidth()/3;break;
-			case Grossura.ULTRA_WIDE:		borda=getWidth()/4;break;
+			case Grossura.THIN:				borda=getSize(unit)/1;break;
+			case Grossura.MEDIUM:default:	borda=getSize(unit)/2;break;
+			case Grossura.WIDE:				borda=getSize(unit)/3;break;
+			case Grossura.ULTRA_WIDE:		borda=getSize(unit)/4;break;
 		}
 		drawBrilho(imagemEdit,unit,width,round,borda);
 		drawPonto(imagemEdit,unit,width,round);
 	}
-		private void drawBrilho(Graphics2D imagemEdit,int unit,float width,float round,float borda){
+		private void drawBrilho(Graphics2D imagemEdit,int unit,float size,float round,float borda){
 			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
 			if(getState().is(Nodulo.State.UNSELECTED,Nodulo.State.HIGHLIGHTED,Nodulo.State.TO_BE_CREATOR))return;
 			imagemEdit.setColor(getBrilhoCor(getState()));
-			final float x=getX()-(width/2)-borda;
-			final float y=getY()-(width/2)-borda;
-			width+=borda*2;
-			imagemEdit.fill(new RoundRectangle2D.Float(x,y,width,width,round,round));
+			final float x=getX(unit)-(size/2)-borda;
+			final float y=getY(unit)-(size/2)-borda;
+			size+=borda*2;
+			imagemEdit.fill(new RoundRectangle2D.Float(x,y,size,size,round,round));
 		}
-		private void drawPonto(Graphics2D imagemEdit,int unit,float width,float round){
+		private void drawPonto(Graphics2D imagemEdit,int unit,float size,float round){
 			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
 			imagemEdit.setColor(getPontoCor(getState()));
-			final float x=getX()-(width/2);
-			final float y=getY()-(width/2);
-			imagemEdit.fill(new RoundRectangle2D.Float(x,y,width,width,round,round));
+			final float x=getX(unit)-(size/2);
+			final float y=getY(unit)-(size/2);
+			imagemEdit.fill(new RoundRectangle2D.Float(x,y,size,size,round,round));
 		}
 	public Cor getBrilhoCor(Nodulo.State state){
 		switch(getState()){

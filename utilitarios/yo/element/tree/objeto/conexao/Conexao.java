@@ -117,13 +117,13 @@ public class Conexao extends Objeto{
 		}
 //LOCAL
 	public int getX1Index(){return son.getMeioXIndex();}
-	public int getX1(){return son.getMeioX();}
+	public int getX1(int unit){return son.getMeioX(unit);}
 	public int getY1Index(){return son.getMeioYIndex();}
-	public int getY1(){return son.getMeioY();}
+	public int getY1(int unit){return son.getMeioY(unit);}
 	public int getX2Index(){return pai.getMeioXIndex();}
-	public int getX2(){return pai.getMeioX();}
+	public int getX2(int unit){return pai.getMeioX(unit);}
 	public int getY2Index(){return pai.getMeioYIndex();}
-	public int getY2(){return pai.getMeioY();}
+	public int getY2(int unit){return pai.getMeioY(unit);}
 //FORMA
 	public Path2D.Float getFormIndex(){
 		final List<Segmento>segs=getSegmentos();
@@ -141,22 +141,22 @@ public class Conexao extends Objeto{
 		}
 		return forma;
 	}
-	public Path2D.Float getForm(){
+	public Path2D.Float getForm(int unit){
 		final List<Segmento>segs=getSegmentos();
 		final Path2D.Float forma=new Path2D.Float();
-		forma.moveTo(getX1(),getY1());					//SON
+		forma.moveTo(getX1(unit),getY1(unit));			//SON
 		for(Segmento seg:segs){
-			forma.lineTo(seg.getX2(),seg.getY2());		//NODS E PAI
+			forma.lineTo(seg.getX2(unit),seg.getY2(unit));		//NODS E PAI
 		}
 		for(int i=segs.size()-1;i>=0;i--){		//FECHAR A LINHA
 			final Segmento seg=segs.get(i);
-			forma.lineTo(seg.getX1(),seg.getY1());		//NODS E SON
+			forma.lineTo(seg.getX1(unit),seg.getY1(unit));		//NODS E SON
 		}
 		return forma;
 	}
 @Override
 	public boolean contains(Point mouse){
-		final Path2D forma=getForm();
+		final Path2D forma=getForm(Tree.UNIT);
 		float raio=Tree.UNIT;
 		switch(getGrossura().getIndex()){
 			case Grossura.THIN:				raio*=0.5f;	break;
@@ -177,7 +177,7 @@ public class Conexao extends Objeto{
 		}
 		final Rectangle area=new Rectangle((int)(mouse.x-raio),(int)(mouse.y-raio),(int)(raio*2),(int)(raio*2));
 		for(Segmento seg:getSegmentos()){
-			final Line2D forma=new Line2D.Float(seg.getX1(),seg.getY1(),seg.getX2(),seg.getY2());
+			final Line2D forma=new Line2D.Float(seg.getX1(Tree.UNIT),seg.getY1(Tree.UNIT),seg.getX2(Tree.UNIT),seg.getY2(Tree.UNIT));
 			if(forma.intersects(area))return seg;
 		}
 		return null;
@@ -335,9 +335,9 @@ public class Conexao extends Objeto{
 	}
 //DRAW
 	public void draw(Graphics2D imagemEdit,int unit){
-		final float borda=Tree.getBordaValue();
+		final float borda=Tree.getBordaValue(unit);
 		drawBrilho(imagemEdit,unit,borda);
-		drawLinha(imagemEdit,unit);
+		drawLinha(imagemEdit,unit,borda);
 		drawPonta(imagemEdit,unit);
 	}
 		private void drawBrilho(Graphics2D imagemEdit,int unit,float borda){
@@ -345,16 +345,16 @@ public class Conexao extends Objeto{
 			if(getState().is(Conexao.State.UNSELECTED,Conexao.State.HIGHLIGHTED))return;
 			switch(getGrossura().getIndex()){
 				case Grossura.THIN:
-					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor()*4*4,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
+					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor(borda)*4*4,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
 				break;
 				case Grossura.MEDIUM:default:
-					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor()*3*3,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
+					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor(borda)*3*3,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
 				break;
 				case Grossura.WIDE:
-					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor()*2*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
+					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor(borda)*2*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
 				break;
 				case Grossura.ULTRA_WIDE:
-					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor()*1.5f*1.5f,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
+					imagemEdit.setStroke(new BasicStroke(getGrossura().getValor(borda)*1.5f*1.5f,BasicStroke.CAP_ROUND,BasicStroke.JOIN_BEVEL));
 				break;
 			}
 			imagemEdit.setColor(getBrilhoCor(getState()));
@@ -362,63 +362,63 @@ public class Conexao extends Objeto{
 				for(Segmento seg:getSegmentos()){
 					if(seg.getState().is(Segmento.State.UNSELECTED))continue;
 					final Path2D.Float forma=new Path2D.Float();
-					forma.moveTo(seg.getX1(),seg.getY1());
-					forma.lineTo(seg.getX2(),seg.getY2());
+					forma.moveTo(seg.getX1(unit),seg.getY1(unit));
+					forma.lineTo(seg.getX2(unit),seg.getY2(unit));
 					imagemEdit.draw(forma);
 				}
 				return;
 			}
 			final Path2D.Float forma=new Path2D.Float();
-			forma.moveTo(getX1(),getY1());
+			forma.moveTo(getX1(unit),getY1(unit));
 			for(Segmento seg:getSegmentos()){
 				if(seg.getPonta2()==Tree.getGhost()){
-					forma.lineTo(Tree.getGhost().getX(),Tree.getGhost().getY());
-				}else forma.lineTo(seg.getX2(),seg.getY2());
+					forma.lineTo(Tree.getGhost().getX(unit),Tree.getGhost().getY(unit));
+				}else forma.lineTo(seg.getX2(unit),seg.getY2(unit));
 			}
 			imagemEdit.draw(forma);								//BRILHO DO SELECTED OU TO_BE_DELETED
 		}
-		private void drawLinha(Graphics2D imagemEdit,int unit){
+		private void drawLinha(Graphics2D imagemEdit,int unit,float borda){
 			if(unit<=2&&getGrossura().getIndex()==Grossura.THIN)return;		//EM ZOOM<=2 COM GROSSURA FINA, É IRRELEVANTE
 			if(unit<=1&&getGrossura().getIndex()==Grossura.MEDIUM)return;	//EM ZOOM<=1 COM GROSSURA MEDIUM, É IRRELEVANTE
-			imagemEdit.setStroke(getBorda().getVisual(getGrossura()));
+			imagemEdit.setStroke(getBorda().getVisual(getGrossura().getValor(borda)));
 			imagemEdit.setColor(getLinhaCor(getState()));
 			final Path2D.Float forma=new Path2D.Float();
-			forma.moveTo(getX1(),getY1());
+			forma.moveTo(getX1(unit),getY1(unit));
 			for(Segmento seg:getSegmentos()){
 				if(seg.getPonta2()==Tree.getGhost()){
-					forma.lineTo(Tree.getGhost().getX(),Tree.getGhost().getY());
-				}else forma.lineTo(seg.getX2(),seg.getY2());
+					forma.lineTo(Tree.getGhost().getX(unit),Tree.getGhost().getY(unit));
+				}else forma.lineTo(seg.getX2(unit),seg.getY2(unit));
 			}
 			imagemEdit.draw(forma);
 		}
 		private void drawPonta(Graphics2D imagemEdit,int unit){
 			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
-			float x1=getX1();
-			float y1=getY1();
-			float x2=getX2();
-			float y2=getY2();
+			float x1=getX1(unit);
+			float y1=getY1(unit);
+			float x2=getX2(unit);
+			float y2=getY2(unit);
 			if(getPai()==Tree.getGhost()){
-				x2=Tree.getGhost().getX();
-				y2=Tree.getGhost().getY();
+				x2=Tree.getGhost().getX(unit);
+				y2=Tree.getGhost().getY(unit);
 			}
 			if(!getNodulos().isEmpty()){
 				final Nodulo nod=getNodulos().get(getNodulos().size()-1);
-				x1=nod.getX();
-				y1=nod.getY();
+				x1=nod.getX(unit);
+				y1=nod.getY(unit);
 			}
-			final Point2D.Float ponta=getPonta(x1,y1,x2,y2);
-			float width=Tree.UNIT;
+			final Point2D.Float ponta=getPonta(unit,x1,y1,x2,y2);
+			float size=unit;
 			switch(getGrossura().getIndex()){
-				case Grossura.THIN:				width*=0.5f;	break;
-				case Grossura.MEDIUM:default:	width*=1.0f;	break;
-				case Grossura.WIDE:				width*=2.0f;	break;
-				case Grossura.ULTRA_WIDE:		width*=3.0f;	break;
+				case Grossura.THIN:				size*=0.5f;	break;
+				case Grossura.MEDIUM:default:	size*=1.0f;	break;
+				case Grossura.WIDE:				size*=2.0f;	break;
+				case Grossura.ULTRA_WIDE:		size*=3.0f;	break;
 			}
-			final float x=(float)(ponta.getX())-(width/2);
-			final float y=(float)(ponta.getY())-(width/2);
-			imagemEdit.fill(new Ellipse2D.Float(x,y,width,width));
+			final float x=(float)(ponta.getX())-(size/2);
+			final float y=(float)(ponta.getY())-(size/2);
+			imagemEdit.fill(new Ellipse2D.Float(x,y,size,size));
 		}
-			private Point2D.Float getPonta(float x1,float y1,float x2,float y2){
+			private Point2D.Float getPonta(int unit,float x1,float y1,float x2,float y2){
 				float x=0;
 				float y=0;
 				if(getPai()==Tree.getGhost()){
@@ -427,36 +427,36 @@ public class Conexao extends Objeto{
 				}else{
 					if(y1>y2){
 						if(x1>x2){	//DIR-INF
-							x=getPai().getX()+getPai().getWidth();
-							y=y2+(((y1-y2)*(getPai().getX()+getPai().getWidth()-x2))/Math.max(1,x1-x2));
-							if(y>getPai().getY()+getPai().getHeight()){	//INF-DIR
-								x=x2+(((x1-x2)*(getPai().getY()+getPai().getHeight()-y2))/Math.max(1,y1-y2));
-								y=getPai().getY()+getPai().getHeight();
+							x=getPai().getX(unit)+getPai().getWidth(unit);
+							y=y2+(((y1-y2)*(getPai().getX(unit)+getPai().getWidth(unit)-x2))/Math.max(1,x1-x2));
+							if(y>getPai().getY(unit)+getPai().getHeight(unit)){	//INF-DIR
+								x=x2+(((x1-x2)*(getPai().getY(unit)+getPai().getHeight(unit)-y2))/Math.max(1,y1-y2));
+								y=getPai().getY(unit)+getPai().getHeight(unit);
 							}
 						}else{		//INF-ESQ
-							x=x2-(((x2-x1)*(getPai().getY()+getPai().getHeight()-y2))/Math.max(1,y1-y2));
-							y=getPai().getY()+getPai().getHeight();
-							if(x<getPai().getX()){	//ESQ-INF
-								x=getPai().getX();
-								y=y2+(((y1-y2)*(x2-getPai().getX()))/Math.max(1,x2-x1));
+							x=x2-(((x2-x1)*(getPai().getY(unit)+getPai().getHeight(unit)-y2))/Math.max(1,y1-y2));
+							y=getPai().getY(unit)+getPai().getHeight(unit);
+							if(x<getPai().getX(unit)){	//ESQ-INF
+								x=getPai().getX(unit);
+								y=y2+(((y1-y2)*(x2-getPai().getX(unit)))/Math.max(1,x2-x1));
 							}
 						}
 					}else{
 						if(x1<x2){	//ESQ-SUP
-							x=getPai().getX();
-							y=y2-(((y2-y1)*(x2-getPai().getX()))/Math.max(1,x2-x1));
-							if(y<getPai().getY()){	//SUP-ESQ
-								x=x2-(((x2-x1)*(y2-getPai().getY()))/Math.max(1,y2-y1));
-								y=getPai().getY();
+							x=getPai().getX(unit);
+							y=y2-(((y2-y1)*(x2-getPai().getX(unit)))/Math.max(1,x2-x1));
+							if(y<getPai().getY(unit)){	//SUP-ESQ
+								x=x2-(((x2-x1)*(y2-getPai().getY(unit)))/Math.max(1,y2-y1));
+								y=getPai().getY(unit);
 							}
 						}else{
-							if(y2==y1)x=getPai().getX()+getPai().getWidth()+1;else{	//SUP-DIR
-								x=x2+(((x1-x2)*(y2-getPai().getY()))/Math.max(1,y2-y1));
-								y=getPai().getY();
+							if(y2==y1)x=getPai().getX(unit)+getPai().getWidth(unit)+1;else{	//SUP-DIR
+								x=x2+(((x1-x2)*(y2-getPai().getY(unit)))/Math.max(1,y2-y1));
+								y=getPai().getY(unit);
 							}
-							if(x>getPai().getX()+getPai().getWidth()){	//DIR-SUP
-								x=getPai().getX()+getPai().getWidth();
-								y=y2-(((y2-y1)*(getPai().getX()+getPai().getWidth()-x2))/Math.max(1,x1-x2));
+							if(x>getPai().getX(unit)+getPai().getWidth(unit)){	//DIR-SUP
+								x=getPai().getX(unit)+getPai().getWidth(unit);
+								y=y2-(((y2-y1)*(getPai().getX(unit)+getPai().getWidth(unit)-x2))/Math.max(1,x1-x2));
 							}
 						}
 					}

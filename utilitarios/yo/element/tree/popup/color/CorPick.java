@@ -7,7 +7,6 @@ import java.util.List;
 import element.tree.propriedades.Cor;
 import element.tree.popup.Item;
 import element.tree.popup.Popup;
-import element.tree.popup.color.CorBloco;
 import element.tree.objeto.modulo.Modulo;
 import element.tree.Tree;
 @SuppressWarnings("serial")

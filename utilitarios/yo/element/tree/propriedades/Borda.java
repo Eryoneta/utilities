@@ -19,8 +19,6 @@ public class Borda{
 		public int getIndex(){return index;}
 		public void setIndex(int index){this.index=index;}
 //BORDA VISUAL
-	public BasicStroke getVisual(){return getVisual(Tree.getBordaValue());}					//PARA MODS
-	public BasicStroke getVisual(Grossura grossura){return getVisual(grossura.getValor());}	//PARA COXS
 	public BasicStroke getStaticVisual(){return getVisual(6*0.3f);}							//PARA POPUP
 	public BasicStroke getVisual(float width){
 		float[]pattern=null;

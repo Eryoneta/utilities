@@ -229,17 +229,18 @@ public class Texto extends JTextPane{
 				final boolean shift=(k.isShiftDown());
 				if(ctrl){
 					switch(k.getKeyCode()){
-						case KeyEvent.VK_Z:		undo();			break;	//DESFAZER
-						case KeyEvent.VK_Y:		redo();			break;	//REFAZER
-						case KeyEvent.VK_D:		deleteLine();	break;	//REMOVER LINHA
+						case KeyEvent.VK_Z:		undo();				break;	//DESFAZER
+						case KeyEvent.VK_Y:		redo();				break;	//REFAZER
+						case KeyEvent.VK_D:		deleteLine();		break;	//REMOVER LINHA
 					};
 				}else if(shift){
 					switch(k.getKeyCode()){
-						case KeyEvent.VK_TAB:	remTab();		break;	//REMOVE TAB
+						case KeyEvent.VK_TAB:	remTab();			break;	//REMOVE TAB
 					};
 				}else{
 					switch(k.getKeyCode()){
-						case KeyEvent.VK_TAB:	addTab(k);		break;	//ADICIONAR TAB
+						case KeyEvent.VK_TAB:	addTab(k);			break;	//ADICIONAR TAB
+						case KeyEvent.VK_ENTER:	addTabbedEnter(k);	break;	//ADICIONAR TAB E ENTER
 					};
 				}
 			}
@@ -307,6 +308,22 @@ public class Texto extends JTextPane{
 				}
 				i=linha.getEndOffset();
 			}
+		}catch(BadLocationException erro){}
+	}
+	private void addTabbedEnter(KeyEvent k){
+		try{
+			final int cursor=getCaretPosition();
+			final Element linha=getStyledDocument().getParagraphElement(cursor);
+			final int start=linha.getStartOffset();
+			int caretQtd=0;
+			for(int i=0;true;i++){
+				if(getDocument().getText(start+i,1).equals("\t")){
+					caretQtd++;
+				}else break;
+			}
+			getDocument().insertString(cursor,"\n",null);
+			for(int i=0;i<caretQtd;i++)getDocument().insertString(cursor+1,"\t",null);
+			k.consume();
 		}catch(BadLocationException erro){}
 	}
 //DRAW

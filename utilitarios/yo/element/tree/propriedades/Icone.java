@@ -2,7 +2,6 @@ package element.tree.propriedades;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
-import element.tree.Tree;
 public class Icone{
 //ICONE
 	private Image icone;
@@ -48,10 +47,9 @@ public class Icone{
 		return true;
 	}
 //SIZE
-	public static int getSize(){return 2*Tree.UNIT;}
-	public static int getRelativeSize(int unit){return 2*unit;}
+	public static int getSize(int unit){return 2*unit;}
 //DRAW
-	public void draw(Graphics2D imagemEdit,int x,int y){
-		imagemEdit.drawImage(getIcone(),x,y,getSize(),getSize(),null);
+	public void draw(Graphics2D imagemEdit,int unit,int x,int y){
+		imagemEdit.drawImage(getIcone(),x,y,getSize(unit),getSize(unit),null);
 	}
 }
