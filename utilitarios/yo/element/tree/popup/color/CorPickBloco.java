@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import element.tree.propriedades.Cor;
 import element.tree.Cursor;
 import element.tree.objeto.modulo.Modulo;
+import element.tree.objeto.modulo.ModuloUI;
 import element.tree.popup.Bloco;
 import element.tree.popup.Popup;
 @SuppressWarnings("serial")
@@ -127,7 +128,7 @@ public class CorPickBloco extends Bloco{
 	private final Image icone=new ImageIcon(Cursor.class.getResource("/icons/picker/Picker.png")).getImage();
 	public void draw(Graphics imagemEdit){
 		if(isFocused()){
-			imagemEdit.setColor(Cor.getChanged(Modulo.Cores.FUNDO,1.5f));
+			imagemEdit.setColor(Cor.getChanged(ModuloUI.Cores.FUNDO,1.5f));
 			imagemEdit.fillRect((int)getX(),(int)getY(),(int)getWidth(),(int)getHeight());
 		}
 		imagemEdit.drawImage(	//INSERE ICONE CENTRALIZADO DO BLOCO

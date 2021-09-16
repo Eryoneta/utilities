@@ -1,34 +1,18 @@
 package element.tree;
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -38,11 +22,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import element.tree.propriedades.Cor;
 import element.tree.propriedades.Icone;
 import element.Elemento;
@@ -51,16 +33,24 @@ import element.tree.objeto.ListaObjeto;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.ObjetoBoundsListener;
 import element.tree.objeto.conexao.Conexao;
-import element.tree.objeto.conexao.Nodulo;
-import element.tree.objeto.conexao.Segmento;
+import element.tree.objeto.conexao.ConexaoST;
+import element.tree.objeto.nodulo.Nodulo;
+import element.tree.objeto.nodulo.NoduloST;
+import element.tree.objeto.conexao.segmento.Segmento;
+import element.tree.objeto.conexao.segmento.SegmentoST;
 import element.tree.objeto.modulo.Modulo;
-import element.tree.popup.Popup;
-import element.tree.texto.ObjetoSetListener;
-import element.tree.texto.Texto;
+import element.tree.objeto.modulo.ModuloST;
 import element.tree.undoRedo.UndoRedo;
-import utilitarios.ferramenta.language.LanguagePackage;
-@SuppressWarnings("serial")
 public class Tree extends Elemento{
+//ST
+	private final TreeST ST=new TreeST(this);
+		public TreeST getST(){return ST;}
+		public int getState(){return getST().getState();}
+		public TreeST.State getStateContent(int state){return getST().getStateContent(state);}
+		public void setState(int stateIndex,Objeto...objs){getST().setState(stateIndex,objs);}
+//UI
+	private final TreeUI UI=new TreeUI(this);
+		public TreeUI getUI(){return UI;}
 //LOCAL
 	private static int X=0;
 		public static int getLocalX(){return X;}
@@ -70,46 +60,11 @@ public class Tree extends Elemento{
 	public static void setLocal(int x,int y){X=x;Y=y;}
 //VAR GLOBAIS
 	public static int UNIT=8;
-	public static float getBordaValue(int unit){return unit*0.3f;}
-//LANG
-	private static LanguagePackage LANG=new LanguagePackage();
-		public static LanguagePackage getLang(){return LANG;}
-		public static void addLanguage(File link,String idiomaFiltro,String prefixFiltro){
-			LANG.add(link,idiomaFiltro,prefixFiltro);
-		}
 //MÓDULOS ESPECIAIS
 	private static Modulo MESTRE;
 		public static Modulo getMestre(){return MESTRE;}
 	private static Modulo GHOST;
 		public static Modulo getGhost(){return GHOST;}
-//FONTE
-	public static class Fonte{
-		public static Font FONTE;
-		public static Cor FUNDO=new Cor(255,255,255);
-		public static Cor FUNDO_SELECT=new Cor(155,155,155);
-		public static Cor FUNDO_UNSELECT=new Cor(230,230,230);
-		public static Cor DARK=new Cor(10,10,10);
-		public static Cor LIGHT=new Cor(245,245,245);
-		public static Cor SELECTED=new Cor(255,255,255);
-		public static Cor UNSELECTED=new Cor(80,80,80);
-	}
-		public void setFonte(Font fonte){
-			Fonte.FONTE=fonte;
-			titulo.setFont(fonte);
-			texto.setFont(fonte);
-			for(Modulo mod:getObjetos().getModulos())mod.setSize();
-		};
-		public static Font getFonte(){return Fonte.FONTE;}
-//COR DE FUNDO
-	public static Cor FUNDO=new Cor(240,240,240);
-//MENU
-	public static class Menu{
-		public static Cor FUNDO=new Cor(220,220,220);
-		public static Cor SELECT=new Cor(154,210,255);
-		public static Cor SELECT_DISABLED=new Cor(240,240,240);
-		public static Cor FONTE=new Cor(10,10,10);
-		public static Cor FONTE_DISABLED=new Cor(109,109,109);
-	}
 //CONFIGURAÇÕES
 	private int objetosLimite=100;
 		public int getObjetosLimite(){return objetosLimite;}
@@ -129,18 +84,9 @@ public class Tree extends Elemento{
 //AÇÕES
 	private Actions actions;
 		public Actions getActions(){return actions;}
-//POPUP
-	private Popup popup;
-		public Popup getPopup(){return popup;}
-//SELEÇÃO
-	private Selecao selecao=new Selecao();
-		public Selecao getSelecao(){return selecao;}
 //UNDO-REDO
 	private UndoRedo undoRedo;
 		public UndoRedo getUndoRedoManager(){return undoRedo;}
-//CURSOR
-	private Cursor cursor;
-		public Cursor getCursor(){return cursor;}
 //LISTENER: DISPARA COM O MUDAR DE FOCO DE UM OBJETO
 	private List<ObjetoFocusListener>objetoListeners=new ArrayList<ObjetoFocusListener>();
 		public void addObjetoListener(ObjetoFocusListener objetoListener){objetoListeners.add(objetoListener);}
@@ -150,210 +96,6 @@ public class Tree extends Elemento{
 			}else{
 				for(ObjetoFocusListener objetoListener:objetoListeners)objetoListener.objetoUnFocused(obj);
 			}
-		}
-//TITULO
-	private Texto titulo=new Texto(){
-		{
-			setOpaque(false);
-			setEnabled(true);
-			setFont(Tree.Fonte.FONTE);
-			setForeground(Cor.BLACK);
-			setLineWrappable(false);
-			final SimpleAttributeSet center=new SimpleAttributeSet();
-			StyleConstants.setAlignment(center,StyleConstants.ALIGN_CENTER);
-			getStyledDocument().setParagraphAttributes(0,getStyledDocument().getLength(),center,false);
-			addEditorListener(new DocumentListener(){
-				public void removeUpdate(DocumentEvent d){run();}
-				public void insertUpdate(DocumentEvent d){run();}
-				public void changedUpdate(DocumentEvent d){}
-				private void run(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
-					if(titulo.getObjeto()==null)return;
-					if(!titulo.getObjeto().getTipo().is(Objeto.Tipo.MODULO))return;
-					final Modulo mod=(Modulo)titulo.getObjeto();
-					mod.setTitle(getText());
-					final int iconSize=(mod.isIconified()?Icone.getSize(Tree.UNIT):0);
-					titulo.setBounds(mod.getX(Tree.UNIT),mod.getY(Tree.UNIT)+iconSize,mod.getWidth(Tree.UNIT),mod.getHeight(Tree.UNIT)-iconSize);
-//					titulo.setFont(mod.getRelativeFont(Tree.UNIT));	//CAUSA ERRO
-					draw();
-					if(!((JFrame)painel.getJanela()).getTitle().startsWith("*")){
-						((JFrame)painel.getJanela()).setTitle("*"+((JFrame)painel.getJanela()).getTitle());
-					}
-				}
-			});
-			addKeyListener(new KeyAdapter(){
-				public void keyPressed(KeyEvent k){
-					updateTituloFont();
-				}
-			});
-			addObjetoSetListener(new ObjetoSetListener(){
-				private Modulo mod=null;
-				private String tituloTexto=null;
-				public void objetoModified(Objeto oldObj,Objeto newObj){
-					if(oldObj!=null&&!oldObj.getTipo().is(Objeto.Tipo.MODULO))return;
-					if(newObj!=null&&!newObj.getTipo().is(Objeto.Tipo.MODULO))return;
-					if(oldObj==newObj)return;
-					if(mod!=null&&tituloTexto!=null){
-						if(getUndoManager().canUndo()){
-							undoRedo.addUndoTitulo(mod,tituloTexto);
-						}
-					}
-					final Modulo mod=(Modulo)newObj;
-					if(mod==null){
-						this.mod=null;
-						tituloTexto=null;
-					}else{
-						this.mod=mod;
-						tituloTexto=mod.getTitle();
-					}
-				}
-			});
-			addKeyListener(new KeyAdapter(){
-				public void keyPressed(KeyEvent k){
-					switch(k.getKeyCode()){
-						case KeyEvent.VK_TAB:		k.consume();	break;
-					}
-				}
-			});
-			setVisible(false);
-		}
-		protected void paintComponent(Graphics imagemEdit){
-			config(imagemEdit);
-			imagemEdit.setColor(getBackground());
-			final int round=Modulo.getRoundValue(Tree.UNIT);
-			imagemEdit.fillRoundRect(0,0,getWidth(),getHeight(),round,round);
-			super.paintComponent(imagemEdit);
-		}
-		protected void paintBorder(Graphics imagemEdit){
-			config(imagemEdit);
-			if(getObjeto()!=null){
-				final Modulo mod=(Modulo)getObjeto();
-				imagemEdit.setColor(Cor.getInverted(mod.getCor()));
-				((Graphics2D)imagemEdit).setStroke(mod.getBorda().getVisual(Tree.getBordaValue(Tree.UNIT)));
-			}else imagemEdit.setColor(getForeground());
-			final int round=Modulo.getRoundValue(Tree.UNIT);
-			imagemEdit.drawRoundRect(0,0,getWidth(),getHeight(),round,round);
-		}
-		private void config(Graphics imagemEdit){
-			final boolean antialias=(isAntialias()&&(getObjetos().getAll().size()<getObjetosLimite()));
-			((Graphics2D)imagemEdit).setRenderingHint(RenderingHints.KEY_ANTIALIASING,(antialias?RenderingHints.VALUE_ANTIALIAS_ON:RenderingHints.VALUE_ANTIALIAS_OFF));
-			((Graphics2D)imagemEdit).setStroke(new BasicStroke(Tree.getBordaValue(Tree.UNIT)));
-		}
-	};
-		public Texto getTitulo(){return titulo;}
-		public void setTitulo(Modulo mod){
-			final int borda=(int)(Tree.getBordaValue(Tree.UNIT));
-			titulo.setBorder(BorderFactory.createEmptyBorder(borda,borda,borda,borda));
-			if(mod==null||mod==getGhost()){
-				triggerObjetoListener(titulo.getObjeto(),true);	//ATUALIZA TITULO DE JANELA-TEXTO
-				titulo.setVisible(false);
-				titulo.clearObjeto();		//NÃO MODIFICAR MOD/COX ANTERIOR
-				titulo.setText("");
-				titulo.crearUndo();
-				painel.getJanela().requestFocus();
-				return;
-			}
-			titulo.clearObjeto();		//NÃO MODIFICAR MOD/COX ANTERIOR
-			titulo.setText(mod.getTitle());
-			final int iconSize=(mod.isIconified()?Icone.getSize(Tree.UNIT):0);
-			titulo.setBounds(mod.getX(Tree.UNIT),mod.getY(Tree.UNIT)+iconSize,mod.getWidth(Tree.UNIT),mod.getHeight(Tree.UNIT)-iconSize);
-			titulo.setObjeto(mod);
-			updateTituloFont();
-			titulo.crearUndo();
-			titulo.setVisible(true);
-			titulo.setSelectionStart(0);
-			titulo.setSelectionEnd(titulo.getText().length());
-			titulo.requestFocus();
-		}
-		public void updateTituloFont(){
-			final Modulo mod=(Modulo)titulo.getObjeto();
-			titulo.setFont(mod.getRelativeFont(Tree.UNIT));
-		//NÃO É PRECISO O BASTANTE, E NÃO ATUALIZA DE FORMA UNIFORME
-//			final Graphics imagemEdit=new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB).getGraphics();
-//			imagemEdit.setFont(titulo.getFont());
-//			final int fonteHeight=imagemEdit.getFontMetrics().getHeight();
-//			final double linhaHeight=((double)mod.getHeight()/mod.getTitle().split("\n").length);
-//			final double space=(double)((linhaHeight-fonteHeight)/linhaHeight);
-//			final MutableAttributeSet set=new SimpleAttributeSet(titulo.getParagraphAttributes());
-//			StyleConstants.setLineSpacing(set,(float)space);
-//			titulo.setParagraphAttributes(set,false);
-		}
-//TEXTO
-	private Texto texto=new Texto(){{
-		setEnabled(false);
-		setFont(Tree.Fonte.FONTE);
-		setLineWrappable(true);
-		addEditorListener(new DocumentListener(){
-			public void removeUpdate(DocumentEvent d){run();}
-			public void insertUpdate(DocumentEvent d){run();}
-			public void changedUpdate(DocumentEvent d){}
-			private void run(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
-				if(texto.getObjeto()==null)return;
-				if(!texto.getObjeto().getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
-				if(texto.getObjeto().getTipo().is(Objeto.Tipo.MODULO)){
-					final Modulo mod=(Modulo)texto.getObjeto();
-					mod.setTexto(Arrays.asList(getText().split("\n",-1)));
-				}else if(texto.getObjeto().getTipo().is(Objeto.Tipo.CONEXAO)){
-					final Conexao cox=(Conexao)texto.getObjeto();
-					cox.setTexto(Arrays.asList(getText().split("\n",-1)));
-				}
-				if(!((JFrame)painel.getJanela()).getTitle().startsWith("*")){
-					((JFrame)painel.getJanela()).setTitle("*"+((JFrame)painel.getJanela()).getTitle());
-				}
-			}
-		});
-		addObjetoSetListener(new ObjetoSetListener(){
-			private Objeto obj=null;
-			private List<String>textoTexto=null;
-			public void objetoModified(Objeto oldObj,Objeto newObj){
-				if(oldObj!=null&&!oldObj.getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
-				if(newObj!=null&&!newObj.getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
-				if(oldObj==newObj)return;
-				if(obj!=null&&textoTexto!=null){
-					if(getUndoManager().canUndo()){
-						undoRedo.addUndoTexto(obj,textoTexto);
-					}
-				}
-				if(newObj==null){
-					obj=null;
-					textoTexto=null;
-				}else{
-					obj=newObj;
-					if(newObj.getTipo().is(Objeto.Tipo.MODULO)){
-						final Modulo mod=(Modulo)newObj;
-						textoTexto=new ArrayList<String>(mod.getTexto());
-					}else if(newObj.getTipo().is(Objeto.Tipo.CONEXAO)){
-						final Conexao cox=(Conexao)newObj;
-						textoTexto=new ArrayList<String>(cox.getTexto());
-					}
-				}
-			}
-		});
-	}};
-		public Texto getTexto(){return texto;}
-		public void setTexto(Objeto obj){
-			texto.setEnabled(false);
-			if(obj==getGhost()){
-				texto.clearObjeto();
-				texto.setText("");
-				texto.crearUndo();
-				texto.setCaretPosition(0);
-				return;
-			}
-			texto.clearObjeto();	//NÃO MODIFICAR MOD/COX ANTERIOR
-			if(obj.getTipo().is(Objeto.Tipo.MODULO)){
-				final Modulo mod=(Modulo)obj;
-				texto.setText(mod.getText());
-				texto.setObjeto(mod);
-				texto.crearUndo();
-				texto.setCaretPosition(Math.min(mod.getCaret(),Math.max(texto.getText().length(),0)));
-			}else if(obj.getTipo().is(Objeto.Tipo.CONEXAO)){
-				final Conexao cox=(Conexao)obj;
-				texto.setText(cox.getText());
-				texto.setObjeto(cox);
-				texto.crearUndo();
-				texto.setCaretPosition(Math.min(cox.getCaret(),Math.max(texto.getText().length(),0)));
-			}
-			texto.setEnabled(true);
 		}
 //OBJS
 	private int objsListaMaxSize=0;
@@ -473,23 +215,23 @@ public class Tree extends Elemento{
 				case MODULO:
 					final Modulo mod=(Modulo)obj;
 					if(mod==getGhost())return false;
-					mod.setState(Modulo.State.SELECTED);
+					mod.setState(ModuloST.State.SELECTED);
 					if(selectedObjetos.contains(mod))return true;
-					setTexto(selectedObjetos.getModulos().size()+selectedObjetos.getConexoes().size()==0?mod:getGhost());
+					getUI().setTexto(selectedObjetos.getModulos().size()+selectedObjetos.getConexoes().size()==0?mod:getGhost());
 					selectedObjetos.add(mod);
 					triggerObjetoListener(mod,true);
 					return true;
 				case CONEXAO:
 					final Conexao cox=(Conexao)obj;
-					cox.setState(Conexao.State.SELECTED);
+					cox.setState(ConexaoST.State.SELECTED);
 					if(selectedObjetos.contains(cox))return true;
-					setTexto(selectedObjetos.getModulos().size()+selectedObjetos.getConexoes().size()==0?cox:getGhost());
+					getUI().setTexto(selectedObjetos.getModulos().size()+selectedObjetos.getConexoes().size()==0?cox:getGhost());
 					selectedObjetos.add(cox);
 					triggerObjetoListener(cox,true);
 					return true;
 				case NODULO:
 					final Nodulo nod=(Nodulo)obj;
-					nod.setState(Nodulo.State.SELECTED);
+					nod.setState(NoduloST.State.SELECTED);
 					if(selectedObjetos.contains(nod))return true;
 					selectedObjetos.add(nod);
 					triggerObjetoListener(nod,true);
@@ -505,8 +247,8 @@ public class Tree extends Elemento{
 					final Modulo mod=(Modulo)obj;
 					for(Conexao cox:mod.getConexoes()){
 						if(!cox.getSon().equals(mod)){
-							if(cox.getState().is(Conexao.State.SELECTED))continue;
-							if(cox.getSon().getState().is(Modulo.State.SELECTED))continue;
+							if(cox.getState().is(ConexaoST.State.SELECTED))continue;
+							if(cox.getSon().getState().is(ModuloST.State.SELECTED))continue;
 							selectTree(cox);
 							select(cox.getSon());
 						}
@@ -531,7 +273,7 @@ public class Tree extends Elemento{
 				case MODULO:
 					final Modulo mod=(Modulo)obj;
 					if(mod==getGhost())return false;
-					mod.setState(Modulo.State.TO_BE_CREATOR);
+					mod.setState(ModuloST.State.TO_BE_CREATOR);
 					if(selectedObjetos.contains(mod))return true;
 					selectedObjetos.add(mod);
 					return true;
@@ -539,7 +281,7 @@ public class Tree extends Elemento{
 				case NODULO:	return false;	//NOD PODE APENAS SER CHAMADO CREATOR PELO COX
 				case SEGMENTO:
 					final Segmento seg=(Segmento)obj;
-					seg.setState(Segmento.State.TO_BE_CREATOR);
+					seg.setState(SegmentoST.State.TO_BE_CREATOR);
 					if(selectedObjetos.contains(seg.getConexao()))return true;
 					selectedObjetos.add(seg.getConexao());
 					return true;
@@ -553,7 +295,7 @@ public class Tree extends Elemento{
 			if(mod==getGhost())return false;	//GHOST NÃO PODE SER SON
 			if(mod==getMestre())return false;	//MESTRE NÃO PODE SER SON
 			unSelect(mod);				//DEVE ESTAR UNSELECTED PARA SER TO_BE_SON
-			mod.setState(Modulo.State.TO_BE_SON);
+			mod.setState(ModuloST.State.TO_BE_SON);
 			if(selectedObjetos.contains(mod))return true;
 			selectedObjetos.add(mod);
 			return true;
@@ -579,7 +321,7 @@ public class Tree extends Elemento{
 				if(allAreConectados)return false;		//NÃO HÁ CONEXÃO QUE POSSA SER CRIADA
 			}
 			unSelect(mod);				//DEVE ESTAR UNSELECTED PARA SER TO_BE_PAI
-			mod.setState(Modulo.State.TO_BE_PAI);
+			mod.setState(ModuloST.State.TO_BE_PAI);
 			if(selectedObjetos.contains(mod))return true;
 			selectedObjetos.add(mod);
 			return true;
@@ -592,7 +334,7 @@ public class Tree extends Elemento{
 					final Modulo mod=(Modulo)obj;
 					if(mod==getGhost())return false;
 					if(mod==getMestre())return false;	//MESTRE NÃO PODE SER DEL
-					mod.setState(Modulo.State.TO_BE_DELETED);
+					mod.setState(ModuloST.State.TO_BE_DELETED);
 					for(Conexao cox:mod.getConexoes()){
 						selectToBeDeleted(cox);
 					}
@@ -601,7 +343,7 @@ public class Tree extends Elemento{
 					return true;
 				case CONEXAO:
 					final Conexao cox=(Conexao)obj;
-					cox.setState(Conexao.State.TO_BE_DELETED);
+					cox.setState(ConexaoST.State.TO_BE_DELETED);
 					for(Nodulo nod:cox.getNodulos()){
 						selectToBeDeleted(nod);
 					}
@@ -610,7 +352,7 @@ public class Tree extends Elemento{
 					return true;
 				case NODULO:
 					final Nodulo nod=(Nodulo)obj;
-					nod.setState(Nodulo.State.TO_BE_DELETED);
+					nod.setState(NoduloST.State.TO_BE_DELETED);
 					if(selectedObjetos.contains(nod))return true;
 					selectedObjetos.add(nod);
 					return true;
@@ -625,39 +367,39 @@ public class Tree extends Elemento{
 				case MODULO:
 					final Modulo mod=(Modulo)obj;
 					if(mod==getGhost())return false;
-					mod.setState(Modulo.State.UNSELECTED);
+					mod.setState(ModuloST.State.UNSELECTED);
 					if(!selectedObjetos.contains(mod))return true;
 					selectedObjetos.del(mod);
 					if(selectedObjetos.getModulos().size()+selectedObjetos.getConexoes().size()==1){
 						if(selectedObjetos.getModulos().size()==1){
-							setTexto(selectedObjetos.getModulos().get(0));
+							getUI().setTexto(selectedObjetos.getModulos().get(0));
 						}else if(selectedObjetos.getConexoes().size()==1){
-							setTexto(selectedObjetos.getConexoes().get(0));
+							getUI().setTexto(selectedObjetos.getConexoes().get(0));
 						}
-					}else if(getTexto().getObjeto()!=getGhost()){
-						setTexto(getGhost());
+					}else if(getUI().getTexto().getObjeto()!=getGhost()){
+						getUI().setTexto(getGhost());
 					}
 					triggerObjetoListener(mod,false);
 					return true;
 				case CONEXAO:
 					final Conexao cox=(Conexao)obj;
-					cox.setState(Conexao.State.UNSELECTED);
+					cox.setState(ConexaoST.State.UNSELECTED);
 					if(!selectedObjetos.contains(cox))return true;
 					selectedObjetos.del(cox);
 					if(selectedObjetos.getModulos().size()+selectedObjetos.getConexoes().size()==1){
 						if(selectedObjetos.getModulos().size()==1){
-							setTexto(selectedObjetos.getModulos().get(0));
+							getUI().setTexto(selectedObjetos.getModulos().get(0));
 						}else if(selectedObjetos.getConexoes().size()==1){
-							setTexto(selectedObjetos.getConexoes().get(0));
+							getUI().setTexto(selectedObjetos.getConexoes().get(0));
 						}
-					}else if(getTexto().getObjeto()!=getGhost()){
-						setTexto(getGhost());
+					}else if(getUI().getTexto().getObjeto()!=getGhost()){
+						getUI().setTexto(getGhost());
 					}
 					triggerObjetoListener(cox,false);
 					return true;
 				case NODULO:
 					final Nodulo nod=(Nodulo)obj;
-					nod.setState(Nodulo.State.UNSELECTED);
+					nod.setState(NoduloST.State.UNSELECTED);
 					if(!selectedObjetos.contains(nod))return true;
 					selectedObjetos.del(nod);
 					triggerObjetoListener(nod,false);
@@ -673,8 +415,8 @@ public class Tree extends Elemento{
 					final Modulo mod=(Modulo)obj;
 					for(Conexao cox:mod.getConexoes()){
 						if(!cox.getSon().equals(mod)){
-							if(!cox.getState().is(Conexao.State.SELECTED))continue;
-							if(!cox.getSon().getState().is(Modulo.State.SELECTED))continue;
+							if(!cox.getState().is(ConexaoST.State.SELECTED))continue;
+							if(!cox.getSon().getState().is(ModuloST.State.SELECTED))continue;
 							unSelectTree(cox);
 							unSelectTree(cox.getSon());
 						}
@@ -766,11 +508,10 @@ public class Tree extends Elemento{
 		Conexao.addBoundsListener(boundsListener);
 		Nodulo.addBoundsListener(boundsListener);
 		undoRedo=new UndoRedo(this);
-		popup=new Popup(this);
-		popup.update();
-		painel.add(titulo);
-		cursor=new Cursor(((JFrame)painel.getJanela()));
-		actions=new Actions(this,((JFrame)painel.getJanela()));
+		getUI().build();
+		painel.add(getUI().getTitulo());
+		actions=new Actions(this);
+		getST().loadStates();
 		clear();
 		actions.putIntputs();
 	}
@@ -778,8 +519,8 @@ public class Tree extends Elemento{
 	public void clear(){
 		Tree.UNIT=8;
 		setLocal(0,0);
-		Tree.Fonte.FONTE=new Font("Courier New",Font.PLAIN,15);
-		selecao.setEmpty();
+		TreeUI.Fonte.FONTE=new Font("Courier New",Font.PLAIN,15);
+		getUI().getSelecao().setEmpty();
 		undoRedo.clear();
 		getObjetos().clear();
 		getSelectedObjetos().clear();
@@ -788,264 +529,21 @@ public class Tree extends Elemento{
 		getVisibleNods().clear();
 		getChunks().clear();
 		objsListaMaxSize=0;
-		Tree.MESTRE=new Modulo(0,0,Tree.getLang().get("T_M","New Mind Map"));
+		Tree.MESTRE=new Modulo(0,0,TreeUI.getLang().get("T_M","New Mind Map"));
 		getMestre().setCor(new Cor(0,255,255));
-		Tree.GHOST=new Modulo(0,0,Tree.getLang().get("T_G","Text"));
+		Tree.GHOST=new Modulo(0,0,TreeUI.getLang().get("T_G","Text"));
 		add(getMestre());
-		setTitulo(getGhost());
-		setTexto(getGhost());
+		getUI().setTitulo(getGhost());
+		getUI().setTexto(getGhost());
 		setAntialias(true);
 		setEnabled(true);
-		getActions().setState(Actions.NORMAL);
-	}
-	public void setFocusOn(Objeto[]objs){
-		if(objs==null)return;
-		int xIndexMin=0;
-		int yIndexMin=0;
-		int xIndexMax=0;
-		int yIndexMax=0;
-		boolean firstRun=true;
-		for(Objeto obj:objs){
-			if(obj==null)continue;
-			int x=0;
-			int y=0;
-			switch(obj.getTipo()){
-				case MODULO:
-					final Modulo mod=(Modulo)obj;
-					x=mod.getMeioXIndex();
-					y=mod.getMeioYIndex();
-				break;
-				case CONEXAO:
-					final Conexao cox=(Conexao)obj;
-					final Rectangle coxForm=cox.getFormIndex().getBounds();
-					x=coxForm.x+(coxForm.width/2);
-					y=coxForm.y+(coxForm.height/2);
-				break;
-				case NODULO:
-					final Nodulo nod=(Nodulo)obj;
-					x=nod.getXIndex();
-					y=nod.getYIndex();
-				break;
-				case SEGMENTO:break;
-			}
-			if(firstRun){
-				xIndexMin=x;
-				yIndexMin=y;
-				xIndexMax=x;
-				yIndexMax=y;
-				firstRun=false;
-			}else{
-				xIndexMin=Math.min(xIndexMin,x);
-				yIndexMin=Math.min(yIndexMin,y);
-				xIndexMax=Math.max(xIndexMax,x);
-				yIndexMax=Math.max(yIndexMax,y);
-			}
-		}
-		final int meioX=(xIndexMax+xIndexMin)/2;
-		final int meioY=(yIndexMax+yIndexMin)/2;
-		final Point telaMeio=getActions().getGridPosition(new Point(painel.getJanela().getWidth()/2,painel.getJanela().getHeight()/2));
-		Tree.setLocal(telaMeio.x-meioX,telaMeio.y-meioY);	//ALINHA O MEIO DA JANELA COM O MEIO DOS OBJS FOCADOS
-	}
-	private Runnable animation;
-	public void animate(Point localIni,Point localFim){
-		new Thread(animation=new Runnable(){
-			public void run(){
-				final double diffX=localFim.x-localIni.x;
-				final double diffY=localFim.y-localIni.y;
-				if(diffX==0&&diffY==0)return;
-				final int passos=20;
-				final Point quadrante=new Point(localIni.x<=localFim.x?1:-1,localIni.y<localFim.y?1:-1);	//INF-DIR
-				final int fps=60;
-				final long tempoAlvo=1000000000/fps;
-				if(Math.abs(diffX)>=Math.abs(diffY)){
-					final double slope=diffY/diffX;
-					final double speed=Math.abs(diffX/passos);
-					for(double x=localIni.x;(quadrante.x==1?x<=localFim.x:x>localFim.x);x+=speed*quadrante.x){
-						final long tempoIni=System.nanoTime();
-						final double y=slope*(x-localIni.x)+localIni.y;	//y=m*x+b
-						Tree.setLocal((int)x,(int)y);
-						draw();
-						if(animation!=this)return;	//OUTRA ANIMAÇÃO FOI CHAMADA
-						try{
-							Thread.sleep((tempoIni-System.nanoTime()+tempoAlvo)/1000000);
-						}catch(Exception erro){/*EVITA ERRO DE VALOR NEGATIVO*/}
-					}
-				}else{
-					final double slope=diffX/diffY;
-					final double speed=Math.abs(diffY/passos);
-					for(double y=localIni.y;(quadrante.y==1?y<=localFim.y:y>localFim.y);y+=speed*quadrante.y){
-						final long tempoIni=System.nanoTime();
-						final double x=slope*(y-localIni.y)+localIni.x;	//x=m*y+b
-						Tree.setLocal((int)x,(int)y);
-						draw();
-						if(animation!=this)return;	//OUTRA ANIMAÇÃO FOI CHAMADA
-						try{
-							Thread.sleep((tempoIni-System.nanoTime()+tempoAlvo)/1000000);
-						}catch(Exception erro){/*EVITA ERRO DE VALOR NEGATIVO*/}
-					}
-				}
-				Tree.setLocal(localFim.x,localFim.y);
-				draw();
-			}
-		}).start();
+		setState(TreeST.NORMAL);
 	}
 //DRAW
 @Override
 	public synchronized void draw(Graphics2D imagemEdit){
-		final int unit=Tree.UNIT;
-		final float borda=Tree.getBordaValue(unit);
-		if(((JFrame)painel.getJanela()).isUndecorated()){
-			clearDraw();
-		}
-		final boolean antialias=(isAntialias()&&(getObjetos().size()<getObjetosLimite()||getObjetosLimite()==-1));	//ANTIALIAS
-		imagemEdit.setRenderingHint(RenderingHints.KEY_ANTIALIASING,(antialias?RenderingHints.VALUE_ANTIALIAS_ON:RenderingHints.VALUE_ANTIALIAS_OFF));
-		final Rectangle tela=new Rectangle(
-				getRelativeBounds().x-unit,
-				getRelativeBounds().y-unit,
-				getRelativeBounds().width+(unit*2),
-				getRelativeBounds().height+(unit*2)
-		);
-		if(!((JFrame)painel.getJanela()).isUndecorated()){
-			drawFundo(imagemEdit,tela,unit);
-		}
-		drawObjetos(imagemEdit,tela,unit,borda);
-		drawFrente(imagemEdit);
-		imagemEdit.dispose();
+		getUI().draw(imagemEdit);
 	}
-		private void drawFundo(Graphics2D imagemEdit,Rectangle tela,int unit){
-			if(unit<=2){	//COR DA GRADE, COBRINDO TUDO
-				imagemEdit.setColor(Cor.getChanged(Tree.FUNDO,0.95f));
-			}else imagemEdit.setColor(Tree.FUNDO);
-			imagemEdit.fillRect(0,0,getWidth(),getHeight());						//FUNDO
-			final boolean showChunks=false;
-			if(showChunks){		//DEBUG
-				final Rectangle chunksInd=getChunksIndexes(-Tree.getLocalX(),-Tree.getLocalY(),tela.width/unit,tela.height/unit);
-				for(int y=chunksInd.y;y-chunksInd.y<chunksInd.height;y++){
-					for(int x=chunksInd.x;x-chunksInd.x<chunksInd.width;x++){
-						imagemEdit.setColor(y%2==0&&x%2==0||y%2!=0&&x%2!=0?Modulo.Cores.CREATE:Modulo.Cores.PAI);	//XAND: 1001
-						final Chunk chunk=getChunks().get(new Point(x,y));
-						if(chunk!=null)imagemEdit.setColor(Modulo.Cores.SON);
-						final int size=unit*Chunk.SIZE;
-						final int X=(x*size)+(Tree.getLocalX()*unit);
-						final int Y=(y*size)+(Tree.getLocalY()*unit);
-						imagemEdit.fillRect(X,Y,size,size);
-						imagemEdit.setColor(Color.RED);
-						imagemEdit.drawString(x+","+y,X,Y+size);
-					}
-				}
-			}
-			if(isShowingGrid()&&unit>2){													//GRADE
-				imagemEdit.setColor(Cor.getChanged(Tree.FUNDO,0.95f));
-				for(int x=0,size=getWidth()/unit;x<=size;x++)imagemEdit.drawLine(unit*x,getY(),unit*x,getHeight());
-				for(int y=0,size=getHeight()/unit;y<=size;y++)imagemEdit.drawLine(getX(),unit*y,getWidth(),unit*y);					
-			}
-		}
-		private void drawObjetos(Graphics2D imagemEdit,Rectangle tela,int unit,float borda){
-			getVisibleMods().clear();
-			getVisibleCoxs().clear();
-			getVisibleNods().clear();
-			final Rectangle chunksIndexes=getChunksIndexes(-Tree.getLocalX(),-Tree.getLocalY(),tela.width/unit,tela.height/unit);
-			for(int y=chunksIndexes.y;y-chunksIndexes.y<chunksIndexes.height;y++){
-				for(int x=chunksIndexes.x;x-chunksIndexes.x<chunksIndexes.width;x++){
-					final Chunk chunk=getChunks().get(new Point(x,y));
-					if(chunk==null)continue;
-					for(Conexao cox:chunk.getObjetos().getConexoes()){
-						getVisibleCoxs().put(cox.getIndex(),cox);
-					}
-					for(Nodulo nod:chunk.getObjetos().getNodulos()){
-						getVisibleNods().put(nod.getIndex(),nod);
-					}
-					for(Modulo mod:chunk.getObjetos().getModulos()){
-						getVisibleMods().put(mod.getIndex(),mod);
-					}
-				}
-			}
-			imagemEdit.setStroke(new BasicStroke((int)borda));	//BORDA DOS OBJS
-		//DRAW CONEXÕES
-			for(Conexao cox:getVisibleCoxs().values()){
-				if(cox.getState().is(Conexao.State.UNSELECTED))cox.draw(imagemEdit,unit);	//COXS DESELECIONADOS
-			}
-			for(Conexao cox:getVisibleCoxs().values()){
-				if(!cox.getState().is(Conexao.State.UNSELECTED))cox.draw(imagemEdit,unit);	//COXS SELECIONADOS FICAM NA FRENTE
-			}
-		//DRAW NÓDULOS
-			for(Nodulo nod:getVisibleNods().values()){
-				if(nod.getState().is(Nodulo.State.UNSELECTED))nod.draw(imagemEdit,unit);	//NODS DESELECIONADOS
-			}
-			for(Nodulo nod:getVisibleNods().values()){
-				if(!nod.getState().is(Nodulo.State.UNSELECTED))nod.draw(imagemEdit,unit);	//NODS SELECIONADOS FICAM NA FRENTE
-			}
-		//DRAW MÓDULOS
-			for(Modulo mod:getVisibleMods().values())mod.draw(imagemEdit,unit);				//MODS
-		}
-		private void drawFrente(Graphics2D imagemEdit){
-			if(!selecao.isEmpty())selecao.draw(imagemEdit);								//ÁREA DE SELEÇÃO
-			if(((JFrame)painel.getJanela()).isUndecorated()){							//BORDA PARA PERMITIR DRAG
-				imagemEdit.setStroke(new BasicStroke(10));
-				final Color f=Tree.FUNDO;
-				imagemEdit.setColor(new Color((float)f.getRed()/255,(float)f.getGreen()/255,(float)f.getBlue()/255,0.6f));
-				imagemEdit.drawRect(0,0,getWidth(),getHeight());
-			}
-			if(getActions().getState()==Actions.AUTO_DRAG_ALL+Actions.NORMAL){			//SETA DO AUTODRAG
-				drawAutoDragLine(imagemEdit);
-			}
-			if(!isEnabled()){															//EFEITO DE ACINZENTADO
-				final Color f=Tree.FUNDO;
-				imagemEdit.setColor(new Color((float)f.getRed()/255,(float)f.getGreen()/255,(float)f.getBlue()/255,0.6f));
-				imagemEdit.fillRect(0,0,getWidth(),getHeight());
-			}
-		}
-			private void drawAutoDragLine(Graphics2D imagemEdit){
-				imagemEdit.setStroke(new BasicStroke(1));
-			//PONTOS
-				final Point ponto1=getActions().getNonGridPosition(getActions().mouseReleased);
-				final Point ponto2=getActions().getNonGridPosition(getActions().mouseMoved);
-				final int difX=ponto2.x-ponto1.x;
-				final int difY=ponto2.y-ponto1.y;
-			//ANGLES
-				double angle=Math.atan2(difY,difX);
-				double angleReto1=angle+Math.toRadians(90);
-				double angleReto2=angle-Math.toRadians(90);
-			//SIZES
-				final double size=(Math.abs(difX)+Math.abs(difY))/4;
-				final double pontaWidth=size/2;
-				final double pontaBaseWidth=size/4;
-				Point2D pontaBase=null;
-			//AJUSTES
-				if(angle>Math.toRadians(90)){			//90º -> 180º
-					angle=Math.abs(Math.toRadians(180)-angle);
-					pontaBase=new Point2D.Double(ponto2.x+(size*Math.cos(angle)),ponto2.y-(size*Math.sin(angle)));
-				}else if(angle>Math.toRadians(0)){		//0º -> 90º
-					pontaBase=new Point2D.Double(ponto2.x-(size*Math.cos(angle)),ponto2.y-(size*Math.sin(angle)));
-				}else if(angle>Math.toRadians(-90)){	//-90º -> 0º
-					angle=Math.abs(Math.toRadians(180)-angle);
-					pontaBase=new Point2D.Double(ponto2.x+(size*Math.cos(angle)),ponto2.y-(size*Math.sin(angle)));
-				}else if(angle>Math.toRadians(-180)){	//-180º -> -90º
-					pontaBase=new Point2D.Double(ponto2.x-(size*Math.cos(angle)),ponto2.y-(size*Math.sin(angle)));
-				}
-			//SETA
-				final Point2D arrowPonta1=new Point2D.Double(pontaBase.getX()-(pontaWidth*Math.cos(angleReto1)),pontaBase.getY()-(pontaWidth*Math.sin(angleReto1)));
-				final Point2D arrowReta1=new Point2D.Double(pontaBase.getX()-(pontaBaseWidth*Math.cos(angleReto1)),pontaBase.getY()-(pontaBaseWidth*Math.sin(angleReto1)));
-				final Point2D arrowPonta2=new Point2D.Double(pontaBase.getX()-(pontaWidth*Math.cos(angleReto2)),pontaBase.getY()-(pontaWidth*Math.sin(angleReto2)));
-				final Point2D arrowReta2=new Point2D.Double(pontaBase.getX()-(pontaBaseWidth*Math.cos(angleReto2)),pontaBase.getY()-(pontaBaseWidth*Math.sin(angleReto2)));
-				final Path2D.Float seta=new Path2D.Float();
-				seta.moveTo(ponto1.x,ponto1.y);							//BASE
-				seta.lineTo(arrowReta1.getX(),arrowReta1.getY());		//MEIO DIREITO
-				seta.lineTo(arrowPonta1.getX(),arrowPonta1.getY());		//PONTA DIREITA
-				seta.lineTo(ponto2.getX(),ponto2.getY());				//PONTA
-				seta.lineTo(arrowPonta2.getX(),arrowPonta2.getY());		//PONTA ESQUERDA
-				seta.lineTo(arrowReta2.getX(),arrowReta2.getY());		//MEIO ESQUERDO
-				seta.closePath();										//BASE
-			//DRAW
-				final int XRadius=10;
-				imagemEdit.setColor(Cor.getChanged(Modulo.Cores.FUNDO,Modulo.Cores.FUNDO.isDark()?1.1f:0.8f));
-				imagemEdit.drawLine(ponto1.x-XRadius,ponto1.y,ponto1.x+XRadius,ponto1.y);
-				imagemEdit.drawLine(ponto1.x,ponto1.y-XRadius,ponto1.x,ponto1.y+XRadius);
-				imagemEdit.setColor(Cor.getTransparent(Cor.getChanged(Modulo.Cores.FUNDO,Modulo.Cores.FUNDO.isDark()?1.1f:0.8f),0.6f));
-				imagemEdit.fill(seta);
-				imagemEdit.setColor(Cor.getChanged(Modulo.Cores.FUNDO,Modulo.Cores.FUNDO.isDark()?1.1f:0.8f));
-				imagemEdit.draw(seta);
-			}
 //TAG -> TREE
 	public List<Objeto>addTree(Element mindTag,boolean replaceMestre)throws Exception{
 		final List<Objeto>lista=new ArrayList<Objeto>();
@@ -1054,7 +552,7 @@ public class Tree extends Elemento{
 			final String fontNome=mindTag.getAttribute("fontName");			//SET FONT
 			final int fontStyle=Integer.parseInt(mindTag.getAttribute("fontStyle"));
 			final int fontSize=Integer.parseInt(mindTag.getAttribute("fontSize"));
-			setFonte(new Font(fontNome,fontStyle,fontSize));
+			getUI().setFonte(new Font(fontNome,fontStyle,fontSize));
 		}
 		final NodeList modsTag=mindTag.getElementsByTagName("mod");		//SET MODS
 		for(int m=0,size=modsTag.getLength();m<size;m++){
@@ -1097,9 +595,9 @@ public class Tree extends Elemento{
 		try{
 			final Document xml=DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 			final Element mindTag=xml.createElement("mind");			//MIND
-			mindTag.setAttribute("fontName",Tree.Fonte.FONTE.getName());					//FONT_NAME
-			mindTag.setAttribute("fontStyle",String.valueOf(Tree.Fonte.FONTE.getStyle()));	//FONT_STYLE
-			mindTag.setAttribute("fontSize",String.valueOf(Tree.Fonte.FONTE.getSize()));	//FONT_SIZE
+			mindTag.setAttribute("fontName",TreeUI.Fonte.FONTE.getName());					//FONT_NAME
+			mindTag.setAttribute("fontStyle",String.valueOf(TreeUI.Fonte.FONTE.getStyle()));	//FONT_STYLE
+			mindTag.setAttribute("fontSize",String.valueOf(TreeUI.Fonte.FONTE.getSize()));	//FONT_SIZE
 			xml.appendChild(mindTag);									//XML DE MIND
 			for(int m=0,size=listaMods.size();m<size;m++){
 				final Modulo mod=listaMods.get(m);
@@ -1119,7 +617,7 @@ public class Tree extends Elemento{
 					.replaceAll("\n    (<mod|<cox|</mod|</cox)","\t$1")				//TROCA ESPAÇOS POR TAB
 					.replaceAll("\n        (<nod|<text|</nod|</text)","\t\t$1");	//TROCA ESPAÇOS POR TAB
 		}catch(TransformerException|TransformerFactoryConfigurationError|ParserConfigurationException erro){
-			Tree.mensagem(Tree.getLang().get("T_Err1","Error: Couldn't build .mind file!")+"\n"+erro,Tree.Options.ERRO);
+			TreeUI.mensagem(TreeUI.getLang().get("T_Err1","Error: Couldn't build .mind file!")+"\n"+erro,TreeUI.Options.ERRO);
 		}
 		return null;
 	}
@@ -1144,10 +642,10 @@ public class Tree extends Elemento{
 		imagemEdit.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 	//FUNDO
 		if(!((JFrame)painel.getJanela()).isUndecorated()){
-			imagemEdit.setColor(Tree.FUNDO);
+			imagemEdit.setColor(TreeUI.FUNDO);
 			imagemEdit.fillRect(0,0,imagem.getWidth(),imagem.getHeight());	//FUNDO
 			if(isShowingGrid()){											//GRADE
-				imagemEdit.setColor(Cor.getChanged(Tree.FUNDO,0.95f));
+				imagemEdit.setColor(Cor.getChanged(TreeUI.FUNDO,0.95f));
 				for(int x=0,size=imagem.getWidth()/unit;x<=size;x++)imagemEdit.drawLine(unit*x,0,unit*x,imagem.getHeight());
 				for(int y=0,size=imagem.getHeight()/unit;y<=size;y++)imagemEdit.drawLine(0,unit*y,imagem.getWidth(),unit*y);
 			}
@@ -1174,16 +672,4 @@ public class Tree extends Elemento{
 			area.height=Math.max(area.height,maxY);
 			return area;
 		}
-//MENSAGEM
-	public enum Options{
-		ERRO,
-		AVISO;
-	}
-	public static void mensagem(String mensagem,Options tipo){
-		Toolkit.getDefaultToolkit().beep();
-		switch(tipo){
-			case AVISO:	JOptionPane.showMessageDialog(null,mensagem,Tree.getLang().get("T_Av","Warning!"),JOptionPane.WARNING_MESSAGE);break;
-			case ERRO:	JOptionPane.showMessageDialog(null,mensagem,Tree.getLang().get("T_Err","Error...!"),JOptionPane.ERROR_MESSAGE);break;
-		}
-	}
 }

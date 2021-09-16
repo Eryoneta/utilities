@@ -1,36 +1,17 @@
-package element.tree.objeto.conexao;
+package element.tree.objeto.conexao.segmento;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import element.tree.Tree;
 import element.tree.objeto.Objeto;
+import element.tree.objeto.conexao.Conexao;
+import element.tree.objeto.nodulo.Nodulo;
 public class Segmento extends Objeto{
-//STATES
-	public enum State{
-		UNSELECTED,
-		TO_BE_CREATOR;
-		public boolean is(Segmento.State... states){
-			for(Segmento.State state:states)if(this.equals(state))return true;
-			return false;
-		}
-	}
-	private Segmento.State state=Segmento.State.UNSELECTED;
-		public Segmento.State getState(){return state;}
-		public void setState(Segmento.State state){
-			switch(getState()){
-				case UNSELECTED:
-					if(state.is(Segmento.State.TO_BE_CREATOR)){
-						this.state=state;							//UNSELECTED -> TO_BE_CREATOR
-						getConexao().setState(Conexao.State.TO_BE_CREATOR);
-					}
-				break;
-				case TO_BE_CREATOR:
-					if(state.is(Segmento.State.UNSELECTED)){
-						this.state=state;							//TO_BE_CREATOR -> UNSELECTED
-					}
-				break;
-			}
-		}
+//ST
+	private final SegmentoST ST=new SegmentoST(this);
+		public SegmentoST getST(){return ST;}
+		public SegmentoST.State getState(){return getST().getState();}
+		public void setState(SegmentoST.State state){getST().setState(state);}
 //CONEXÃO
 	public Conexao conexao;
 		public Conexao getConexao(){return conexao;}
@@ -111,7 +92,7 @@ public class Segmento extends Objeto{
 	public int hashCode(){	//ALGUMAS PARTES SÃO DESNECESSÁRIAS PARA DISTINÇÃO
 		final int prime=31;
 		int result=super.hashCode();
-		result=prime*result+((state==null)?0:state.hashCode());
+		result=prime*result+((ST==null)?0:ST.hashCode());
 		result=prime*result+((conexao==null)?0:conexao.hashCode());
 		result=prime*result+((ponta1==null)?0:ponta1.hashCode());
 		result=prime*result+((ponta2==null)?0:ponta2.hashCode());
@@ -124,7 +105,7 @@ public class Segmento extends Objeto{
 		if(getClass()!=obj.getClass())return false;
 		final Segmento seg=(Segmento)obj;
 		if(!super.equals(obj))return false;
-		if(state!=seg.state)return false;
+		if(ST!=seg.ST)return false;
 		if(conexao!=seg.conexao)return false;
 		if(ponta1!=seg.ponta1)return false;
 		if(ponta2!=seg.ponta2)return false;

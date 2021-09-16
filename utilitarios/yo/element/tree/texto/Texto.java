@@ -13,7 +13,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JTextPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -31,9 +30,8 @@ import javax.swing.text.StyledEditorKit;
 import javax.swing.text.View;
 import javax.swing.text.ViewFactory;
 import javax.swing.undo.UndoManager;
-
 import element.tree.propriedades.Cor;
-import element.tree.Tree;
+import element.tree.TreeUI;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.objeto.modulo.Modulo;
@@ -217,9 +215,9 @@ public class Texto extends JTextPane{
 		}
 //MAIN
 	public Texto(){
-		final Cor cor=Cor.getChanged(Tree.FUNDO,0.7f);
+		final Cor cor=Cor.getChanged(TreeUI.FUNDO,0.7f);
 		setSelectionColor(cor);
-		setSelectedTextColor(cor.isDark()?Tree.Fonte.LIGHT:Tree.Fonte.DARK);
+		setSelectedTextColor(cor.isDark()?TreeUI.Fonte.LIGHT:TreeUI.Fonte.DARK);
 		setEditorKit(editor);
 		editor.setTabSize(20);
 		setUndoManager(new UndoManager());

@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Path2D;
 import element.tree.propriedades.Cor;
-import element.tree.objeto.modulo.Modulo;
+import element.tree.objeto.modulo.ModuloUI;
 public class Selecao{
 //STATES
 	public enum State{
@@ -61,19 +61,19 @@ public class Selecao{
 	public void draw(Graphics2D imagemEdit){
 		imagemEdit.setStroke(new BasicStroke(1));
 		switch(getState()){
-			case TO_SELECT:default:	imagemEdit.setColor(Cor.getTransparent(Modulo.Cores.FUNDO,0.6f));	break;
-			case TO_CREATE:			imagemEdit.setColor(Cor.getTransparent(Modulo.Cores.CREATE,0.6f));	break;
-			case TO_CREATE_SON:		imagemEdit.setColor(Cor.getTransparent(Modulo.Cores.SON,0.6f));		break;
-			case TO_CREATE_PAI:		imagemEdit.setColor(Cor.getTransparent(Modulo.Cores.PAI,0.6f));		break;
-			case TO_DELETE:			imagemEdit.setColor(Cor.getTransparent(Modulo.Cores.DELETE,0.6f));	break;
+			case TO_SELECT:default:	imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.FUNDO,0.6f));	break;
+			case TO_CREATE:			imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.CREATE,0.6f));	break;
+			case TO_CREATE_SON:		imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.SON,0.6f));		break;
+			case TO_CREATE_PAI:		imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.PAI,0.6f));		break;
+			case TO_DELETE:			imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.DELETE,0.6f));	break;
 		}
 		imagemEdit.fillRect(getAncoraX(),getAncoraY(),getAreaX(),getAreaY());
 		switch(getState()){
-			case TO_SELECT:default:	imagemEdit.setColor(Modulo.Cores.FUNDO);	break;
-			case TO_CREATE:			imagemEdit.setColor(Modulo.Cores.CREATE);	break;
-			case TO_CREATE_SON:		imagemEdit.setColor(Modulo.Cores.SON);		break;
-			case TO_CREATE_PAI:		imagemEdit.setColor(Modulo.Cores.PAI);		break;
-			case TO_DELETE:			imagemEdit.setColor(Modulo.Cores.DELETE);	break;
+			case TO_SELECT:default:	imagemEdit.setColor(ModuloUI.Cores.FUNDO);	break;
+			case TO_CREATE:			imagemEdit.setColor(ModuloUI.Cores.CREATE);	break;
+			case TO_CREATE_SON:		imagemEdit.setColor(ModuloUI.Cores.SON);		break;
+			case TO_CREATE_PAI:		imagemEdit.setColor(ModuloUI.Cores.PAI);		break;
+			case TO_DELETE:			imagemEdit.setColor(ModuloUI.Cores.DELETE);	break;
 		}
 		imagemEdit.drawRect(getAncoraX(),getAncoraY(),getAreaX(),getAreaY());
 	}

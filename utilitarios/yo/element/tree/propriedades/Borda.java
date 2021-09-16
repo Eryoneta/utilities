@@ -1,6 +1,6 @@
 package element.tree.propriedades;
 import java.awt.BasicStroke;
-import element.tree.Tree;
+import element.tree.TreeUI;
 public class Borda{
 //BORDAS
 	public static final int SOLID=0;
@@ -46,18 +46,18 @@ public class Borda{
 //NOME
 	public String getNome(){
 		switch(index){
-			case SOLID:default:				return Tree.getLang().get("T_Pop_B_S","Solid");
-			case TRACED:					return Tree.getLang().get("T_Pop_B_T","Dash");
-			case LONG_TRACED:				return Tree.getLang().get("T_Pop_B_Tl","Long Dash");
-			case DOTTED:					return Tree.getLang().get("T_Pop_B_P","Dot");
-			case DOTTED_1_TRACED_1:			return Tree.getLang().get("T_Pop_B_PT","1 dot e 1 dash");
-			case DOTTED_2_TRACED_1:			return Tree.getLang().get("T_Pop_B_PPT","2 dots e 1 dash");
-			case DOTTED_1_TRACED_2:			return Tree.getLang().get("T_Pop_B_PTT","1 dot e 2 dashes");
-			case DOTTED_2_TRACED_2:			return Tree.getLang().get("T_Pop_B_PPTT","2 dots e 2 dashes");
-			case DOTTED_1_LONG_TRACED_1:	return Tree.getLang().get("T_Pop_B_PTl","1 dot e 1 long dash");
-			case DOTTED_2_LONG_TRACED_1:	return Tree.getLang().get("T_Pop_B_PPTl","2 dots e 1 long dash");
-			case DOTTED_1_LONG_TRACED_2:	return Tree.getLang().get("T_Pop_B_PTlTl","1 dot e 2 long dashes");
-			case DOTTED_2_LONG_TRACED_2:	return Tree.getLang().get("T_Pop_B_PPTlTl","2 dots e 2 long dashes");
+			case SOLID:default:				return TreeUI.getLang().get("T_Pop_B_S","Solid");
+			case TRACED:					return TreeUI.getLang().get("T_Pop_B_T","Dash");
+			case LONG_TRACED:				return TreeUI.getLang().get("T_Pop_B_Tl","Long Dash");
+			case DOTTED:					return TreeUI.getLang().get("T_Pop_B_P","Dot");
+			case DOTTED_1_TRACED_1:			return TreeUI.getLang().get("T_Pop_B_PT","1 dot e 1 dash");
+			case DOTTED_2_TRACED_1:			return TreeUI.getLang().get("T_Pop_B_PPT","2 dots e 1 dash");
+			case DOTTED_1_TRACED_2:			return TreeUI.getLang().get("T_Pop_B_PTT","1 dot e 2 dashes");
+			case DOTTED_2_TRACED_2:			return TreeUI.getLang().get("T_Pop_B_PPTT","2 dots e 2 dashes");
+			case DOTTED_1_LONG_TRACED_1:	return TreeUI.getLang().get("T_Pop_B_PTl","1 dot e 1 long dash");
+			case DOTTED_2_LONG_TRACED_1:	return TreeUI.getLang().get("T_Pop_B_PPTl","2 dots e 1 long dash");
+			case DOTTED_1_LONG_TRACED_2:	return TreeUI.getLang().get("T_Pop_B_PTlTl","1 dot e 2 long dashes");
+			case DOTTED_2_LONG_TRACED_2:	return TreeUI.getLang().get("T_Pop_B_PPTlTl","2 dots e 2 long dashes");
 		}
 	}
 //MAIN

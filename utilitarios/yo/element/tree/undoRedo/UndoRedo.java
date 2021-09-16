@@ -7,7 +7,7 @@ import java.util.List;
 import element.tree.objeto.ListaObjeto;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
-import element.tree.objeto.conexao.Nodulo;
+import element.tree.objeto.nodulo.Nodulo;
 import element.tree.objeto.modulo.Modulo;
 import element.tree.propriedades.Borda;
 import element.tree.propriedades.Grossura;
@@ -223,8 +223,8 @@ public class UndoRedo{
 //FOCUS
 	private void focusAndSelect(Objeto[]objs){
 		final Point local=Tree.getLocal();
-		getTree().setFocusOn(objs);
-		getTree().animate(local,Tree.getLocal());
+		getTree().getActions().setFocusOn(objs);
+		getTree().getActions().animate(local,Tree.getLocal());
 		getTree().unSelectAll();
 		for(Objeto obj:objs)getTree().select(obj);
 	}
