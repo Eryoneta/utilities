@@ -1,4 +1,4 @@
-package element.tree;
+package element.tree.main;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -25,6 +25,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import element.tree.Chunk;
+import element.tree.Cursor;
+import element.tree.Selecao;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.objeto.conexao.ConexaoST;
@@ -66,7 +69,7 @@ public class TreeUI{
 			getTitulo().setFont(fonte);
 			getTexto().setFont(fonte);
 			for(Modulo mod:tree.getObjetos().getModulos())mod.setSize();
-		};
+		}
 		public static Font getFonte(){return Fonte.FONTE;}
 //COR DE FUNDO
 	public static Cor FUNDO=new Cor(240,240,240);

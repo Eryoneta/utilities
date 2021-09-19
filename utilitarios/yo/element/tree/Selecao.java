@@ -1,27 +1,20 @@
 package element.tree;
-import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Path2D;
-import element.tree.propriedades.Cor;
-import element.tree.objeto.modulo.ModuloUI;
+import element.tree.main.Tree;
 public class Selecao{
-//STATES
-	public enum State{
-		TO_UNSELECT,
-		TO_SELECT,
-		TO_CREATE,
-		TO_CREATE_SON,
-		TO_CREATE_PAI,
-		TO_DELETE;
-		public boolean is(Selecao.State... states){
-			for(Selecao.State state:states)if(this.equals(state))return true;
-			return false;
+//ST
+	private final SelecaoST ST=new SelecaoST(this);
+		public SelecaoST getST(){return ST;}
+		public SelecaoST.State getState(){return getST().getState();}
+		public void setState(SelecaoST.State state){getST().setState(state);}
+//UI
+	private final SelecaoUI UI=new SelecaoUI(this);
+		public SelecaoUI getUI(){return UI;}
+		public void draw(Graphics2D imagemEdit){
+			getUI().draw(imagemEdit);
 		}
-	}
-	private State state=Selecao.State.TO_SELECT;
-		public Selecao.State getState(){return state;}
-		public void setState(Selecao.State state){this.state=state;}
 //LOCAL
 	private int ancoraXIndex=0;
 		public int getAncoraXIndex(){return Math.min(ancoraXIndex,areaXIndex);}
@@ -57,24 +50,4 @@ public class Selecao{
 	public boolean isEmpty(){return(getAreaX()==0&&getAreaY()==0);}
 //MAIN
 	public Selecao(){}
-//DRAW
-	public void draw(Graphics2D imagemEdit){
-		imagemEdit.setStroke(new BasicStroke(1));
-		switch(getState()){
-			case TO_SELECT:default:	imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.FUNDO,0.6f));	break;
-			case TO_CREATE:			imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.CREATE,0.6f));	break;
-			case TO_CREATE_SON:		imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.SON,0.6f));		break;
-			case TO_CREATE_PAI:		imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.PAI,0.6f));		break;
-			case TO_DELETE:			imagemEdit.setColor(Cor.getTransparent(ModuloUI.Cores.DELETE,0.6f));	break;
-		}
-		imagemEdit.fillRect(getAncoraX(),getAncoraY(),getAreaX(),getAreaY());
-		switch(getState()){
-			case TO_SELECT:default:	imagemEdit.setColor(ModuloUI.Cores.FUNDO);	break;
-			case TO_CREATE:			imagemEdit.setColor(ModuloUI.Cores.CREATE);	break;
-			case TO_CREATE_SON:		imagemEdit.setColor(ModuloUI.Cores.SON);		break;
-			case TO_CREATE_PAI:		imagemEdit.setColor(ModuloUI.Cores.PAI);		break;
-			case TO_DELETE:			imagemEdit.setColor(ModuloUI.Cores.DELETE);	break;
-		}
-		imagemEdit.drawRect(getAncoraX(),getAncoraY(),getAreaX(),getAreaY());
-	}
 }

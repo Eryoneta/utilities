@@ -1,4 +1,4 @@
-package element.tree;
+package element.tree.main;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -29,6 +29,8 @@ import element.tree.propriedades.Cor;
 import element.tree.propriedades.Icone;
 import element.Elemento;
 import element.Painel;
+import element.tree.Chunk;
+import element.tree.ObjetoFocusListener;
 import element.tree.objeto.ListaObjeto;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.ObjetoBoundsListener;

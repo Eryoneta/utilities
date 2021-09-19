@@ -1,7 +1,7 @@
 package element.tree;
 import java.awt.Point;
 import java.awt.Rectangle;
-
+import element.tree.main.Tree;
 import element.tree.objeto.ListaObjeto;
 import element.tree.objeto.Objeto;
 public class Chunk{

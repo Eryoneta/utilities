@@ -2,7 +2,7 @@ package element.tree.objeto.conexao.segmento;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
-import element.tree.Tree;
+import element.tree.main.Tree;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.objeto.nodulo.Nodulo;

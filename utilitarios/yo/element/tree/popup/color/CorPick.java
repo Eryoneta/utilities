@@ -8,7 +8,7 @@ import element.tree.propriedades.Cor;
 import element.tree.popup.Item;
 import element.tree.popup.Popup;
 import element.tree.objeto.modulo.Modulo;
-import element.tree.Tree;
+import element.tree.main.Tree;
 @SuppressWarnings("serial")
 public class CorPick extends Item{
 //MÓDULOS SELECIONADOS

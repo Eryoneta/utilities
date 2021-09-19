@@ -1,4 +1,4 @@
-package element.tree;
+package element.tree.main;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -26,6 +26,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+
+import element.tree.Chunk;
+import element.tree.SelecaoST;
 import element.tree.objeto.ListaObjeto;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
@@ -688,6 +691,7 @@ public class Actions{
 				if(cox.getPai()==Tree.getMestre())continue;
 				final Conexao newCox=new Conexao(cox.getSon(),cox.getPai());
 				newCox.setBorda(cox.getBorda());
+				newCox.setGrossura(cox.getGrossura());
 				newCox.setTexto(cox.getTexto());
 				final List<Nodulo>newNods=new ArrayList<>();
 				for(Nodulo nod:cox.getNodulos()){
@@ -768,7 +772,7 @@ public class Actions{
 			delUndoable(objs);
 		}
 	//SET
-		protected void setHover(Selecao.State state){
+		protected void setHover(SelecaoST.State state){
 			final Point mouse=getNonGridPosition(mouseMoved);
 			tree.unSelectAll();
 			tree.getUI().getPopup().close();
@@ -815,7 +819,7 @@ public class Actions{
 			}
 			tree.draw();
 		}
-		protected void setArea(Selecao.State state,boolean addTo,int...locations){
+		protected void setArea(SelecaoST.State state,boolean addTo,int...locations){
 			Rectangle allChunksIndexes=null;
 			Rectangle newChunksIndexes=null;
 			switch(locations.length){

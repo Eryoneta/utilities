@@ -2,7 +2,7 @@ package element.tree.popup;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JMenu;
-import element.tree.TreeUI;
+import element.tree.main.TreeUI;
 import element.tree.objeto.modulo.ModuloUI;
 @SuppressWarnings("serial")
 public class Menu extends JMenu{

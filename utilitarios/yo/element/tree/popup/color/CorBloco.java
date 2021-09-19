@@ -12,7 +12,7 @@ import java.awt.event.MouseMotionAdapter;
 import javax.swing.JColorChooser;
 import element.tree.propriedades.Cor;
 import element.tree.Cursor;
-import element.tree.TreeUI;
+import element.tree.main.TreeUI;
 import element.tree.objeto.modulo.Modulo;
 import element.tree.objeto.modulo.ModuloUI;
 import element.tree.popup.Bloco;

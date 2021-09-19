@@ -7,7 +7,7 @@ import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import element.tree.propriedades.Grossura;
-import element.tree.Tree;
+import element.tree.main.Tree;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.ObjetoBoundsListener;
 import element.tree.objeto.conexao.Conexao;

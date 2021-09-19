@@ -3,8 +3,8 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import element.tree.Tree;
-import element.tree.TreeUI;
+import element.tree.main.Tree;
+import element.tree.main.TreeUI;
 import element.tree.propriedades.Cor;
 import element.tree.propriedades.Icone;
 public class ModuloUI{

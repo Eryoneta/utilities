@@ -18,8 +18,8 @@ import element.tree.popup.icon.IconePick;
 import element.tree.propriedades.Borda;
 import element.tree.propriedades.Cor;
 import element.tree.propriedades.Icone;
-import element.tree.Tree;
-import element.tree.TreeUI;
+import element.tree.main.Tree;
+import element.tree.main.TreeUI;
 public class Modulo extends Objeto{
 //ST
 	private final ModuloST ST=new ModuloST(this);

@@ -1,5 +1,5 @@
 package element.tree.objeto.modulo;
-import element.tree.Tree;
+import element.tree.main.Tree;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.objeto.conexao.ConexaoST;
 public class ModuloST{

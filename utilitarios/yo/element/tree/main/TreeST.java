@@ -1,11 +1,13 @@
-package element.tree;
+package element.tree.main;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import element.tree.Cursor;
+import element.tree.CursorST;
+import element.tree.SelecaoST;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.objeto.conexao.ConexaoST;
@@ -32,6 +34,7 @@ public class TreeST{
 	public final static int RIGHT=3000;				//[0-9]000
 	public final static int DRAG_ALL=10000;			//[0-9]0000
 	public final static int AUTO_DRAG_ALL=20000;	//[0-9]0000
+//STATE
 	private int state=NORMAL;
 		public int getState(){return state;}
 //STATE
@@ -134,7 +137,7 @@ public class TreeST{
 		states.put(NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.NORMAL);
+					tree.getUI().getCursor().set(CursorST.NORMAL);
 				};
 			});
 			setMousePressedAction(new Action(){
@@ -193,19 +196,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE);
 					setState(TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE_SON);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE_SON);
 					setState(TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_DELETE);
+					tree.getActions().setHover(SelecaoST.State.TO_DELETE);
 					setState(TO_DELETE);
 				}
 			});
@@ -214,7 +217,7 @@ public class TreeST{
 		states.put(MIDDLE+WAITING1+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.SELECT);
 				};
 			});
 			setMouseReleasedAction(new Action(){
@@ -239,7 +242,7 @@ public class TreeST{
 		states.put(DRAG_ALL+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.SELECT);
 				};
 			});
 			setMouseReleasedAction(new Action(){
@@ -260,19 +263,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE);
 					setState(DRAG_ALL+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE_SON);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE_SON);
 					setState(DRAG_ALL+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_DELETE);
+					tree.getActions().setHover(SelecaoST.State.TO_DELETE);
 					setState(DRAG_ALL+TO_DELETE);
 				}
 			});
@@ -281,7 +284,7 @@ public class TreeST{
 		states.put(AUTO_DRAG_ALL+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.AUTODRAG);
+					tree.getUI().getCursor().set(CursorST.AUTODRAG);
 					tree.getActions().startAutoDrag();
 				};
 			});
@@ -298,19 +301,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE);
 					setState(TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE_SON);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE_SON);
 					setState(TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_DELETE);
+					tree.getActions().setHover(SelecaoST.State.TO_DELETE);
 					setState(TO_DELETE);
 				}
 			});
@@ -319,7 +322,7 @@ public class TreeST{
 		states.put(LEFT+WAITING1+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -383,12 +386,12 @@ public class TreeST{
 						setState(DRAG+NORMAL);
 					
 					}else if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_SELECT,true,
+						tree.getActions().setArea(SelecaoST.State.TO_SELECT,true,
 								tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						setState(SELECT_AREA+NORMAL);
 					}else if(Cursor.match(m,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_SELECT,false,
+						tree.getActions().setArea(SelecaoST.State.TO_SELECT,false,
 								tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						setState(SELECT_AREA+NORMAL);
@@ -400,7 +403,7 @@ public class TreeST{
 		states.put(DRAG_ALL+LEFT+WAITING1+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -456,7 +459,7 @@ public class TreeST{
 		states.put(SELECT_AREA+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.AREA_SELECT+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.AREA_SELECT+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -484,10 +487,10 @@ public class TreeST{
 				public void run(MouseEvent m){
 					final Point mouseDraggedAtual=tree.getActions().getGridPosition(m.getPoint());
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_SELECT,true,
+						tree.getActions().setArea(SelecaoST.State.TO_SELECT,true,
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 					}else if(Cursor.match(m,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_SELECT,false,
+						tree.getActions().setArea(SelecaoST.State.TO_SELECT,false,
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 					}
 				}
@@ -496,26 +499,26 @@ public class TreeST{
 				public void run(KeyEvent k){
 					switch(k.getKeyCode()){
 						case KeyEvent.VK_CONTROL:
-							tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+							tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 						break;
 					}
 				}
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 					setState(SELECT_AREA+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
 					setState(SELECT_AREA+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 					setState(SELECT_AREA+TO_DELETE);
 				}
 			});
@@ -524,7 +527,7 @@ public class TreeST{
 		states.put(DRAG_ALL+SELECT_AREA+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.AREA_SELECT+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.AREA_SELECT+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -551,26 +554,26 @@ public class TreeST{
 				public void run(KeyEvent k){
 					switch(k.getKeyCode()){
 						case KeyEvent.VK_CONTROL:
-							tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+							tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 						break;
 					}
 				}
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_DELETE);
 				}
 			});
@@ -579,7 +582,7 @@ public class TreeST{
 		states.put(LEFT+WAITING2+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -625,7 +628,7 @@ public class TreeST{
 				public void run(MouseEvent m){
 					final Point mouseDraggedAtual=tree.getActions().getGridPosition(m.getPoint());
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_SELECT,true,
+						tree.getActions().setArea(SelecaoST.State.TO_SELECT,true,
 								tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						setState(SELECT_AREA+NORMAL);
@@ -654,7 +657,7 @@ public class TreeST{
 		states.put(DRAG_ALL+LEFT+WAITING2+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -724,7 +727,7 @@ public class TreeST{
 		states.put(DRAG+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -772,7 +775,7 @@ public class TreeST{
 		states.put(DRAG_ALL+DRAG+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -802,7 +805,7 @@ public class TreeST{
 		states.put(MOVE+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.MOVE+Cursor.NORMAL);
+					tree.getUI().getCursor().set(CursorST.MOVE+CursorST.NORMAL);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -839,7 +842,7 @@ public class TreeST{
 		states.put(DRAG_ALL+MOVE+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -878,13 +881,13 @@ public class TreeST{
 	states.put(EDIT_TITLE,new State(){{
 		setAction(new Action(){
 			public void run(){
-				tree.getUI().getCursor().set(Cursor.EDIT_TITLE+Cursor.NORMAL);
+				tree.getUI().getCursor().set(CursorST.EDIT_TITLE+CursorST.NORMAL);
 			}
 		});
 		setMousePressedAction(new Action(){
 			public void run(MouseEvent m){
 				if(Cursor.match(m,Cursor.LEFT)){
-					tree.getUI().getCursor().set(Cursor.EDIT_TITLE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.EDIT_TITLE+CursorST.SELECT);
 				}else if(Cursor.match(m,Cursor.MIDDLE)){
 					setState(DRAG_ALL+EDIT_TITLE);
 				}else if(Cursor.match(m,Cursor.RIGHT)){
@@ -908,13 +911,13 @@ public class TreeST{
 				final Point mouseDraggedAtual=tree.getActions().getGridPosition(m.getPoint());
 				if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
 					tree.getUI().setTitulo(null);
-					tree.getActions().setArea(Selecao.State.TO_SELECT,true,
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,true,
 							tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 							mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 					setState(SELECT_AREA+NORMAL);
 				}else if(Cursor.match(m,Cursor.LEFT)){
 					tree.getUI().setTitulo(null);
-					tree.getActions().setArea(Selecao.State.TO_SELECT,false,
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,false,
 							tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 							mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 					setState(SELECT_AREA+NORMAL);
@@ -936,7 +939,7 @@ public class TreeST{
 	states.put(DRAG_ALL+EDIT_TITLE,new State(){{
 		setAction(new Action(){
 			public void run(){
-				tree.getUI().getCursor().set(Cursor.DRAG+Cursor.EDIT_TITLE+Cursor.SELECT);
+				tree.getUI().getCursor().set(CursorST.DRAG+CursorST.EDIT_TITLE+CursorST.SELECT);
 			}
 		});
 		setMousePressedAction(new Action(){
@@ -987,7 +990,7 @@ public class TreeST{
 		states.put(RIGHT+WAITING1+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -1042,7 +1045,7 @@ public class TreeST{
 		states.put(DRAG_ALL+RIGHT+NORMAL,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -1066,7 +1069,7 @@ public class TreeST{
 		states.put(TO_CREATE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.CREATE+Cursor.NORMAL);
+					tree.getUI().getCursor().set(CursorST.CREATE+CursorST.NORMAL);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -1114,19 +1117,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_UNSELECT);
+					tree.getActions().setHover(SelecaoST.State.TO_UNSELECT);
 					setState(NORMAL);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE_SON);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE_SON);
 					setState(TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_DELETE);
+					tree.getActions().setHover(SelecaoST.State.TO_DELETE);
 					setState(TO_DELETE);
 				}
 			});
@@ -1135,7 +1138,7 @@ public class TreeST{
 		states.put(DRAG_ALL+TO_CREATE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.CREATE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.CREATE+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -1156,19 +1159,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_UNSELECT);
+					tree.getActions().setHover(SelecaoST.State.TO_UNSELECT);
 					setState(DRAG_ALL+NORMAL);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE_SON);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE_SON);
 					setState(DRAG_ALL+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_DELETE);
+					tree.getActions().setHover(SelecaoST.State.TO_DELETE);
 					setState(DRAG_ALL+TO_DELETE);
 				}
 			});
@@ -1178,9 +1181,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(getModulo()!=null){
-						tree.getUI().getCursor().set(Cursor.MOVE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.MOVE+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.CREATE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.CREATE+CursorST.SELECT);
 					}
 				}
 			});
@@ -1220,12 +1223,12 @@ public class TreeST{
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
 						if(getModulo()!=null){
 							getModulo().setLocationIndex(mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
-							tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,true,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 							setState(SELECT_AREA+TO_CREATE,getModulo());
 						}else{
-							tree.getActions().setArea(Selecao.State.TO_CREATE,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE,true,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 							setState(SELECT_AREA+TO_CREATE);
@@ -1233,12 +1236,12 @@ public class TreeST{
 					}else if(Cursor.match(m,Cursor.LEFT)){
 						if(getModulo()!=null){
 							tree.getActions().addAndSelect(getModulo());
-							tree.getActions().setArea(Selecao.State.TO_SELECT,false,
+							tree.getActions().setArea(SelecaoST.State.TO_SELECT,false,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 							setState(SELECT_AREA+NORMAL);
 						}else{
-							tree.getActions().setArea(Selecao.State.TO_CREATE,false,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE,false,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 							setState(SELECT_AREA+TO_CREATE);
@@ -1252,9 +1255,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(getModulo()!=null){
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.CREATE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.CREATE+CursorST.SELECT);
 					}
 				}
 			});
@@ -1295,9 +1298,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(getModulo()!=null){
-						tree.getUI().getCursor().set(Cursor.AREA_PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.AREA_PAI+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.AREA_CREATE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.AREA_CREATE+CursorST.SELECT);
 					}
 				}
 			});
@@ -1336,7 +1339,7 @@ public class TreeST{
 						tree.getUI().getSelecao().setEmpty();
 						if(getModulo()!=null){
 							tree.getActions().addAndSelect(getModulo());
-							tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+							tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 							tree.getUI().getSelecao().setEmpty();
 							tree.draw();
 							setState(NORMAL);
@@ -1360,20 +1363,20 @@ public class TreeST{
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
 						if(getModulo()!=null){
 							getModulo().setLocationIndex(mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
-							tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,true,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}else{
-							tree.getActions().setArea(Selecao.State.TO_CREATE,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE,true,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}
 					}else if(Cursor.match(m,Cursor.LEFT)){
 						if(getModulo()!=null){
 							tree.getActions().addAndSelect(getModulo());
-							tree.getActions().setArea(Selecao.State.TO_SELECT,false,
+							tree.getActions().setArea(SelecaoST.State.TO_SELECT,false,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 							setState(SELECT_AREA+NORMAL);
 						}else{
-							tree.getActions().setArea(Selecao.State.TO_CREATE,false,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE,false,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}
 					}
@@ -1385,10 +1388,10 @@ public class TreeST{
 						case KeyEvent.VK_CONTROL:
 							if(getModulo()!=null){
 								tree.getActions().addAndSelect(getModulo());
-								tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+								tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 								setState(SELECT_AREA+NORMAL);
 							}else{
-								tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+								tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 							}
 						break;
 					}
@@ -1397,21 +1400,21 @@ public class TreeST{
 			setCreateAction(new Action(){
 				public void run(){
 					tree.getActions().addAndSelect(getModulo());
-					tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 					setState(SELECT_AREA+NORMAL);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
 					tree.getActions().addAndSelect(getModulo());
-					tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
 					setState(SELECT_AREA+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
 					tree.getActions().addAndSelect(getModulo());
-					tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 					setState(SELECT_AREA+TO_DELETE);
 				}
 			});
@@ -1421,9 +1424,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(getModulo()!=null){
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.AREA_PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.AREA_PAI+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.AREA_CREATE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.AREA_CREATE+CursorST.SELECT);
 					}
 				}
 			});
@@ -1451,7 +1454,7 @@ public class TreeST{
 						tree.getUI().getSelecao().setEmpty();
 						if(getModulo()!=null){
 							tree.getActions().addAndSelect(getModulo());
-							tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 							tree.getUI().getSelecao().setEmpty();
 							tree.draw();
 							setState(DRAG_ALL+NORMAL);
@@ -1486,10 +1489,10 @@ public class TreeST{
 						case KeyEvent.VK_CONTROL:
 							if(getModulo()!=null){
 								tree.getActions().addAndSelect(getModulo());
-								tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+								tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 								setState(DRAG_ALL+SELECT_AREA+NORMAL);
 							}else{
-								tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+								tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 							}
 						break;
 					}
@@ -1498,21 +1501,21 @@ public class TreeST{
 			setCreateAction(new Action(){
 				public void run(){
 					tree.getActions().addAndSelect(getModulo());
-					tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 					setState(DRAG_ALL+SELECT_AREA+NORMAL);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
 					tree.getActions().addAndSelect(getModulo());
-					tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
 					tree.getActions().addAndSelect(getModulo());
-					tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_DELETE);
 				}
 			});
@@ -1522,9 +1525,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(getModulo()!=null){
-						tree.getUI().getCursor().set(Cursor.MOVE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.MOVE+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.CREATE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.CREATE+CursorST.SELECT);
 					}
 				}
 			});
@@ -1603,9 +1606,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(getModulo()!=null){
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.CREATE+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.CREATE+CursorST.SELECT);
 					}
 				}
 			});
@@ -1661,7 +1664,7 @@ public class TreeST{
 		states.put(DRAG+TO_CREATE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -1718,7 +1721,7 @@ public class TreeST{
 		states.put(DRAG_ALL+DRAG+TO_CREATE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -1758,7 +1761,7 @@ public class TreeST{
 			{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.MOVE+Cursor.NORMAL);
+					tree.getUI().getCursor().set(CursorST.MOVE+CursorST.NORMAL);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -1813,7 +1816,7 @@ public class TreeST{
 					final Point mouseDraggedAtual=tree.getActions().getGridPosition(m.getPoint());
 					if(Cursor.match(m,Cursor.LEFT)){
 						tree.getActions().addAndSelect(getModulo());
-						tree.getActions().setArea(Selecao.State.TO_SELECT,false,
+						tree.getActions().setArea(SelecaoST.State.TO_SELECT,false,
 								tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						setState(SELECT_AREA+NORMAL);
@@ -1831,7 +1834,7 @@ public class TreeST{
 								tree.selectToBePai(modHover);
 								tree.draw();
 							}
-							tree.getUI().getCursor().set(Cursor.PAI+Cursor.NORMAL);
+							tree.getUI().getCursor().set(CursorST.PAI+CursorST.NORMAL);
 						break;
 					}
 				}
@@ -1843,7 +1846,7 @@ public class TreeST{
 							lock=false;
 							tree.unSelectAllMods();
 							tree.draw();
-							tree.getUI().getCursor().set(Cursor.MOVE+Cursor.NORMAL);
+							tree.getUI().getCursor().set(CursorST.MOVE+CursorST.NORMAL);
 						break;
 					}
 				}
@@ -1855,7 +1858,7 @@ public class TreeST{
 			{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -1890,7 +1893,7 @@ public class TreeST{
 								tree.selectToBePai(modHover);
 								tree.draw();
 							}
-							tree.getUI().getCursor().set(Cursor.DRAG+Cursor.PAI+Cursor.NORMAL);
+							tree.getUI().getCursor().set(CursorST.DRAG+CursorST.PAI+CursorST.NORMAL);
 						break;
 					}
 				}
@@ -1902,7 +1905,7 @@ public class TreeST{
 							lock=false;
 							tree.unSelectAllMods();
 							tree.draw();
-							tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.NORMAL);
+							tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.NORMAL);
 						break;
 					}
 				}
@@ -1912,7 +1915,7 @@ public class TreeST{
 		states.put(TO_CONNECT,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.SON+Cursor.NORMAL);
+					tree.getUI().getCursor().set(CursorST.SON+CursorST.NORMAL);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -1946,19 +1949,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE);
 					setState(TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_UNSELECT);
+					tree.getActions().setHover(SelecaoST.State.TO_UNSELECT);
 					setState(NORMAL);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_DELETE);
+					tree.getActions().setHover(SelecaoST.State.TO_DELETE);
 					setState(TO_DELETE);
 				}
 			});
@@ -1967,7 +1970,7 @@ public class TreeST{
 		states.put(DRAG_ALL+TO_CONNECT,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.SON+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.SON+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -1988,19 +1991,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE);
 					setState(DRAG_ALL+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_UNSELECT);
+					tree.getActions().setHover(SelecaoST.State.TO_UNSELECT);
 					setState(DRAG_ALL+NORMAL);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_DELETE);
+					tree.getActions().setHover(SelecaoST.State.TO_DELETE);
 					setState(DRAG_ALL+TO_DELETE);
 				}
 			});
@@ -2010,9 +2013,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(Tree.getGhost().getConexoes().isEmpty()){
-						tree.getUI().getCursor().set(Cursor.SON+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.SON+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.PAI+CursorST.SELECT);
 					}
 				}
 			});
@@ -2049,11 +2052,11 @@ public class TreeST{
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
 						Tree.getGhost().setLocationIndex(mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						if(Tree.getGhost().getConexoes().isEmpty()){
-							tree.getActions().setArea(Selecao.State.TO_CREATE_SON,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,true,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}else{
-							tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,true,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}
@@ -2062,11 +2065,11 @@ public class TreeST{
 					}else if(Cursor.match(m,Cursor.LEFT)){
 						Tree.getGhost().setLocationIndex(mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						if(Tree.getGhost().getConexoes().isEmpty()){
-							tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}else{
-							tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,false,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,false,
 									tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}
@@ -2081,9 +2084,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(Tree.getGhost().getConexoes().isEmpty()){
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.SON+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.SON+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.PAI+CursorST.SELECT);
 					}
 				}
 			});
@@ -2119,9 +2122,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(Tree.getGhost().getConexoes().isEmpty()){
-						tree.getUI().getCursor().set(Cursor.AREA_SON+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.AREA_SON+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.AREA_PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.AREA_PAI+CursorST.SELECT);
 					}
 				}
 			});
@@ -2182,20 +2185,20 @@ public class TreeST{
 					final Point mouseDraggedAtual=tree.getActions().getGridPosition(m.getPoint());
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
 						if(Tree.getGhost().getConexoes().isEmpty()){
-							tree.getActions().setArea(Selecao.State.TO_CREATE_SON,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,true,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}else{
 							Tree.getGhost().setLocationIndex(mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
-							tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,true,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,true,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}
 					}else if(Cursor.match(m,Cursor.LEFT)){
 						if(Tree.getGhost().getConexoes().isEmpty()){
-							tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}else{
 							Tree.getGhost().setLocationIndex(mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
-							tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,false,
+							tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,false,
 									mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						}
 					}
@@ -2206,8 +2209,8 @@ public class TreeST{
 					switch(k.getKeyCode()){
 						case KeyEvent.VK_CONTROL:
 							if(Tree.getGhost().getConexoes().isEmpty()){
-								tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
-							}else tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,false);
+								tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
+							}else tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,false);
 						break;
 					}
 				}
@@ -2215,21 +2218,21 @@ public class TreeST{
 			setCreateAction(new Action(){
 				public void run(){
 					tree.getActions().deleteGhostCoxs();
-					tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 					setState(SELECT_AREA+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
 					tree.getActions().deleteGhostCoxs();
-					tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 					setState(SELECT_AREA+NORMAL);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
 					tree.getActions().deleteGhostCoxs();
-					tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 					setState(SELECT_AREA+TO_DELETE);
 				}
 			});
@@ -2239,9 +2242,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(Tree.getGhost().getConexoes().isEmpty()){
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.AREA_SON+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.AREA_SON+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.AREA_PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.AREA_PAI+CursorST.SELECT);
 					}
 				}
 			});
@@ -2300,8 +2303,8 @@ public class TreeST{
 					switch(k.getKeyCode()){
 						case KeyEvent.VK_CONTROL:
 							if(Tree.getGhost().getConexoes().isEmpty()){
-								tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
-							}else tree.getActions().setArea(Selecao.State.TO_CREATE_PAI,false);
+								tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
+							}else tree.getActions().setArea(SelecaoST.State.TO_CREATE_PAI,false);
 						break;
 					}
 				}
@@ -2309,21 +2312,21 @@ public class TreeST{
 			setCreateAction(new Action(){
 				public void run(){
 					tree.getActions().deleteGhostCoxs();
-					tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
 					tree.getActions().deleteGhostCoxs();
-					tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 					setState(DRAG_ALL+SELECT_AREA+NORMAL);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
 					tree.getActions().deleteGhostCoxs();
-					tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_DELETE);
 				}
 			});
@@ -2333,9 +2336,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(Tree.getGhost().getConexoes().isEmpty()){
-						tree.getUI().getCursor().set(Cursor.SON+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.SON+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.PAI+CursorST.SELECT);
 					}
 				}
 			});
@@ -2390,9 +2393,9 @@ public class TreeST{
 			setAction(new Action(){
 				public void run(){
 					if(Tree.getGhost().getConexoes().isEmpty()){
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.SON+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.SON+CursorST.SELECT);
 					}else{
-						tree.getUI().getCursor().set(Cursor.DRAG+Cursor.PAI+Cursor.SELECT);
+						tree.getUI().getCursor().set(CursorST.DRAG+CursorST.PAI+CursorST.SELECT);
 					}
 				}
 			});
@@ -2435,7 +2438,7 @@ public class TreeST{
 		states.put(DRAG+TO_CONNECT,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -2490,7 +2493,7 @@ public class TreeST{
 		states.put(DRAG_ALL+DRAG+TO_CONNECT,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.MOVE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.MOVE+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -2530,7 +2533,7 @@ public class TreeST{
 		states.put(MOVE+TO_CONNECT,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.PAI+Cursor.NORMAL);
+					tree.getUI().getCursor().set(CursorST.PAI+CursorST.NORMAL);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -2571,7 +2574,7 @@ public class TreeST{
 		states.put(DRAG_ALL+MOVE+TO_CONNECT,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.PAI+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.PAI+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -2595,7 +2598,7 @@ public class TreeST{
 		states.put(TO_DELETE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DELETE+Cursor.NORMAL);
+					tree.getUI().getCursor().set(CursorST.DELETE+CursorST.NORMAL);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -2634,19 +2637,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE);
 					setState(TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE_SON);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE_SON);
 					setState(TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_UNSELECT);
+					tree.getActions().setHover(SelecaoST.State.TO_UNSELECT);
 					setState(NORMAL);
 				}
 			});
@@ -2655,7 +2658,7 @@ public class TreeST{
 		states.put(DRAG_ALL+TO_DELETE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.DELETE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.DELETE+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -2683,19 +2686,19 @@ public class TreeST{
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE);
 					setState(DRAG_ALL+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_CREATE_SON);
+					tree.getActions().setHover(SelecaoST.State.TO_CREATE_SON);
 					setState(DRAG_ALL+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setHover(Selecao.State.TO_UNSELECT);
+					tree.getActions().setHover(SelecaoST.State.TO_UNSELECT);
 					setState(DRAG_ALL+NORMAL);
 				}
 			});
@@ -2704,7 +2707,7 @@ public class TreeST{
 		states.put(WAITING1+TO_DELETE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DELETE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DELETE+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -2747,12 +2750,12 @@ public class TreeST{
 				public void run(MouseEvent m){
 					final Point mouseDraggedAtual=tree.getActions().getGridPosition(m.getPoint());
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_DELETE,true,
+						tree.getActions().setArea(SelecaoST.State.TO_DELETE,true,
 								tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						setState(SELECT_AREA+TO_DELETE);
 					}else if(Cursor.match(m,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_DELETE,false,
+						tree.getActions().setArea(SelecaoST.State.TO_DELETE,false,
 								tree.getActions().mouseDragged.x-Tree.getLocalX(),tree.getActions().mouseDragged.y-Tree.getLocalY(),
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						setState(SELECT_AREA+TO_DELETE);
@@ -2764,7 +2767,7 @@ public class TreeST{
 		states.put(DRAG_ALL+WAITING1+TO_DELETE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.DELETE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.DELETE+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -2808,7 +2811,7 @@ public class TreeST{
 		states.put(SELECT_AREA+TO_DELETE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.AREA_DELETE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.AREA_DELETE+CursorST.SELECT);
 				}
 			});
 			setMousePressedAction(new Action(){
@@ -2842,11 +2845,11 @@ public class TreeST{
 				public void run(MouseEvent m){
 					final Point mouseDraggedAtual=tree.getActions().getGridPosition(m.getPoint());
 					if(Cursor.match(m,Cursor.CTRL,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_DELETE,true,
+						tree.getActions().setArea(SelecaoST.State.TO_DELETE,true,
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 						tree.draw();
 					}else if(Cursor.match(m,Cursor.LEFT)){
-						tree.getActions().setArea(Selecao.State.TO_DELETE,false,
+						tree.getActions().setArea(SelecaoST.State.TO_DELETE,false,
 								mouseDraggedAtual.x-Tree.getLocalX(),mouseDraggedAtual.y-Tree.getLocalY());
 					}
 				}
@@ -2855,26 +2858,26 @@ public class TreeST{
 				public void run(KeyEvent k){
 					switch(k.getKeyCode()){
 						case KeyEvent.VK_CONTROL:
-							tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+							tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 						break;
 					}
 				}
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 					setState(SELECT_AREA+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
 					setState(SELECT_AREA+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 					setState(SELECT_AREA+NORMAL);
 				}
 			});
@@ -2883,7 +2886,7 @@ public class TreeST{
 		states.put(DRAG_ALL+SELECT_AREA+TO_DELETE,new State(){{
 			setAction(new Action(){
 				public void run(){
-					tree.getUI().getCursor().set(Cursor.DRAG+Cursor.AREA_DELETE+Cursor.SELECT);
+					tree.getUI().getCursor().set(CursorST.DRAG+CursorST.AREA_DELETE+CursorST.SELECT);
 				}
 			});
 			setMouseReleasedAction(new Action(){
@@ -2916,26 +2919,26 @@ public class TreeST{
 				public void run(KeyEvent k){
 					switch(k.getKeyCode()){
 						case KeyEvent.VK_CONTROL:
-							tree.getActions().setArea(Selecao.State.TO_DELETE,false);
+							tree.getActions().setArea(SelecaoST.State.TO_DELETE,false);
 						break;
 					}
 				}
 			});
 			setCreateAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_CREATE);
 				}
 			});
 			setConnectAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_CREATE_SON,false);
+					tree.getActions().setArea(SelecaoST.State.TO_CREATE_SON,false);
 					setState(DRAG_ALL+SELECT_AREA+TO_CONNECT);
 				}
 			});
 			setDeleteAction(new Action(){
 				public void run(){
-					tree.getActions().setArea(Selecao.State.TO_SELECT,false);
+					tree.getActions().setArea(SelecaoST.State.TO_SELECT,false);
 					setState(DRAG_ALL+SELECT_AREA+NORMAL);
 				}
 			});

@@ -12,7 +12,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import element.tree.propriedades.Borda;
 import element.tree.propriedades.Grossura;
-import element.tree.Tree;
+import element.tree.main.Tree;
 import element.tree.objeto.Objeto;
 import element.tree.objeto.ObjetoBoundsListener;
 import element.tree.objeto.nodulo.Nodulo;
@@ -103,14 +103,10 @@ public class Conexao extends Objeto{
 //MÓDULOS
 	private Modulo pai;
 		public Modulo getPai(){return pai;}
-		public void setPai(Modulo mod){
-			pai=mod;
-		}
+		public void setPai(Modulo mod){pai=mod;}
 	private Modulo son;
 		public Modulo getSon(){return son;}
-		public void setSon(Modulo mod){
-			son=mod;
-		}
+		public void setSon(Modulo mod){son=mod;}
 //NÓDULOS
 	private List<Nodulo>nodulos=new ArrayList<Nodulo>();
 		public List<Nodulo>getNodulos(){return nodulos;}

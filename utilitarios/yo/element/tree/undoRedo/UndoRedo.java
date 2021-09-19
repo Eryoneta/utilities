@@ -11,7 +11,7 @@ import element.tree.objeto.nodulo.Nodulo;
 import element.tree.objeto.modulo.Modulo;
 import element.tree.propriedades.Borda;
 import element.tree.propriedades.Grossura;
-import element.tree.Tree;
+import element.tree.main.Tree;
 import element.tree.propriedades.Cor;
 import element.tree.propriedades.Icone;
 public class UndoRedo{

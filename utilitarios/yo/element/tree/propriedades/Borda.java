@@ -1,6 +1,6 @@
 package element.tree.propriedades;
 import java.awt.BasicStroke;
-import element.tree.TreeUI;
+import element.tree.main.TreeUI;
 public class Borda{
 //BORDAS
 	public static final int SOLID=0;

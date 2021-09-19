@@ -1,5 +1,5 @@
 package element.tree.propriedades;
-import element.tree.TreeUI;
+import element.tree.main.TreeUI;
 public class Grossura{
 //GROSSURAS
 	public static final int MEDIUM=0;
