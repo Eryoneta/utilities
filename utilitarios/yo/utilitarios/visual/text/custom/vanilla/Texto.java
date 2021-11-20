@@ -1,4 +1,4 @@
-package utilitarios.visual;
+package utilitarios.visual.text.custom.vanilla;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;

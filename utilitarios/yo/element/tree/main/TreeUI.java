@@ -2,7 +2,6 @@ package element.tree.main;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -16,7 +15,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -24,7 +22,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
-
 import element.tree.Chunk;
 import element.tree.Cursor;
 import element.tree.Selecao;
@@ -40,6 +37,7 @@ import element.tree.propriedades.Cor;
 import element.tree.propriedades.Icone;
 import element.tree.texto.ObjetoSetListener;
 import element.tree.texto.Texto;
+import element.tree.texto.Titulo;
 import utilitarios.ferramenta.language.LanguagePackage;
 @SuppressWarnings("serial")
 public class TreeUI{
@@ -91,97 +89,74 @@ public class TreeUI{
 	private Cursor cursor;
 		public Cursor getCursor(){return cursor;}
 //TITULO
-	private Texto titulo;
-		public Texto getTitulo(){return titulo;}
+	private Titulo titulo;
+		public Titulo getTitulo(){return titulo;}
 		public void buildTitulo(){
-			titulo=new Texto(){
-				{
-					setOpaque(false);
-					setEnabled(true);
-					setFont(TreeUI.Fonte.FONTE);
-					setForeground(Cor.BLACK);
-					setLineWrappable(false);
-					final SimpleAttributeSet center=new SimpleAttributeSet();
-					StyleConstants.setAlignment(center,StyleConstants.ALIGN_CENTER);
-					getStyledDocument().setParagraphAttributes(0,getStyledDocument().getLength(),center,false);
-					addEditorListener(new DocumentListener(){
-						public void removeUpdate(DocumentEvent d){run();}
-						public void insertUpdate(DocumentEvent d){run();}
-						public void changedUpdate(DocumentEvent d){}
-						private void run(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
-							if(titulo.getObjeto()==null)return;
-							if(!titulo.getObjeto().getTipo().is(Objeto.Tipo.MODULO))return;
-							final Modulo mod=(Modulo)titulo.getObjeto();
-							mod.setTitle(getText());
-							final int iconSize=(mod.isIconified()?Icone.getSize(Tree.UNIT):0);
-							titulo.setBounds(mod.getX(Tree.UNIT),mod.getY(Tree.UNIT)+iconSize,mod.getWidth(Tree.UNIT),mod.getHeight(Tree.UNIT)-iconSize);
+			titulo=new Titulo(tree){{
+				setOpaque(false);
+				setEnabled(true);
+				setFont(TreeUI.Fonte.FONTE);
+				setForeground(Cor.BLACK);
+				setLineWrappable(false);
+				final SimpleAttributeSet center=new SimpleAttributeSet();
+				StyleConstants.setAlignment(center,StyleConstants.ALIGN_CENTER);
+				getStyledDocument().setParagraphAttributes(0,getStyledDocument().getLength(),center,false);
+				getDocument().addDocumentListener(new DocumentListener(){
+				@Override public void removeUpdate(DocumentEvent d){updateObjTitle();}
+				@Override public void insertUpdate(DocumentEvent d){updateObjTitle();}
+				@Override public void changedUpdate(DocumentEvent d){updateObjTitle();}
+					private void updateObjTitle(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
+						if(titulo==null)return;
+						if(titulo.getObjeto()==null)return;
+						if(!titulo.getObjeto().getTipo().is(Objeto.Tipo.MODULO))return;
+						final Modulo mod=(Modulo)titulo.getObjeto();
+						mod.setTitle(getText());
+						final int iconSize=(mod.isIconified()?Icone.getSize(Tree.UNIT):0);
+						titulo.setBounds(mod.getX(Tree.UNIT),mod.getY(Tree.UNIT)+iconSize,mod.getWidth(Tree.UNIT),mod.getHeight(Tree.UNIT)-iconSize);
 //									titulo.setFont(mod.getRelativeFont(Tree.UNIT));	//CAUSA ERRO
-							tree.draw();
-							final JFrame janela=(JFrame)tree.getPainel().getJanela();
-							if(!janela.getTitle().startsWith("*")){
-								janela.setTitle("*"+janela.getTitle());
+						tree.draw();
+						final JFrame janela=(JFrame)tree.getPainel().getJanela();
+						if(!janela.getTitle().startsWith("*")){
+							janela.setTitle("*"+janela.getTitle());
+						}
+					}
+				});
+				addKeyListener(new KeyAdapter(){
+				@Override public void keyPressed(KeyEvent k){
+						updateTituloFont();
+					}
+				});
+				addObjetoSetListener(new ObjetoSetListener(){
+					private Modulo mod=null;
+					private String tituloTexto=null;
+				@Override public void objetoModified(Objeto oldObj,Objeto newObj){
+						if(oldObj!=null&&!oldObj.getTipo().is(Objeto.Tipo.MODULO))return;
+						if(newObj!=null&&!newObj.getTipo().is(Objeto.Tipo.MODULO))return;
+						if(oldObj==newObj)return;
+						if(mod!=null&&tituloTexto!=null){
+							if(getUndoManager().canUndo()){
+								tree.getUndoRedoManager().addUndoTitulo(mod,tituloTexto);
 							}
 						}
-					});
-					addKeyListener(new KeyAdapter(){
-						public void keyPressed(KeyEvent k){
-							updateTituloFont();
+						final Modulo mod=(Modulo)newObj;
+						if(mod==null){
+							this.mod=null;
+							tituloTexto=null;
+						}else{
+							this.mod=mod;
+							tituloTexto=mod.getTitle();
 						}
-					});
-					addObjetoSetListener(new ObjetoSetListener(){
-						private Modulo mod=null;
-						private String tituloTexto=null;
-						public void objetoModified(Objeto oldObj,Objeto newObj){
-							if(oldObj!=null&&!oldObj.getTipo().is(Objeto.Tipo.MODULO))return;
-							if(newObj!=null&&!newObj.getTipo().is(Objeto.Tipo.MODULO))return;
-							if(oldObj==newObj)return;
-							if(mod!=null&&tituloTexto!=null){
-								if(getUndoManager().canUndo()){
-									tree.getUndoRedoManager().addUndoTitulo(mod,tituloTexto);
-								}
-							}
-							final Modulo mod=(Modulo)newObj;
-							if(mod==null){
-								this.mod=null;
-								tituloTexto=null;
-							}else{
-								this.mod=mod;
-								tituloTexto=mod.getTitle();
-							}
+					}
+				});
+				addKeyListener(new KeyAdapter(){
+				@Override public void keyPressed(KeyEvent k){
+						switch(k.getKeyCode()){
+							case KeyEvent.VK_TAB:		k.consume();	break;
 						}
-					});
-					addKeyListener(new KeyAdapter(){
-						public void keyPressed(KeyEvent k){
-							switch(k.getKeyCode()){
-								case KeyEvent.VK_TAB:		k.consume();	break;
-							}
-						}
-					});
-					setVisible(false);
-				}
-				protected void paintComponent(Graphics imagemEdit){
-					config(imagemEdit);
-					imagemEdit.setColor(getBackground());
-					final int round=ModuloUI.getRoundValue(Tree.UNIT);
-					imagemEdit.fillRoundRect(0,0,getWidth(),getHeight(),round,round);
-					super.paintComponent(imagemEdit);
-				}
-				protected void paintBorder(Graphics imagemEdit){
-					config(imagemEdit);
-					if(getObjeto()!=null){
-						final Modulo mod=(Modulo)getObjeto();
-						imagemEdit.setColor(Cor.getInverted(mod.getCor()));
-						((Graphics2D)imagemEdit).setStroke(mod.getBorda().getVisual(TreeUI.getBordaValue(Tree.UNIT)));
-					}else imagemEdit.setColor(getForeground());
-					final int round=ModuloUI.getRoundValue(Tree.UNIT);
-					imagemEdit.drawRoundRect(0,0,getWidth(),getHeight(),round,round);
-				}
-				private void config(Graphics imagemEdit){
-					final boolean antialias=(tree.isAntialias()&&(tree.getObjetos().getAll().size()<tree.getObjetosLimite()));
-					((Graphics2D)imagemEdit).setRenderingHint(RenderingHints.KEY_ANTIALIASING,(antialias?RenderingHints.VALUE_ANTIALIAS_ON:RenderingHints.VALUE_ANTIALIAS_OFF));
-					((Graphics2D)imagemEdit).setStroke(new BasicStroke(TreeUI.getBordaValue(Tree.UNIT)));
-				}
-			};
+					}
+				});
+				setVisible(false);
+			}};
 		}
 		public void setTitulo(Modulo mod){
 			final int borda=(int)(TreeUI.getBordaValue(Tree.UNIT));
@@ -228,11 +203,13 @@ public class TreeUI{
 				setEnabled(false);
 				setFont(TreeUI.Fonte.FONTE);
 				setLineWrappable(true);
-				addEditorListener(new DocumentListener(){
-					public void removeUpdate(DocumentEvent d){run();}
-					public void insertUpdate(DocumentEvent d){run();}
-					public void changedUpdate(DocumentEvent d){}
-					private void run(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
+				getDocument().addDocumentListener(new DocumentListener(){
+				@Override public void removeUpdate(DocumentEvent d){updateObjText();}
+				@Override public void insertUpdate(DocumentEvent d){updateObjText();}
+				@Override public void changedUpdate(DocumentEvent d){updateObjText();}
+					private void updateObjText(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
+						if(texto==null)return;
+						if(texto.isEditing())return;
 						if(texto.getObjeto()==null)return;
 						if(!texto.getObjeto().getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
 						if(texto.getObjeto().getTipo().is(Objeto.Tipo.MODULO)){
@@ -251,7 +228,7 @@ public class TreeUI{
 				addObjetoSetListener(new ObjetoSetListener(){
 					private Objeto obj=null;
 					private List<String>textoTexto=null;
-					public void objetoModified(Objeto oldObj,Objeto newObj){
+				@Override public void objetoModified(Objeto oldObj,Objeto newObj){
 						if(oldObj!=null&&!oldObj.getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
 						if(newObj!=null&&!newObj.getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
 						if(oldObj==newObj)return;
