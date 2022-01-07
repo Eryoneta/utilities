@@ -27,16 +27,12 @@ public class MindMarkEditor extends SimpleEditor{
 		editorTexto.getDocument().addDocumentListener(new DocumentListener(){
 		@Override public void removeUpdate(DocumentEvent d){update();}
 		@Override public void insertUpdate(DocumentEvent d){update();}
-		@Override public void changedUpdate(DocumentEvent d){update();}
-			private boolean updating=false;
+		@Override public void changedUpdate(DocumentEvent d){}
 			private void update(){
-				if(updating)return;
-				updating=true;
 				SwingUtilities.invokeLater(new Runnable(){
 				@Override
 					public void run(){
 						updateMarkdown();
-						updating=false;
 					}
 				});
 			}
@@ -56,6 +52,6 @@ public class MindMarkEditor extends SimpleEditor{
 
 		undoRedo.setDisabled(false);
 		
-		System.out.println(editorTexto.getText());
+//		System.out.println(editorTexto.getText());
 	}
 }

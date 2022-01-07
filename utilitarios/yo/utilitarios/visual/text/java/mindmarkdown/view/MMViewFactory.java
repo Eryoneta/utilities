@@ -6,11 +6,7 @@ import javax.swing.text.Element;
 import javax.swing.text.IconView;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.View;
-import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkEditor;
-import utilitarios.visual.text.java.mindmarkdown.view.table.MMCellView;
-import utilitarios.visual.text.java.mindmarkdown.view.table.MMRowView;
-import utilitarios.visual.text.java.mindmarkdown.view.table.MMTableView;
 import utilitarios.visual.text.java.view.SimpleLabelView;
 import utilitarios.visual.text.java.view.SimpleViewFactory;
 public class MMViewFactory extends SimpleViewFactory{
@@ -26,11 +22,7 @@ public class MMViewFactory extends SimpleViewFactory{
 			switch(kind){
 				case AbstractDocument.ContentElementName:	return new SimpleLabelView(elem,editorKit);
 				case AbstractDocument.ParagraphElementName:	return new MMParagraphView(elem,(MindMarkEditor)editorKit);
-				case MindMarkDocumento.ParagraphCitationElementName:	return new MMParagraphCitationView(elem,(MindMarkEditor)editorKit);
 				case AbstractDocument.SectionElementName:	return new BoxView(elem,View.Y_AXIS);
-				case MindMarkDocumento.TableElementName:	return new MMTableView(elem);
-				case MindMarkDocumento.RowElementName:		return new MMRowView(elem);
-				case MindMarkDocumento.CellElementName:		return new MMCellView(elem);
 				case StyleConstants.ComponentElementName:	return new ComponentView(elem);
 				case StyleConstants.IconElementName:		return new IconView(elem);
 			}

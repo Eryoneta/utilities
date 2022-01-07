@@ -1,7 +1,9 @@
 package utilitarios.visual.text.java.mindmarkdown;
 import java.awt.Font;
 import utilitarios.visual.text.java.SimpleTexto;
-import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkSizeModifierAtributo;
+import utilitarios.visual.text.java.mindmarkdown.attribute.MMLinkAtributo;
+import utilitarios.visual.text.java.mindmarkdown.attribute.MMSizeModifierAtributo;
+import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
 @SuppressWarnings("serial")
 public class MindMarkTexto extends SimpleTexto{
 //EDITING
@@ -11,16 +13,7 @@ public class MindMarkTexto extends SimpleTexto{
 	public MindMarkTexto(){
 		setEditorKit(new MindMarkEditor(this));
 		setUndoManager(new MMUndoManager());
-//		addKeyListener(new KeyAdapter(){	//TESTES
-//			public void keyPressed(KeyEvent k){	//TODO: REMOVER
-//				switch(k.getKeyCode()){
-//					case KeyEvent.VK_T:
-//						((MindMarkDocumento)getDocument()).insertTable(0, 2, new int[] {200, 100, 150});
-//					break;
-//				}
-//				
-//			}
-//		});
+		MMLinkAtributo.setListeners(this);
 		setVisible(true);
 	}
 	public void setEditorKit(MindMarkEditor editor){
@@ -34,6 +27,7 @@ public class MindMarkTexto extends SimpleTexto{
 	public void setFont(Font font){
 		super.setFont(font);
 		if(font==null)return;
-		MindMarkSizeModifierAtributo.setDefaultFontSize(font.getSize());
+		MindMarkAtributo.setDefaultFont(font);
+		MMSizeModifierAtributo.setDefaultFontSize(font.getSize());
 	}
 }
