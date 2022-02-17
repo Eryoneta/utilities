@@ -209,7 +209,6 @@ public class TreeUI{
 				@Override public void changedUpdate(DocumentEvent d){updateObjText();}
 					private void updateObjText(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
 						if(texto==null)return;
-						if(texto.isEditing())return;
 						if(texto.getObjeto()==null)return;
 						if(!texto.getObjeto().getTipo().is(Objeto.Tipo.MODULO,Objeto.Tipo.CONEXAO))return;
 						if(texto.getObjeto().getTipo().is(Objeto.Tipo.MODULO)){

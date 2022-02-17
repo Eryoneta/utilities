@@ -1,4 +1,4 @@
-package utilitarios.visual.text.java.mindmarkdown.attribute;
+package utilitarios.visual.text.java.mindmarkdown.attribute.variable;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
@@ -9,34 +9,15 @@ import java.awt.event.MouseMotionAdapter;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.StyleConstants;
+import element.tree.popup.Popup;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkTexto;
+import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
 @SuppressWarnings("serial")
-public class MMLinkAtributo extends MindMarkAtributo{
-//TAGS
-	private final static String START_TAG=Pattern.quote("[");
-	private final static String END_TAG=Pattern.quote("]");
-	private final static String START_VAR_TAG=Pattern.quote("(");
-	private final static String END_VAR_TAG=Pattern.quote(")");
-//DEFINITIONS
-	private final static String DEFINITION=(
-			notPrecededBy(ESCAPE)+
-			group(START_TAG)+								//GROUP 1
-			group(allExceptLineBreak()+oneOrMore())+		//GROUP 2
-			group(											//GROUP 3
-					notPrecededBy(ESCAPE)+
-					END_TAG+
-					START_VAR_TAG+
-					group(allExceptLineBreak()+oneOrMore())+//GROUP 4
-					notPrecededBy(ESCAPE)+
-					END_VAR_TAG
-			)
-	);
+public class MMLinkAtributo extends MindMarkVariableAtributo{
 //VAR GLOBAIS
 	public final static String LINK="link";
 	public final static Color COLOR=new Color(0,116,204);
@@ -62,30 +43,15 @@ public class MMLinkAtributo extends MindMarkAtributo{
 	}
 //MAIN
 	public MMLinkAtributo(){
-		StyleConstants.setUnderline(this,true);
-		StyleConstants.setForeground(this,COLOR);
+		buildDefinitionWithURL("",false);
 	}
 //FUNCS
-	public static void applyStyle(MindMarkDocumento doc){
-		final MMLinkAtributo atributo=new MMLinkAtributo();
-		final String texto=doc.getText();
-		final Matcher textMatch=Pattern.compile(DEFINITION).matcher(texto);
-		while(textMatch.find()){
-		//TAG INI
-			final int indexTextoTagIni=textMatch.start(1);
-			final int lengthTextoTagIni=textMatch.group(1).length();
-			doc.setCharacterAttributes(indexTextoTagIni,lengthTextoTagIni,MindMarkAtributo.SPECIAL,true);
-		//TEXTO
-			final int indexTexto=textMatch.start(2);
-			final int lengthTexto=textMatch.group(2).length();
-			final String link=textMatch.group(4);
-			atributo.addAttribute(LINK,new Link(link,indexTexto,lengthTexto));
-			if(isValid(link))doc.setCharacterAttributes(indexTexto,lengthTexto,atributo,false);
-		//TAG FIM
-			final int indexTextoTagFim=textMatch.start(3);
-			final int lengthTextoTagFim=textMatch.group(3).length();
-			doc.setCharacterAttributes(indexTextoTagFim,lengthTextoTagFim,MindMarkAtributo.SPECIAL,true);
-		}
+@Override
+	protected void setURLAtributos(MindMarkAtributo atributo,int indexTexto,String texto,String url){
+		if(!isValid(url))return;
+		StyleConstants.setUnderline(atributo,true);
+		StyleConstants.setForeground(atributo,COLOR);
+		atributo.addAttribute(LINK,new Link(url,indexTexto,texto.length()));
 	}
 	private static boolean isValid(String link){
 		try{
@@ -138,10 +104,16 @@ public class MMLinkAtributo extends MindMarkAtributo{
 	}
 		private static void setHovered(MindMarkTexto texto,Link link){
 			if(link!=null){
-				if(SHOW_TOOLTIP)texto.setToolTipText(link.getLink());
+				if(SHOW_TOOLTIP){
+					Popup.showTooltip(true);
+					texto.setToolTipText(link.getLink());
+				}
 				if(texto.getCursor().getType()!=Cursor.HAND_CURSOR)texto.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			}else{
-				if(SHOW_TOOLTIP)texto.setToolTipText(null);
+				if(SHOW_TOOLTIP){
+					Popup.showTooltip(false);
+					texto.setToolTipText(null);
+				}
 				if(texto.getCursor().getType()!=Cursor.DEFAULT_CURSOR)texto.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			}
 		}
