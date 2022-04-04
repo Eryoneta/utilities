@@ -5,47 +5,44 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
 @SuppressWarnings("serial")
 public class MindMarkSimpleAtributo extends MindMarkAtributo{
+//VARS GLOBAIS
+	private boolean isMultiline=false;
+	private boolean startTagEqualsEndTag=false;
 //DEFINITION
 	private String definition="";
-		public void buildDefinition(String tag){
-			definition=(//	(?:(?<escapedStart>(?<!\\)\\(?:\\\\)*?)tag(?=.+?tag))
-						//		|(?:tag(?:(?!tag).)+?(?<escapedEnd>(?<!\\)\\(?:\\\\)*?)tag)
-						//		|(?:(?<startTag>tag)(?<text>.+?)(?<endTag>tag))
+		public void buildDefinition(String startTag,boolean isMultiline,String endTag){
+			this.isMultiline=isMultiline;
+			startTagEqualsEndTag=(startTag.equals(endTag));
+			definition=(startTagEqualsEndTag?
+					(/*(?<newLine>\n)
+						|(?:escapeDefinition("Start")(?<startTag>startTag))*/
 					oneOrOther(
+							namedGroup("newLine",lineBreak()),
 							pseudoGroup(
-									namedGroup("escapedStart",
-											notPrecededBy(ESCAPE_TAG)+
-											ESCAPE_TAG+
-											pseudoGroup(ESCAPE_TAG+ESCAPE_TAG)+zeroOrMore()+butInTheSmallestAmount()
-									)+
-									tag+		//CONSOME TAG
-									followedBy(	//DEIXA O RESTO PARA OUTRO MATCH
-											allExceptLineBreak()+oneOrMore()+butInTheSmallestAmount()+
-											tag
-									)
-							),
-							pseudoGroup(
-									tag+		//NÃO IMPORTA MAIS, CONSOME TAG
-									pseudoGroup(
-											notFollowedBy(tag)+
-											allExceptLineBreak()
-									)+oneOrMore()+butInTheSmallestAmount()+
-									namedGroup("escapedEnd",
-											notPrecededBy(ESCAPE_TAG)+
-											ESCAPE_TAG+
-											pseudoGroup(ESCAPE_TAG+ESCAPE_TAG)+zeroOrMore()+butInTheSmallestAmount()
-									)+
-									tag			//CONSOME TAG
-							),
-							pseudoGroup(		//MATCH POR COMPLETO
-									namedGroup("startTag",tag)+
-									namedGroup("text",
-											allExceptLineBreak()+oneOrMore()+butInTheSmallestAmount()
-									)+
-									namedGroup("endTag",tag)
+									escapeDefinition("Start")+
+									namedGroup("startTag",startTag)
 							)
 					)
-			);
+			):(		/*(?<newLine>\n)
+						|(?:escapeDefinition("Start")(?<startTag>startTag))
+						|(?:escapeDefinition("End")(?<endTag>endTag))*/
+					oneOrOther(
+							namedGroup("newLine",lineBreak()),
+							pseudoGroup(
+									escapeDefinition("Start")+
+									namedGroup("startTag",startTag)
+							),
+							pseudoGroup(
+									escapeDefinition("End")+
+									namedGroup("endTag",endTag)
+							)
+					)
+			));
+			//NÃO É CAPAZ DE LIDAR COM A ESCAPED_TAG_END E TAG_START-TEXT-TAG_END:
+				//TEXTO TAG TEXTO ESCAPED_TAG TEXTO TAG = DEVE-SE ESCOLHER ENTRE FORMAT ESCAPED_TAG_END OU FORMAT TAG_START-TEXT-TAG_END 
+			/*(?:(?<escapedStart>(?<!\\)\\(?:\\\\)*?)(?<escapedStartTag>tag)(?=.+?tag))
+				|(?:tag(?:(?!tag).)+?(?<escapedEnd>(?<!\\)\\(?:\\\\)*?)(?<escapedEndTag>tag))
+				|(?:(?<startTag>tag)(?<text>.+?)(?<endTag>tag))*/
 		};
 //ATRIBUTOS
 	private MindMarkAtributo atributo=new MindMarkAtributo();
@@ -56,36 +53,72 @@ public class MindMarkSimpleAtributo extends MindMarkAtributo{
 	public void applyStyle(MindMarkDocumento doc){
 		final String texto=doc.getText();
 		final Matcher match=Pattern.compile(definition).matcher(texto);
+		final Match matchedTag=new Match();
 		while(match.find()){
-			if(match.group("escapedStart")!=null){
-			//ESCAPED_START
-				final int index=match.start("escapedStart")+match.group("escapedStart").length()-1;
-				final MindMarkAtributo specialAtributo=getSpecialAtributo_OneTagOnLeft(doc,index,1,0);
-				doc.setCharacterAttributes(index,1,specialAtributo,true);
-			}else if(match.group("escapedEnd")!=null){
-			//ESCAPED_END
-				final int index=match.start("escapedEnd")+match.group("escapedEnd").length()-1;
-				final MindMarkAtributo specialAtributo=getSpecialAtributo_OneTagOnLeft(doc,index,1,0);
-				doc.setCharacterAttributes(index,1,specialAtributo,true);
+		//NEW_LINE
+			if(match.group("newLine")!=null){
+				if(!isMultiline)matchedTag.reset();	//RECOMEÇA
+		//START_TAG
+			}else if(match.group("startTag")!=null){
+				if(MindMarkAtributo.isStyledSpecial(doc,match.start("startTag")))continue;	//JÁ FOI ESTILIZADO
+			//ESCAPED_TAG
+				if(match.group("escapeStart")!=null){
+					MindMarkAtributo.styleEscape(doc,match.start("escapeStart"),match.group("escapeStart").length(),match.group("startTag").length());
+				}else{
+				//NON_ESCAPED_TAG
+					if(match.group("nonEscapeStart")!=null){
+						MindMarkAtributo.styleNonEscape(doc,match.start("nonEscapeStart"),match.group("nonEscapeStart").length(),match.group("startTag").length());
+					}
+				//START_TAG
+					final int indexStartTag=match.start("startTag");
+					final int lengthStartTag=match.group("startTag").length();
+				//FINISH
+					if(matchedTag.isEmpty()){
+						matchedTag.setIndex(indexStartTag);
+						matchedTag.setLength(lengthStartTag);
+					}else if(startTagEqualsEndTag){
+						final int indexTagIni=matchedTag.getIndex();
+						final int lengthTagIni=matchedTag.getLength();
+						final int indexTagFim=indexStartTag;
+						final int lengthTagFim=lengthStartTag;
+						if(indexTagIni+lengthTagIni==indexTagFim){
+							matchedTag.setIndex(indexTagFim);
+							matchedTag.setLength(lengthTagFim);
+							continue;	//NÃO HÁ TEXTO
+						}
+						MindMarkAtributo.styleText(doc,indexTagIni,lengthTagIni,atributo,indexTagFim,lengthTagFim);
+						matchedTag.reset();	//RECOMEÇA
+					}
+				}
+		//END_TAG
 			}else{
-			//TAG_START
-				final int indexTagIni=match.start("startTag");
-				final int lengthTagIni=match.group("startTag").length();
-			//TEXT
-				final int indexTexto=match.start("text");
-				final int lengthTexto=match.group("text").length();
-			//TAG_END
-				final int indexTagFim=match.start("endTag");
-				final int lengthTagFim=match.group("endTag").length();
-			//TAGS
-				if(isStyled(doc,indexTagIni))continue;	//JÁ FOI ESTILIZADO
-				if(isStyled(doc,indexTagFim))continue;	//JÁ FOI ESTILIZADO
-				//SPECIAL
-				final MindMarkAtributo specialAtributo=getSpecialAtributo_TwoTags(doc,indexTagIni,lengthTagIni,indexTagFim,lengthTagFim);
-				doc.setCharacterAttributes(indexTagIni,lengthTagIni,specialAtributo,true);
-				doc.setCharacterAttributes(indexTagFim,lengthTagFim,specialAtributo,true);
-				//TEXT
-				doc.setCharacterAttributes(indexTexto,lengthTexto,atributo,false);
+				if(MindMarkAtributo.isStyledSpecial(doc,match.start("endTag")))continue;	//JÁ FOI ESTILIZADO
+			//ESCAPED_TAG
+				if(match.group("escapeEnd")!=null){
+					MindMarkAtributo.styleEscape(doc,match.start("escapeEnd"),match.group("escapeEnd").length(),match.group("escapeEnd").length());
+				}else{
+				//NON_ESCAPED_TAG
+					if(match.group("nonEscapeEnd")!=null){
+						MindMarkAtributo.styleNonEscape(doc,match.start("nonEscapeEnd"),match.group("nonEscapeEnd").length(),match.group("nonEscapeEnd").length());
+					}
+				//END_TAG
+					final int indexEndTag=match.start("endTag");
+					final int lengthEndTag=match.group("endTag").length();
+				//FINISH
+					if(!matchedTag.isEmpty()){
+						final int indexTagIni=matchedTag.getIndex();
+						final int lengthTagIni=matchedTag.getLength();
+						final int indexTagFim=indexEndTag;
+						final int lengthTagFim=lengthEndTag;
+						if(indexTagIni+lengthTagIni==indexTagFim){
+							matchedTag.setIndex(indexTagFim);
+							matchedTag.setLength(lengthTagFim);
+							continue;	//NÃO HÁ TEXTO
+						}
+						MindMarkAtributo.styleText(doc,indexTagIni,lengthTagIni,atributo,indexTagFim,lengthTagFim);
+						matchedTag.reset();	//RECOMEÇA
+					}
+				}
 			}
 		}
 	}

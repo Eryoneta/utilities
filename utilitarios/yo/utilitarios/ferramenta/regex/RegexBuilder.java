@@ -64,6 +64,7 @@ public interface RegexBuilder{
 	public default String occursBetween(int minQuantity,int maxQuantity){return "{"+minQuantity+","+maxQuantity+"}";}
 	public default String occursAtLeast(int minQuantity){return "{"+minQuantity+",}";}
 	public default String butInTheSmallestAmount(){return "?";}
+	public default String butNotCheckingBack(){return "+";}
 //COMPUTATION
 	public default String oneOrOther(String...words){
 		final StringBuilder result=new StringBuilder("");
@@ -80,6 +81,7 @@ public interface RegexBuilder{
 	public default String namedGroup(String name,String group){return "(?<"+name+">"+group+")";}
 	public default String pseudoGroup(String pseudoGroup){return "(?:"+pseudoGroup+")";}
 	public default String matchOfGroup(int groupId){return "\\"+groupId;}	//EX: "(\w)a\1" == (= "WOW" && != "WOA")
+	public default String matchOfGroup(String groupName){return "\\k<"+groupName+">";}
 //	public default String oneGroupOrOther(String possibleGroups){return "(?|"+possibleGroups+")";}
 //RANGE
 	public static class Range{

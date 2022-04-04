@@ -10,16 +10,16 @@ public class MMImageAtributo extends MindMarkVariableAtributo{
 	private final static String WIDTH_VAR="w";
 	private final static String HEIGHT_VAR="h";
 //TAGS
-	private final static String TAG=Pattern.quote("!");
+	public final static String TAG=Pattern.quote("!");
 	private final static String WIDTH_VAR_TAG=Pattern.quote(WIDTH_VAR);
 	private final static String HEIGHT_VAR_TAG=Pattern.quote(HEIGHT_VAR);
 //DEFINITION
 	private final String variablesDefinition=(
-		//(?:(?<sizeTag>w|h)(?<sizeValue>[0-9]{1,2}))?
+		//(?:(?<sizeTag>w|h)(?<sizeValue>[0-9]{1,3}))?
 			pseudoGroup(
 					namedGroup("sizeTag",oneOrOther(WIDTH_VAR_TAG,HEIGHT_VAR_TAG))+
 					namedGroup("sizeValue",
-							characters(range(0,9))+occursBetween(1,2)
+							characters(range(0,9))+occursBetween(1,3)
 					)
 			)+zeroOrOne()
 	);
@@ -28,16 +28,16 @@ public class MMImageAtributo extends MindMarkVariableAtributo{
 //IMAGE
 	public static class Image{
 	//WIDTH
-		private int width;
+		private int width=0;
 			public int getWidth(){return width;}
 	//HEIGHT
-		private int height;
+		private int height=0;
 			public int getHeight(){return height;}
 	//LEGENDA
-		private String legenda;
+		private String legenda="";
 			public String getLegenda(){return legenda;}
 	//LINK
-		private String link;
+		private String link="";
 			public String getLink(){return link;}
 	//MAIN
 		public Image(String legenda,String link){
@@ -47,7 +47,8 @@ public class MMImageAtributo extends MindMarkVariableAtributo{
 	}
 //MAIN
 	public MMImageAtributo(){
-		buildDefinitionWithURLAndVars(TAG,false,false,true);
+		//(?<=^|\n)...(?=\n|$)
+		buildDefinitionWithURLAndVars(precededBy(oneOrOther(startOfText(),lineBreak())),TAG,true,true,true,followedBy(oneOrOther(lineBreak(),endOfText())));
 	}
 //FUNCS
 	private MindMarkDocumento doc;
@@ -60,6 +61,12 @@ public class MMImageAtributo extends MindMarkVariableAtributo{
 @Override
 	protected void setURLAtributos(MindMarkAtributo atributo,int indexTexto,String texto,String url){
 		this.url=url;
+		final  MindMarkAtributo imagemAtributo=new MindMarkAtributo();
+		StyleConstants.setAlignment(imagemAtributo,StyleConstants.ALIGN_CENTER);
+		final Image imagem=new Image(texto,url);
+		imagemAtributo.addAttribute(IMAGE,imagem);
+		StyleConstants.setSpaceAbove(imagemAtributo,Math.max(imagem.height,10));
+		doc.setParagraphAttributes(indexTexto,0,imagemAtributo,false);
 	}
 @Override
 	protected void setVarsAtributos(MindMarkAtributo atributo,int indexTexto,String texto,String vars){
@@ -73,7 +80,7 @@ public class MMImageAtributo extends MindMarkVariableAtributo{
 			}
 		}
 		imagemAtributo.addAttribute(IMAGE,imagem);
-		StyleConstants.setSpaceAbove(imagemAtributo,100f);	//TODO
+		StyleConstants.setSpaceAbove(imagemAtributo,Math.max(imagem.height,10));
 		doc.setParagraphAttributes(indexTexto,0,imagemAtributo,false);
 	}
 		private void setImagemAtributo(Image imagem,String var,String valor){

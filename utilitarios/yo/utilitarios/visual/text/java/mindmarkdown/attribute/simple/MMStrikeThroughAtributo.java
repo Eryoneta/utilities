@@ -4,10 +4,11 @@ import javax.swing.text.StyleConstants;
 @SuppressWarnings("serial")
 public class MMStrikeThroughAtributo extends MindMarkSimpleAtributo{
 //TAG
-	public final static String TAG="~";
+	public final static String STRIKE_THROUGH="~";
+	public final static String TAG=Pattern.quote(STRIKE_THROUGH);
 //MAIN
 	public MMStrikeThroughAtributo(){
-		buildDefinition(Pattern.quote(TAG));
+		buildDefinition(TAG,false,TAG);
 		setAtributo(StyleConstants.StrikeThrough,true);
 	}
 }

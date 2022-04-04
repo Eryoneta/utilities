@@ -4,10 +4,11 @@ import javax.swing.text.StyleConstants;
 @SuppressWarnings("serial")
 public class MMItalicAtributo extends MindMarkSimpleAtributo{
 //TAG
-	public final static String TAG="´";
+	public final static String ITALIC="´";
+	public final static String TAG=Pattern.quote(ITALIC);
 //MAIN
 	public MMItalicAtributo(){
-		buildDefinition(Pattern.quote(TAG));
+		buildDefinition(TAG,false,TAG);
 		setAtributo(StyleConstants.Italic,true);
 	}
 }

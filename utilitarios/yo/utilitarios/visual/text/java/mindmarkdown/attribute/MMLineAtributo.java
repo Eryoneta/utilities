@@ -7,53 +7,51 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 @SuppressWarnings("serial")
 public class MMLineAtributo extends MindMarkAtributo{
 //SYMBOLS
-	private final static String DEFAULT="===";		//SÓLIDO TOTAL
-	private final static String SOLID_G="=0=";		//SÓLIDO TOTAL
-	private final static String SOLID_M="=1=";		//SÓLIDO MÉDIO
-	private final static String SOLID_S="=2=";		//SÓLIDO PEQUENO
-	private final static String DOTLINE_G="=3=";	//COM PONTO CENTRAL TOTAL
-	private final static String DOTLINE_M="=4=";	//COM PONTO CENTRAL MÉDIO
-	private final static String DOTLINE_S="=5=";	//COM PONTO CENTRAL PEQUENO
-	private final static String DIAMOND_G="=6=";	//DIAMANTE TOTAL
-	private final static String DIAMOND_M="=7=";	//DIAMANTE MÉDIO
-	private final static String DIAMOND_S="=8=";	//DIAMANTE PEQUENO
-	private final static String GRADIENT="=9=";		//GRADIENTE TOTAL
+	public final static String DEFAULT_OPTION="=";
+	public final static String OPTION_0="0";
+	public final static String OPTION_1="1";
+	public final static String OPTION_2="2";
+	public final static String OPTION_3="3";
+	public final static String OPTION_4="4";
+	public final static String OPTION_5="5";
+	public final static String OPTION_6="6";
+	public final static String OPTION_7="7";
+	public final static String OPTION_8="8";
+	public final static String OPTION_9="9";
 //TAGS
-	private final String TAG="="+characters(range(0,9),"=")+"=";
+	public final static String TAG=Pattern.quote(DEFAULT_OPTION+"");
+	private final String COMPLETE_TAG=TAG+characters(range(0,9),TAG)+characters(range(0,9))+zeroOrOne()+TAG;	//=[0-9=][0-9]?=
 //DEFINITIONS
 	private final String definition=(
-			//(?:(?:^|\n)(?<escapedStart>(?<!\\)\\(?:\\\\)*?)=[0-9=]=(?=\n|$))|(?:(?:^|\n)(?<tag>=[0-9=]=)(?=\n|$))
-			oneOrOther(
-					pseudoGroup(
-							pseudoGroup(oneOrOther(startOfText(),lineBreak()))+
-							namedGroup("escapedStart",
-									notPrecededBy(ESCAPE_TAG)+
-									ESCAPE_TAG+
-									pseudoGroup(ESCAPE_TAG+ESCAPE_TAG)+zeroOrMore()+butInTheSmallestAmount()
-							)+
-							TAG+
-							followedBy(oneOrOther(lineBreak(),endOfText()))
-					),
-					pseudoGroup(
-							pseudoGroup(oneOrOther(startOfText(),lineBreak()))+
-							namedGroup("tag",TAG)+
-							followedBy(oneOrOther(lineBreak(),endOfText()))
-					)
-			)
+			/*(?<=^|\n)
+				escapeDefinition()
+				(?<tag>=[0-9=][0-9]?=)
+				(?=\n|$)*/
+			precededBy(oneOrOther(startOfText(),lineBreak()))+
+			escapeDefinition()+
+			namedGroup("tag",COMPLETE_TAG)+
+			followedBy(oneOrOther(lineBreak(),endOfText()))
 	);
 //VAR GLOBAIS
 	public final static String LINE="line";
-	public final static Color LINE_COLOR=new Color(190,190,190);
+	public final static Color COLOR=new Color(190,190,190);
 	public final static float LINE_WIDTH=4;
-	public final static int TYPE_0=0,TYPE_1=1,TYPE_2=2,TYPE_3=3,TYPE_4=4,TYPE_5=5,TYPE_6=6,TYPE_7=7,TYPE_8=8,TYPE_9=9;
 //LINE
 	public static class Line{
+	//TYPES
+		public enum Type{SOLID,SOLID_THIN,TRACED,DOTS,PENCIL_SCRATCH,ARROWS,MIDDLE_DOT,THREE_DOTS,DIAMOND,GRADIENT}
 	//TYPE
-		private int type;
-			public int getType(){return type;}
+		private Type type;
+			public Type getType(){return type;}
+	//SIZES
+		public enum Size{SIZE_0,SIZE_1,SIZE_2,SIZE_3,SIZE_4,SIZE_5,SIZE_6,SIZE_7,SIZE_8,SIZE_9}
+	//SIZE
+		private Size size;
+			public Size getSize(){return size;}
 	//MAIN
-		public Line(int type){
+		public Line(Type type,Size size){
 			this.type=type;
+			this.size=size;
 		}
 	}
 //MAIN
@@ -63,42 +61,61 @@ public class MMLineAtributo extends MindMarkAtributo{
 		final String texto=doc.getText();
 		final Matcher match=Pattern.compile(definition).matcher(texto);
 		while(match.find()){
-			if(match.group("escapedStart")!=null){
-			//ESCAPED_START
-				final int index=match.start("escapedStart")+match.group("escapedStart").length()-1;
-				final MindMarkAtributo specialAtributo=getSpecialAtributo_OneTagOnLeft(doc,index,1,0);
-				doc.setCharacterAttributes(index,1,specialAtributo,true);
+		//ESCAPED_START
+			if(match.group("escape")!=null){
+				if(MindMarkAtributo.isStyledSpecial(doc,match.start("tag")))continue;	//JÁ FOI ESTILIZADO
+				MindMarkAtributo.styleEscape(doc,match.start("escape"),match.group("escape").length(),match.group("tag").length());
+		//TAG
 			}else{
+				if(MindMarkAtributo.isStyledSpecial(doc,match.start("tag")))continue;	//JÁ FOI ESTILIZADO
+			//NON_ESCAPED_START
+				if(match.group("nonEscape")!=null){
+					MindMarkAtributo.styleNonEscape(doc,match.start("nonEscape"),match.group("nonEscape").length(),match.group("tag").length());
+				}
 			//TAG
 				final int indexTag=match.start("tag");
 				final int lengthTag=match.group("tag").length();
 			//LINE
-				final int type=getType(match.group("tag"));
-			//TAGS
-				if(isStyled(doc,indexTag))continue;	//JÁ FOI ESTILIZADO
-				//SPECIAL
-				final MindMarkAtributo specialAtributo=getSpecialAtributo_OneTagOnLeft(doc,indexTag,lengthTag,0);
-				doc.setCharacterAttributes(indexTag,lengthTag,specialAtributo,true);
-				//TEXT
+				final Line.Type type=getType(match.group("tag"));
+				final Line.Size size=getSize(match.group("tag"));
+			//FINISH
+				if(!match.group("nonEscape").isEmpty())continue;	//NÃO DEVE HAVER TEXTO ANTES DA TAG
 				final MindMarkAtributo atributo=new MindMarkAtributo();
 				StyleConstants.setAlignment(atributo,StyleConstants.ALIGN_CENTER);
-				atributo.addAttribute(LINE,new Line(type));
-				doc.setParagraphAttributes(indexTag,0,atributo,false);
+				atributo.addAttribute(LINE,new Line(type,size));
+				MindMarkAtributo.styleLine(doc,indexTag,lengthTag,atributo,indexTag+lengthTag,0);
 			}
 		}
 	}
-		private int getType(String line){
-			switch(line){
-				case DEFAULT:case SOLID_G:default:	return TYPE_0;
-				case SOLID_M:		return TYPE_1;
-				case SOLID_S:		return TYPE_2;
-				case DOTLINE_G:		return TYPE_3;
-				case DOTLINE_M:		return TYPE_4;
-				case DOTLINE_S:		return TYPE_5;
-				case DIAMOND_G:		return TYPE_6;
-				case DIAMOND_M:		return TYPE_7;
-				case DIAMOND_S:		return TYPE_8;
-				case GRADIENT:		return TYPE_9;
+		private Line.Type getType(String line){
+			final String type=String.valueOf(line.charAt(1));
+			switch(type){
+				case DEFAULT_OPTION:case OPTION_0:default:	return Line.Type.SOLID;
+				case OPTION_1:		return Line.Type.SOLID_THIN;
+				case OPTION_2:		return Line.Type.TRACED;
+				case OPTION_3:		return Line.Type.DOTS;
+				case OPTION_4:		return Line.Type.PENCIL_SCRATCH;
+				case OPTION_5:		return Line.Type.ARROWS;
+				case OPTION_6:		return Line.Type.MIDDLE_DOT;
+				case OPTION_7:		return Line.Type.THREE_DOTS;
+				case OPTION_8:		return Line.Type.DIAMOND;
+				case OPTION_9:		return Line.Type.GRADIENT;
+			}
+		}
+		private Line.Size getSize(String line){
+			if(line.length()==3)return Line.Size.SIZE_0;
+			final String size=String.valueOf(line.charAt(2));
+			switch(size){
+				case OPTION_1:		return Line.Size.SIZE_1;
+				case OPTION_2:		return Line.Size.SIZE_2;
+				case OPTION_3:		return Line.Size.SIZE_3;
+				case OPTION_4:		return Line.Size.SIZE_4;
+				case OPTION_5:		return Line.Size.SIZE_5;
+				case OPTION_6:		return Line.Size.SIZE_6;
+				case OPTION_7:		return Line.Size.SIZE_7;
+				case OPTION_8:		return Line.Size.SIZE_8;
+				case OPTION_9:		return Line.Size.SIZE_9;
+				case OPTION_0:default:	return Line.Size.SIZE_0;
 			}
 		}
 }

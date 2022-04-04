@@ -206,7 +206,7 @@ public class TreeUI{
 				getDocument().addDocumentListener(new DocumentListener(){
 				@Override public void removeUpdate(DocumentEvent d){updateObjText();}
 				@Override public void insertUpdate(DocumentEvent d){updateObjText();}
-				@Override public void changedUpdate(DocumentEvent d){updateObjText();}
+				@Override public void changedUpdate(DocumentEvent d){}
 					private void updateObjText(){		//ALTERA IMEDIATAMENTE PARA PODER SALVAR COM O TEXTO ABERTO
 						if(texto==null)return;
 						if(texto.getObjeto()==null)return;

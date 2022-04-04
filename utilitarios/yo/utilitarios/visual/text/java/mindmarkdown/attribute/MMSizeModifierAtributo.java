@@ -13,33 +13,20 @@ public class MMSizeModifierAtributo extends MindMarkAtributo{
 	private final static String DECREASE_TAG=Pattern.quote(DECREASE);
 //DEFINITIONS
 	private final String definition=(
-			//(?<!(?<!\\)\\(?:\\\\){0,99})(#|\^|\n)((?:(?!#|\^|\n).)*)
-			notPrecededByEscape()+
-			group(oneOrOther(INCREASE_TAG,DECREASE_TAG,lineBreak()))+	//GROUP 1
-			group(														//GROUP 2
+			/*(?<newLine>\n|$)
+				|(?:escapeDefinition()(?<tag>#|\^))
+			*/
+			oneOrOther(
+					namedGroup("newLine",oneOrOther(lineBreak(),endOfText())),
 					pseudoGroup(
-							notFollowedBy(
-									oneOrOther(INCREASE_TAG,DECREASE_TAG,lineBreak())
-							)+
-							allExceptLineBreak()
-					)+zeroOrMore()
+							escapeDefinition()+
+							namedGroup("tag",oneOrOther(INCREASE_TAG,DECREASE_TAG))
+					)
 			)
 	);
-	private final String escapedDefinition=(
-			//((?<!\\)\\(?:\\\\)*)(?:#|\^|\n)(?:(?!(?<!\\)\\(?:\\\\)*(?:#|\^)).)*
-			group(precededByEscape())+	//GROUP 1
-			pseudoGroup(oneOrOther(INCREASE_TAG,DECREASE_TAG,lineBreak()))+
-			pseudoGroup(
-					notFollowedBy(
-							notPrecededByEscape()+
-							pseudoGroup(oneOrOther(INCREASE_TAG,DECREASE_TAG,lineBreak()))
-					)+
-					allExceptLineBreak()
-			)+zeroOrMore()
-	);
 //FONTE_SIZE
-	public static int DEFAULT_FONT_SIZE=12;
-		public static void setDefaultFontSize(int size){DEFAULT_FONT_SIZE=size;}
+	public int DEFAULT_FONT_SIZE=12;
+		public void setDefaultFontSize(int size){DEFAULT_FONT_SIZE=size;}
 //SIZES
 	private static float[]BIGGER_SIZES=new float[]{1.5f,2.5f,4.0f};
 	private static float[]SMALLER_SIZES=new float[]{0.7f,0.4f,0.2f};
@@ -48,76 +35,82 @@ public class MMSizeModifierAtributo extends MindMarkAtributo{
 //FUNCS
 	public void applyStyle(MindMarkDocumento doc){
 		final String texto=doc.getText();
-		final Matcher matchLinha=Pattern.compile(allExceptLineBreak()+zeroOrMore()).matcher(texto);
-		while(matchLinha.find()){
-			final int linhaIndex=matchLinha.start();
-			applyStyle(doc,matchLinha.group(),linhaIndex);
-			applyEscapedStyle(doc,matchLinha.group(),linhaIndex);
+		final Matcher match=Pattern.compile(definition).matcher(texto);
+		final Match matchedTag=new Match();
+		int sizeIndex=0;
+		boolean hasHittedLimit=false;
+		while(match.find()){
+		//NEW_LINE
+			if(match.group("newLine")!=null){
+				if(!matchedTag.isEmpty()){
+					final int indexNewLine=match.start("newLine");
+					final Match matchIndex=new Match(matchedTag.getIndex(),matchedTag.getLength());
+					final Match matchTexto=new Match();
+					matchTexto.setIndex(matchIndex.getIndex()+matchIndex.getLength());
+					matchTexto.setLength(indexNewLine-matchTexto.getIndex());
+					applyStyle(doc,hasHittedLimit,sizeIndex,matchIndex,matchTexto);
+				}
+				matchedTag.reset();
+				sizeIndex=0;
+		//ESCAPED_TAG
+			}else if(match.group("escape")!=null){
+				if(MindMarkAtributo.isStyledSpecial(doc,match.start("tag")))continue;	//JÁ FOI ESTILIZADO
+				MindMarkAtributo.styleEscape(doc,match.start("escape"),match.group("escape").length(),match.group("tag").length());
+		//TAG
+			}else{
+				if(MindMarkAtributo.isStyledSpecial(doc,match.start("tag")))continue;	//JÁ FOI ESTILIZADO
+			//NON_ESCAPED_TAG
+				if(match.group("nonEscape")!=null){
+					MindMarkAtributo.styleNonEscape(doc,match.start("nonEscape"),match.group("nonEscape").length(),match.group("tag").length());
+				}
+			//TAG
+				final int indexTag=match.start("tag");
+				final int lengthTag=match.group("tag").length();
+			//FINISH
+				final int newSizeIndex=(isIncreaseTag(match.group("tag"))?increaseSizeIndex(sizeIndex):decreaseSizeIndex(sizeIndex));
+				if(newSizeIndex==sizeIndex)continue;	//NÃO MUDA DE TAMANHO
+				if(!matchedTag.isEmpty()){
+					final Match matchIndex=new Match(matchedTag.getIndex(),matchedTag.getLength());
+					final Match matchTexto=new Match();
+					matchTexto.setIndex(matchIndex.getIndex()+matchIndex.getLength());
+					matchTexto.setLength(indexTag-matchTexto.getIndex());
+					applyStyle(doc,hasHittedLimit,sizeIndex,matchIndex,matchTexto);
+				}
+				matchedTag.setIndex(indexTag);
+				matchedTag.setLength(lengthTag);
+				hasHittedLimit=(newSizeIndex==sizeIndex);
+				sizeIndex=newSizeIndex;
+			}
 		}
 	}
-		private void applyStyle(MindMarkDocumento doc,String texto,int linhaIndex){
-			final MMSizeModifierAtributo atributo=new MMSizeModifierAtributo();
-			int sizeIndex=0;
-			final Matcher match=Pattern.compile(definition).matcher(texto);
-			while(match.find()){
-				if(isStyled(doc,linhaIndex+match.start(1)))continue;	//JÁ FOI ESTILIZADO
-			//TAG
-				final int indexTag=linhaIndex+match.start(1);
-				final int lengthTag=match.group(1).length();
-			//TEXTO
-				if(isIncreaseTag(match.group(1))){
-					sizeIndex++;
-				}else sizeIndex--;
-				final int indexTexto=linhaIndex+match.start(2);
-				final int lengthTexto=match.group(2).length();
-				final int newSize=(int)(DEFAULT_FONT_SIZE*getFontSizeModifier(sizeIndex));
-				StyleConstants.setFontSize(atributo,newSize);
-				if(!isBelowLimit(sizeIndex)&&!isAboveLimit(sizeIndex)){
-					doc.setCharacterAttributes(indexTexto,lengthTexto,atributo,false);
-				}else doc.setCharacterAttributes(indexTag,lengthTag+lengthTexto,atributo,false);
-			//TAGS
-				final MindMarkAtributo specialAtributo=getSpecialAtributo_OneTagOnLeft(doc,indexTag,lengthTag,lengthTexto);
-				if(!isBelowLimit(sizeIndex)&&!isAboveLimit(sizeIndex))doc.setCharacterAttributes(indexTag,lengthTag,specialAtributo,true);
-			//END
-				if(isBelowLimit(sizeIndex)){
-					sizeIndex++;
-				}else if(isAboveLimit(sizeIndex))sizeIndex--;
+		private void applyStyle(MindMarkDocumento doc,boolean hasHittedLimit,int sizeIndex,Match matchIndex,Match matchTexto){
+			final int endIndex=doc.getParagraphElement(matchIndex.getIndex()).getEndOffset();
+			final MindMarkAtributo atributo=new MindMarkAtributo();
+			final int newSize=(int)(DEFAULT_FONT_SIZE*getFontSizeModifier(sizeIndex));
+			StyleConstants.setFontSize(atributo,newSize);
+			if(!hasHittedLimit){
+				MindMarkAtributo.styleText(doc,matchIndex.getIndex(),matchIndex.getLength(),atributo,endIndex,0);
+			}else MindMarkAtributo.styleText(doc,matchIndex.getIndex(),0,atributo,endIndex,0);
+		}
+		private boolean isIncreaseTag(String tag){
+			switch(tag){
+				case INCREASE:default:	return true;
+				case DECREASE:			return false;
 			}
 		}
-			private boolean isIncreaseTag(String tag){
-				switch(tag){
-					case INCREASE:default:	return true;
-					case DECREASE:			return false;
-				}
-			}
-			private boolean isBelowLimit(int sizeIndex){
-				sizeIndex*=-1;//INVERTE DE - PARA +
-				if(sizeIndex>SMALLER_SIZES.length)return true;
-				return false;
-			}
-			private boolean isAboveLimit(int sizeIndex){
-				if(sizeIndex>BIGGER_SIZES.length)return true;
-				return false;
-			}
-			private float getFontSizeModifier(int sizeIndex){	//..., -2, -1, 0, 1, 2, ...
-				if(sizeIndex<0){		//MENOR
-					if(isBelowLimit(sizeIndex))return SMALLER_SIZES[SMALLER_SIZES.length-1];
-					sizeIndex*=-1;//INVERTE DE - PARA +
-					return SMALLER_SIZES[sizeIndex-1];
-				}else if(sizeIndex>0){	//MAIOR
-					if(isAboveLimit(sizeIndex))return BIGGER_SIZES[BIGGER_SIZES.length-1];
-					return BIGGER_SIZES[sizeIndex-1];
-				}else return 1.0f;		//IGUAL
-			}
-		private void applyEscapedStyle(MindMarkDocumento doc,String texto,int linhaIndex){
-			final Matcher match=Pattern.compile(escapedDefinition).matcher(texto);
-			while(match.find()){
-			//TAG INI
-				if(match.group(1)!=null){
-					final int index=linhaIndex+match.start(1)+match.group(1).length()-1;
-					final MindMarkAtributo specialAtributo=getSpecialAtributo_OneTagOnLeft(doc,index,1,0);
-					doc.setCharacterAttributes(index,1,specialAtributo,true);
-				}
-			}
+		private int increaseSizeIndex(int sizeIndex){
+			if(sizeIndex+1>BIGGER_SIZES.length)return sizeIndex;
+			return sizeIndex+1;
+		}
+		private int decreaseSizeIndex(int sizeIndex){
+			if(-sizeIndex+1>SMALLER_SIZES.length)return sizeIndex;
+			return sizeIndex-1;
+		}
+		private float getFontSizeModifier(int sizeIndex){	//..., -2, -1, 0, 1, 2, ...
+			if(sizeIndex<0){		//MENOR
+				return SMALLER_SIZES[-sizeIndex-1];
+			}else if(sizeIndex>0){	//MAIOR
+				return BIGGER_SIZES[sizeIndex-1];
+			}else return 1.0f;		//IGUAL
 		}
 }

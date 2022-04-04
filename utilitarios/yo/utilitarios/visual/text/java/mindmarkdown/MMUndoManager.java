@@ -8,7 +8,7 @@ public class MMUndoManager extends UndoManager{
 		public void setDisabled(boolean disabled){this.disabled=disabled;}
 		public boolean isDisabled(){return disabled;}
 //MAIN
-	public MMUndoManager(){}
+	public MMUndoManager(){}//TODO: DELETAR TUDO?
 //FUNCS
 @Override
 	public synchronized boolean addEdit(UndoableEdit anEdit){

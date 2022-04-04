@@ -4,10 +4,11 @@ import javax.swing.text.StyleConstants;
 @SuppressWarnings("serial")
 public class MMUnderlineAtributo extends MindMarkSimpleAtributo{
 //TAG
-	public final static String TAG="_";
+	public final static String UNDERLINE="_";
+	public final static String TAG=Pattern.quote(UNDERLINE);
 //MAIN
 	public MMUnderlineAtributo(){
-		buildDefinition(Pattern.quote(TAG));
+		buildDefinition(TAG,false,TAG);
 		setAtributo(StyleConstants.Underline,true);
 	}
 }

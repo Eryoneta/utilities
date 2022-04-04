@@ -1,114 +1,140 @@
 package utilitarios.visual.text.java.mindmarkdown.attribute;
-import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
+
+import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import utilitarios.ferramenta.regex.RegexBuilder;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkEditor;
-import utilitarios.visual.text.java.mindmarkdown.MindMarkTexto;
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial","unchecked"})
 public class MindMarkAtributo extends SimpleAttributeSet implements RegexBuilder{
 //ESCAPE
 	protected final static String ESCAPE_TAG=Pattern.quote("\\");
 //VAR STATICS
-	public static MindMarkAtributo DEFAULT=new MindMarkAtributo();
-		public static void setDefaultFont(Font fonte){
-			DEFAULT=new MindMarkAtributo(){{
-				StyleConstants.setFontFamily(this,fonte.getFamily());
-				StyleConstants.setFontSize(this,fonte.getSize());
-			}};
+	//DEFAULT
+	public final static String DEFAULT_FORMAT="default-format";
+		public static void setDefaultFormat(MindMarkAtributo atributo){
+			atributo.addAttribute(DEFAULT_FORMAT,true);
 		}
-	public final static String SHOW_FORMAT="show-format";
-	public static void setShowFormat(MindMarkAtributo atributo,MindMarkEditor.Section section){
-		atributo.addAttribute(SHOW_FORMAT,section);
-	}
+	//HIDDEN
+	public final static String HIDDEN_FORMAT="hidden-format";
+		public static void setHiddenFormat(MindMarkAtributo atributo,boolean show){
+			atributo.addAttribute(HIDDEN_FORMAT,show);
+		}
+	//SPECIAL
 	public final static String SPECIAL_FORMAT="special-format";
-	public final static MindMarkAtributo INVISIBLE=new MindMarkAtributo(){{
-		this.addAttribute(SPECIAL_FORMAT,true);
-		StyleConstants.setFontSize(this,0);
-	}};
+		public static void setSpecialFormat(MindMarkAtributo atributo){
+			atributo.addAttribute(SPECIAL_FORMAT,true);
+		}
 	public final static MindMarkAtributo SPECIAL=new MindMarkAtributo(){{
-		this.addAttribute(SPECIAL_FORMAT,true);
+		MindMarkAtributo.setSpecialFormat(this);
 		StyleConstants.setFontFamily(this,MindMarkEditor.DEFAULT_FONT.getFamily());
 		StyleConstants.setForeground(this,MindMarkEditor.SPECIAL_CHARACTERS_COLOR);
 	}};
-//FUNCS STATICS
-//SPECIAL
-	public String notPrecededByEscape(){
-		return	//(?<!(?<!\\)\\(?:\\\\){0,9})
-				notPrecededBy(
-						notPrecededBy(ESCAPE_TAG)+
-						ESCAPE_TAG+
-						pseudoGroup(ESCAPE_TAG+ESCAPE_TAG)+occursBetween(0,9)
-				);
-	}
-	public String precededByEscape(){
-		return	//(?<!\\)\\(?:\\\\)*
-				notPrecededBy(ESCAPE_TAG)+
-				ESCAPE_TAG+
-				pseudoGroup(ESCAPE_TAG+ESCAPE_TAG)+zeroOrMore()+butInTheSmallestAmount();
+	public final static MindMarkAtributo INVISIBLE=new MindMarkAtributo(){{
+		StyleConstants.setFontSize(this,0);
+	}};
+	//SECTION
+	public final static String SECTION_FORMAT="section-format";
+		public static void setSectionFormat(MindMarkAtributo atributo,List<MindMarkDocumento.FormatSection>section){
+			atributo.addAttribute(SECTION_FORMAT,section);
+		}
+//MATCH
+	protected class Match{
+	//INDEX
+		private int index=-1;
+			public int getIndex(){return index;}
+			public void setIndex(int index){this.index=index;}
+	//LENGTH
+		private int length=-1;
+			public int getLength(){return length;}
+			public void setLength(int length){this.length=length;}
+	//MAIN
+		public Match(){}
+		public Match(int index,int length){
+			setIndex(index);
+			setLength(length);
+		}
+	//FUNCS
+		public boolean isEmpty(){return (index==-1&&length==-1);}
+		public void reset(){
+			index=-1;
+			length=-1;
+		}
 	}
 //MAIN
 	public MindMarkAtributo(){}
+//FUNCS: ESCAPE
+	//DEFINITION
+	protected String escapeDefinition(String name){
+		return//	(?:(?<escape>(?<!\\)\\(?:\\\\)*?)|(?<nonEscape>(?<!\\)(?:\\\\)*?))
+				pseudoGroup(oneOrOther(
+						namedGroup("escape"+name,
+								notPrecededBy(ESCAPE_TAG)+
+								ESCAPE_TAG+
+								pseudoGroup(ESCAPE_TAG+ESCAPE_TAG)+zeroOrMore()+butInTheSmallestAmount()
+						),
+						namedGroup("nonEscape"+name,
+								notPrecededBy(ESCAPE_TAG)+
+								pseudoGroup(ESCAPE_TAG+ESCAPE_TAG)+zeroOrMore()+butInTheSmallestAmount()
+						)
+				));
+	}
+		public String escapeDefinition(){return escapeDefinition("");}
+//FUNCS: STYLE
+	//STYLE_ESCAPE
+	protected static void styleEscape(MindMarkDocumento doc,int indexEscape,int lengthEscape,int lengthTag){
+		for(int i=0;i<lengthEscape;i+=2)doc.setCharacterAttributes(indexEscape+i,1,MindMarkAtributo.SPECIAL,true);
+		registerAtributo(doc,new MindMarkDocumento.FormatSection(indexEscape,lengthEscape,indexEscape,lengthEscape));
+	}
+	//STYLE_NON_ESCAPE
+	protected static void styleNonEscape(MindMarkDocumento doc,int indexEscape,int lengthEscape,int lengthTag){
+		if(lengthEscape==0||lengthTag==0)return;
+		styleEscape(doc,indexEscape,lengthEscape,lengthTag);	//EXATAMENTE IGUAL A ESCAPE
+		registerAtributo(doc,new MindMarkDocumento.FormatSection(indexEscape,lengthEscape,indexEscape,lengthEscape));
+	}
+	//STYLE
+	protected static void styleText(MindMarkDocumento doc,int indexTagStart,int lengthTagStart,MindMarkAtributo atributo,int indexTagEnd,int lengthTagEnd){
+		style(doc,indexTagStart,lengthTagStart,atributo,indexTagEnd,lengthTagEnd,true);
+	}
+	protected static void styleLine(MindMarkDocumento doc,int indexTagStart,int lengthTagStart,MindMarkAtributo atributo,int indexTagEnd,int lengthTagEnd){
+		style(doc,indexTagStart,lengthTagStart,atributo,indexTagEnd,lengthTagEnd,false);
+	}
+	private static void style(MindMarkDocumento doc,int indexTagStart,int lengthTagStart,MindMarkAtributo atributo,int indexTagEnd,int lengthTagEnd,boolean isText){
+		//TAG_START
+		doc.setCharacterAttributes(indexTagStart,lengthTagStart,MindMarkAtributo.SPECIAL,true);
+		//TEXT
+		final int indexTexto=indexTagStart+lengthTagStart;
+		final int lengthTexto=indexTagEnd-indexTexto;
+		if(isText){
+			doc.setCharacterAttributes(indexTexto,lengthTexto,atributo,false);
+		}else doc.setParagraphAttributes(indexTexto,lengthTexto,atributo,false);
+		//TAG_END
+		doc.setCharacterAttributes(indexTagEnd,lengthTagEnd,MindMarkAtributo.SPECIAL,true);
+		//FINISH
+		registerAtributo(doc,new MindMarkDocumento.FormatSection(indexTagStart,lengthTagStart,indexTagEnd,lengthTagEnd));
+	}
 //FUNCS
-	protected static MindMarkAtributo getSpecialAtributo_TwoTags(MindMarkDocumento doc,int formatStart,int formatStartLength,int formatEnd,int formatEndLength){
-		MindMarkEditor.Section section=(MindMarkEditor.Section)doc.getParagraphElement(formatStart).getAttributes().getAttribute(MindMarkAtributo.SHOW_FORMAT);
-		if(section==null)section=(MindMarkEditor.Section)doc.getParagraphElement(formatEnd).getAttributes().getAttribute(MindMarkAtributo.SHOW_FORMAT);
-		if(section==null)return MindMarkAtributo.INVISIBLE;
-		final int selecStart=section.getIndex1();
-		final int selecEnd=section.getIndex2();
-		final int formatRealEnd=formatEnd+formatEndLength;
-		switch(section.getShowMode()){
-			case MindMarkTexto.SHOW_ALL_FORMAT:			return MindMarkAtributo.SPECIAL;	//TUDO É VISÍVEL
-			case MindMarkTexto.SHOW_FORMAT_ON_LINE:		return MindMarkAtributo.SPECIAL;	//LINHA ESTÁ SELECIONADA
-			case MindMarkTexto.SHOW_FORMAT_ON_WORD:
-				if(formatStart<selecStart&&selecEnd<formatRealEnd)return MindMarkAtributo.SPECIAL;								//F1 S1-S2 F2: O TEXTO É SELECIONADO
-				if(formatStart<selecStart&&selecStart<formatRealEnd&&formatRealEnd<selecEnd)return MindMarkAtributo.SPECIAL;	//F1 S1-F2-S2: F2 É SELECIONADO
-				if(selecStart<formatStart&&formatStart<selecEnd&&selecEnd<formatRealEnd)return MindMarkAtributo.SPECIAL;		//S1-F1-S2 F2: F1 É SELECIONADO
-				if(selecStart<formatStart&&formatRealEnd<selecEnd)return MindMarkAtributo.SPECIAL;								//S1-F1-F2-S2: F1 E F2 SÃO SELECIONADOS
-				return MindMarkAtributo.INVISIBLE;
-			case MindMarkTexto.SHOW_FORMAT_ON_CHAR:
-				if(selecStart>=formatStart&&formatStart+formatStartLength>=selecStart)return MindMarkAtributo.SPECIAL;			//F1|S1-S2 F2: A SELEÇÃO COMEÇA EM F1
-				if(selecEnd>=formatStart&&formatStart+formatStartLength>=selecEnd)return MindMarkAtributo.SPECIAL;				//S1-S2|F1 F2: A SELEÇÃO TERMINA EM F1
-				if(selecEnd>=formatEnd&&formatEnd+formatEndLength>=selecEnd)return MindMarkAtributo.SPECIAL;					//F1 S1-S2|F2: A SELEÇÃO TERMINA EM F2
-				if(selecStart>=formatEnd&&formatEnd+formatEndLength>=selecStart)return MindMarkAtributo.SPECIAL;				//F1 F2|S1-S2: A SELEÇÃO COMEÇA EM F2
-				if(formatStart<selecStart&&selecStart<formatRealEnd&&formatRealEnd<selecEnd)return MindMarkAtributo.SPECIAL;	//F1 S1-F2-S2: F2 É SELECIONADO
-				if(selecStart<formatStart&&formatStart<selecEnd&&selecEnd<formatRealEnd)return MindMarkAtributo.SPECIAL;		//S1-F1-S2 F2: F1 É SELECIONADO
-				if(selecStart<formatStart&&formatRealEnd<selecEnd)return MindMarkAtributo.SPECIAL;								//S1-F1-F2-S2: F1 E F2 SÃO SELECIONADOS
-				return MindMarkAtributo.INVISIBLE;
-			case MindMarkTexto.SHOW_NO_FORMAT:default:	return MindMarkAtributo.INVISIBLE;
-		}
+	protected static void registerAtributo(MindMarkDocumento doc,MindMarkDocumento.FormatSection section){
+		int index=section.getStartTagIndex();
+		do{
+			final Element paragraph=doc.getParagraphElement(index);
+			List<MindMarkDocumento.FormatSection>sections=
+					(List<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
+			if(sections==null){
+				sections=new ArrayList<MindMarkDocumento.FormatSection>();
+				sections.add(section);
+				final MindMarkAtributo formatAtributo=new MindMarkAtributo();
+				MindMarkAtributo.setSectionFormat(formatAtributo,sections);
+				doc.setParagraphAttributes(index,0,formatAtributo,false);
+			}else sections.add(section);
+			index=paragraph.getEndOffset();
+		}while(index<=section.getEndTagIndex()&&index<doc.getLength());
 	}
-	protected static MindMarkAtributo getSpecialAtributo_OneTagOnLeft(MindMarkDocumento doc,int formatIndex,int formatLength,int textLength){
-		final MindMarkEditor.Section section=(MindMarkEditor.Section)doc.getParagraphElement(formatIndex).getAttributes().getAttribute(MindMarkAtributo.SHOW_FORMAT);
-		if(section==null)return MindMarkAtributo.INVISIBLE;
-		final int selecStart=section.getIndex1();
-		final int selecEnd=section.getIndex2();
-		switch(section.getShowMode()){
-			case MindMarkTexto.SHOW_FORMAT_ON_CHAR:
-				if(selecStart>=formatIndex&&formatIndex+formatLength>=selecStart)return MindMarkAtributo.SPECIAL;				//F|S1-S2 T: A SELEÇÃO COMEÇA EM F
-				if(selecEnd>=formatIndex&&formatIndex+formatLength>=selecEnd)return MindMarkAtributo.SPECIAL;					//S1-S2|F T: A SELEÇÃO TERMINA EM F
-				if(selecStart<formatIndex&&formatIndex<selecEnd)return MindMarkAtributo.SPECIAL;								//S1-F-S2 T: F É SELECIONADO
-				return MindMarkAtributo.INVISIBLE;
-			default:	return getSpecialAtributo_TwoTags(doc,formatIndex,formatLength,formatIndex+formatLength+textLength,0);
-		}
-	}
-	protected static MindMarkAtributo getSpecialAtributo_OneTagOnRight(MindMarkDocumento doc,int formatIndex,int formatLength,int textLength){
-		final MindMarkEditor.Section section=(MindMarkEditor.Section)doc.getParagraphElement(formatIndex).getAttributes().getAttribute(MindMarkAtributo.SHOW_FORMAT);
-		if(section==null)return MindMarkAtributo.INVISIBLE;
-		final int selecStart=section.getIndex1();
-		final int selecEnd=section.getIndex2();
-		switch(section.getShowMode()){
-			case MindMarkTexto.SHOW_FORMAT_ON_CHAR:
-				if(selecStart>=formatIndex&&formatIndex+formatLength>=selecStart)return MindMarkAtributo.SPECIAL;			//T F|S1-S2: A SELEÇÃO COMEÇA EM F
-				if(selecEnd>=formatIndex&&formatIndex+formatLength>=selecEnd)return MindMarkAtributo.SPECIAL;				//T S1-S2|F: A SELEÇÃO TERMINA EM F
-				if(selecStart<formatIndex&&formatIndex<selecEnd)return MindMarkAtributo.SPECIAL;								//S1-F-S2 T: F É SELECIONADO
-				return MindMarkAtributo.INVISIBLE;
-			default:	return getSpecialAtributo_TwoTags(doc,formatIndex-textLength,0,formatIndex,formatLength);
-		}
-	}
-	protected static boolean isStyled(MindMarkDocumento doc,int index){
+	protected static boolean isStyledSpecial(MindMarkDocumento doc,int index){
 		final Boolean isStyled=(Boolean)doc.getCharacterElement(index).getAttributes().getAttribute(SPECIAL_FORMAT);
 		if(isStyled!=null&&isStyled==true)return true;
 		return false;
