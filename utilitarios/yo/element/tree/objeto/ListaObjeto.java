@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import element.tree.objeto.conexao.Conexao;
-import element.tree.objeto.conexao.Nodulo;
+import element.tree.objeto.nodulo.Nodulo;
 import element.tree.objeto.modulo.Modulo;
 public class ListaObjeto{
 //LISTAS

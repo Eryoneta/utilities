@@ -20,10 +20,10 @@ public class Elemento{
 	public Point getLocation(){return new Point(getX(),getY());}
 	public void setLocation(int x,int y){setX(x);setY(y);}
 //FORM
-	protected int width=0;
+	protected int width=1;
 		public int getWidth(){return width;}
 		public void setWidth(int width){this.width=width;update=true;}
-	protected int height=0;
+	protected int height=1;
 		public int getHeight(){return height;}
 		public void setHeight(int height){this.height=height;update=true;}
 	public Dimension getSize(){return new Dimension(getWidth(),getHeight());}

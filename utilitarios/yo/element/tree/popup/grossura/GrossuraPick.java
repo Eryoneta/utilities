@@ -5,9 +5,8 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
 import element.tree.propriedades.Grossura;
-import element.tree.Tree;
+import element.tree.main.Tree;
 import element.tree.objeto.conexao.Conexao;
 import element.tree.popup.Item;
 import element.tree.popup.Popup;

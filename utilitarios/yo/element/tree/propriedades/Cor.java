@@ -12,10 +12,26 @@ public class Cor extends Color{
 		private void setBrilho(Cor cor){this.brilho=getBrightness(cor);}
 		public boolean isDark(){return(brilho<130);}
 //MAIN
-	public Cor(int r,int g,int b){super(r,g,b);setBrilho(this);}
-	public Cor(int r,int g,int b,int a){super(r,g,b,a);setBrilho(this);}
-	public Cor(float r,float g,float b,float a){super(r,g,b,a);setBrilho(this);}
-	public Cor(Color cor){super(cor.getRGB());setBrilho(this);}
+	public Cor(int r,int g,int b){
+		super(r,g,b);
+		setBrilho(this);
+	}
+	public Cor(int r,int g,int b,int a){
+		super(r,g,b,a);
+		setBrilho(this);
+	}
+	public Cor(float r,float g,float b,float a){
+		super(r,g,b,a);
+		setBrilho(this);
+		}
+	public Cor(String hex){
+		super(Integer.valueOf(hex.substring(1,3),16),Integer.valueOf(hex.substring(3,5),16),Integer.valueOf(hex.substring(5,7),16));
+		setBrilho(this);
+	}
+	public Cor(Color cor){
+		super(cor.getRGB());
+		setBrilho(this);
+	}
 //FUNCS
 @Override
 	public int hashCode(){

@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import element.tree.propriedades.Cor;
 import element.tree.Cursor;
 import element.tree.objeto.modulo.Modulo;
+import element.tree.objeto.modulo.ModuloUI;
 import element.tree.popup.Bloco;
 import element.tree.popup.Popup;
 @SuppressWarnings("serial")
@@ -32,8 +33,8 @@ public class CorPickBloco extends Bloco{
 			public void mouseReleased(MouseEvent m){
 				final Point mouse=m.getPoint();
 				if(Cursor.match(m,Cursor.LEFT)){
-					setCor(mouse);
 					janela.dispose();
+					setCor(mouse);
 				}
 			}
 		});
@@ -71,6 +72,7 @@ public class CorPickBloco extends Bloco{
 	private CorPick pick;
 	private Robot bot;
 		private void setCor(Point local){
+			if(pick.getSelectedMods().isEmpty())return;
 			final Cor cor=new Cor(bot.getPixelColor(local.x,local.y));
 			boolean changed=false;
 			final Cor[]oldCores=new Cor[pick.getSelectedMods().size()];
@@ -127,7 +129,7 @@ public class CorPickBloco extends Bloco{
 	private final Image icone=new ImageIcon(Cursor.class.getResource("/icons/picker/Picker.png")).getImage();
 	public void draw(Graphics imagemEdit){
 		if(isFocused()){
-			imagemEdit.setColor(Cor.getChanged(Modulo.Cores.FUNDO,1.5f));
+			imagemEdit.setColor(Cor.getChanged(ModuloUI.Cores.FUNDO,1.5f));
 			imagemEdit.fillRect((int)getX(),(int)getY(),(int)getWidth(),(int)getHeight());
 		}
 		imagemEdit.drawImage(	//INSERE ICONE CENTRALIZADO DO BLOCO

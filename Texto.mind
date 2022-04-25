@@ -1,0 +1,136 @@
+<mind fontName="Courier New" fontSize="12" fontStyle="0">	<mod border="0" color="FFFFFF" icons="" title="Texto" x="0" y="0">		<text>+ Texto:&#13;
+- Editor de texto implementado do zero.</text>	</mod>	<mod border="0" color="FFFFFF" icons="" title="Mecânica" x="-1" y="5">		<text>+ Mecânica:&#13;
+</text>	</mod>	<mod border="0" color="FFFFFF" icons="/Basics/Empty.png" title="Texto" x="-14" y="19">		<text>+ Texto:&#13;
+//TEXTO&#13;
+	private String texto;&#13;
+		public String getText();&#13;
+		public void setText(String texto);&#13;
+//LINHAS&#13;
+	private LIst&lt;Linha&gt;linhas;&#13;
+		private void setLinhas();&#13;
+//MAIN&#13;
+	public MarkdownText(){}&#13;
+//FUNCS&#13;
+@Override&#13;
+	public void paintComponent(Graphics g);</text>	</mod>	<mod border="0" color="FFFFFF" icons="/Basics/Empty.png" title="Linha" x="-5" y="19">		<text>+ Linha:&#13;
+//VAR GLOBAIS&#13;
+	public static String DEFINITION;&#13;
+//PAI&#13;
+	private MarkdownText texto;&#13;
+		public MarkdownText getTextParent();&#13;
+//INDEX&#13;
+	private int index;&#13;
+//LENGTH&#13;
+	private int length;&#13;
+//PALAVRAS&#13;
+	private List&lt;Palavra&gt;palavras;&#13;
+		private void setPalavras();&#13;
+//MAIN&#13;
+	public Linha(MarkdownText texto,int index,int length);&#13;
+//DRAW&#13;
+	public void draw(Graphics g);&#13;
+</text>	</mod>	<mod border="0" color="FFFFFF" icons="/Basics/Empty.png" title="Palavra" x="4" y="19">		<text>+ Palavra:&#13;
+//VAR GLOBAIS&#13;
+	public static String DEFINITION;&#13;
+//PAI&#13;
+	private Linha linha;&#13;
+		public Linha getLineParent();&#13;
+//INDEX&#13;
+	private int index;&#13;
+//LENGTH&#13;
+	private int length;&#13;
+//LETRAS&#13;
+	private List&lt;Letra&gt;letras=new ArrayList&lt;&gt;();&#13;
+		private void setLetras();&#13;
+//MAIN&#13;
+	public Palavra(Linha linha,int index,int length);</text>	</mod>	<mod border="0" color="FFFFFF" icons="/Basics/Empty.png" title="Letra" x="14" y="19">		<text>+ Letra:
+//PAI
+	private Palavra palavra;
+		public Palavra getWordParent();
+//INDEX
+	private int relIndex;
+		public int getIndex();
+//WIDTH
+	private int width;
+//MAIN
+	//@param palavra onde pertence
+	//@param index de acordo com o Texto
+	public Letra(Palavra palavra,int index);
+</text>	</mod>	<mod border="0" color="FFFFFF" icons="" title="Idéias" x="6" y="5">		<text>+ Idéias:
+- O index de cada ´Caratere´ é relativo à ´Palavra´, que é relativo à ´Linha´, que possúi o index.
+. indexCAbsoluto=indexL+indexP+indexC;
+. indexPAbsoluto=indexL+indexL;
+. indexLAbsoluto=indexL;
+. Inserir uma letra significa atualizar o indexes dos ´Caracteres´ após a inserção.
+
+- Width é fixo, mas alterado(Chamado pelo insert()).
+. Height segue ele.
+- O index é o da lista.
+- O lenght é o da lista.
+
+
+Teste Teste Teste Teste Teste 
+Teste Teste Teste Teste Teste 
+Teste Teste Teste Teste Teste 
+
+- Mas cada char deve ter um index...!
+. Coordenada x,y? ´Linha´s são y e ´Caracteres´ são x?
+
+</text>	</mod>	<mod border="0" color="DCDCDC" icons="/Basics/Folder.png" title="text" x="0" y="10">		<text/>	</mod>	<mod border="0" color="FFFFFF" icons="/Basics/Empty.png" title="Atributos" x="9" y="11">		<text/>	</mod>	<mod border="0" color="FFFFFF" icons="" title="Detalhes" x="-8" y="3">		<text>* Detalhes:
+
++ Caret:
+- Arrows = Move o caret.
+. Ctrl+Arrows = Salta o caret.
+- Ao passar pelas linhas, possúi uma preferência ´x´.
+- PageUp = Move o caret o equivalente a quantidade de linhas visíveis para cima.
+- PageDown = Move o caret o equivalente a quantidade de linhas visíveis para baixo.
+- Home = Move o caret para o começo da linha.
+. Ctrl+Home = Move o caret para o começo do texto.
+- End = Move o caret para o fim da linha.
+. Ctrl+End = Move o caret para o fim do texto.
+
++ Seleção:
+- 1xClick+Drag = Cria uma seleção, que pode ser expandida para cima ou abaixo.
+. Definido por ´selecIni´ e ´selecFim´, que podem um antes ou depois do outro.
+- 2xClick = Seleciona uma palavra.
+. 3xClick = Seleciona uma linha.
+- Toda a seleção pode ser extendida com os mesmos atalhos do mover do caret.
+. Home, End, PageUp, PageDown, Ctrl.
+
++ Keys:
+- Ctrl+D = Apaga uma linha.
+- Ctrl+A = Seleciona tudo.
+- Enter = Cria nova linha.
+- Backspace = Apaga antes do caret.
+. Ctrl+Backspace = Apaga uma palavra antes do caret.
+- Delete = Apaga depois do caret.
+. Ctrl+Delete = Apaga uma palavra depois do caret.
+
++ Clipboard:
+- Ctrl+X = Copia e deleta a seleção.
+- Ctrl+C = Copia a seleção.
+- Ctrl+V = Cola texto.
+</text>	</mod>	<mod border="0" color="DCDCDC" icons="/Basics/Folder.png" title="markdown" x="-29" y="12">		<text/>	</mod>	<mod border="0" color="FFFFFF" icons="/Basics/Empty.png" title="MindMarkdown" x="-39" y="17">		<text>+ MindMarkdown:&#13;
+</text>	</mod>	<mod border="0" color="FFFFFF" icons="" title="MindMarkdown" x="-12" y="0">		<text>+ MindMarkdown:
+</text>	</mod>	<mod border="0" color="FFFFFF" icons="" title="Detalhes" x="-19" y="0">		<text>* Detalhes:
+
++ Edições:
+- Ctrl+B = Negrita a seleção.
+- Ctrl+I = Italiza a seleção.
+- Ctrl+U = Sublinha a seleção.
+- Ctrl+T = Risca a seleção.
+- Ctrl+E = Destaca a seleção.
+- Ctrl+L = Insere link.
+</text>	</mod>	<mod border="0" color="FFFFFF" icons="" title="Protótipo" x="13" y="0">		<text>+ Protótipo:&#13;
+- Processo:&#13;
+. Um texto Markdown é set();&#13;
+. Formatação:&#13;
+  Cada mark é substituído por html. A posição de cada formatação é guardada.&#13;
+  Conforme o texto é editado, a posição das formatações afetadas são atualizadas.&#13;
+- Marks recebem fonte=0, sumindo de vista!&#13;
+- O documento recebe o texto normal, mas em cima é adicionado styles, que fazem a mágica.&#13;
+. Nas linhas selecionadas, o style recebido é o que determina se os caractéres especiais aparecem ou não(Controla a fonteSize).&#13;
+. De acordo com os styles, os Views podem adicionar algo com o paint().&#13;
+. Tudo recebe ou perde styles, mas o texto permanece o mesmo.&#13;
+. O Document pode ter styles custom, mas o editorKit é quem se responsabiliza pelas atualizações do markdown.</text>	</mod>	<cox border="0" pai="0" son="1" width="2">		<text/>	</cox>	<cox border="0" pai="0" son="9" width="0">		<text/>	</cox>	<cox border="0" pai="0" son="12" width="2">		<text/>	</cox>	<cox border="0" pai="0" son="14" width="2">		<text/>	</cox>	<cox border="0" pai="1" son="6" width="0">		<text/>	</cox>	<cox border="0" pai="1" son="7" width="2">		<text/>	</cox>	<cox border="1" pai="2" son="3" width="1">		<text/>	</cox>	<cox border="0" pai="7" son="2" width="0">		<text/>	</cox>	<cox border="1" pai="3" son="4" width="1">		<text/>	</cox>	<cox border="0" pai="7" son="3" width="0">		<text/>	</cox>	<cox border="1" pai="4" son="5" width="1">		<text/>	</cox>	<cox border="0" pai="7" son="4" width="0">		<text/>	</cox>	<cox border="0" pai="7" son="5" width="0">		<text/>	</cox>	<cox border="0" pai="7" son="8" width="0">		<text/>	</cox>	<cox border="0" pai="7" son="10" width="2">		<text/>	</cox>	<cox border="0" pai="10" son="11" width="0">		<text/>	</cox>	<cox border="0" pai="12" son="13" width="0">		<text/>	</cox>
+</mind>

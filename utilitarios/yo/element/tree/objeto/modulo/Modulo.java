@@ -1,21 +1,16 @@
 package element.tree.objeto.modulo;
-import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import element.tree.objeto.Objeto;
 import element.tree.objeto.ObjetoBoundsListener;
 import element.tree.objeto.conexao.Conexao;
@@ -23,106 +18,20 @@ import element.tree.popup.icon.IconePick;
 import element.tree.propriedades.Borda;
 import element.tree.propriedades.Cor;
 import element.tree.propriedades.Icone;
-import element.tree.Tree;
+import element.tree.main.Tree;
+import element.tree.main.TreeUI;
 public class Modulo extends Objeto{
-//STATES
-	public enum State{
-		UNSELECTED,
-		SELECTED,
-		HIGHLIGHTED,
-		TO_BE_CREATOR,
-		TO_BE_SON,
-		TO_BE_PAI,
-		TO_BE_DELETED;
-		public boolean is(Modulo.State... states){
-			for(Modulo.State state:states)if(this.equals(state))return true;
-			return false;
+//ST
+	private final ModuloST ST=new ModuloST(this);
+		public ModuloST getST(){return ST;}
+		public ModuloST.State getState(){return getST().getState();}
+		public void setState(ModuloST.State state){getST().setState(state);}
+//UI
+	private final ModuloUI UI=new ModuloUI(this);
+		public ModuloUI getUI(){return UI;}
+		public void draw(Graphics2D imagemEdit,int unit){
+			getUI().draw(imagemEdit,unit);
 		}
-	}
-	private State state=Modulo.State.UNSELECTED;
-		public Modulo.State getState(){return state;}
-		public void setState(Modulo.State state){
-			switch(getState()){
-				case UNSELECTED:
-					if(state.is(Modulo.State.SELECTED)){
-						this.state=state;							//UNSELECTED -> SELECTED
-						for(Conexao cox:getConexoes())cox.setState(Conexao.State.HIGHLIGHTED);
-					}else if(state.is(Modulo.State.HIGHLIGHTED)){
-						this.state=state;							//UNSELECTED -> HIGHLIGHTED
-					}else if(state.is(Modulo.State.TO_BE_CREATOR)){
-						this.state=state;							//UNSELECTED -> TO_BE_CREATOR
-					}else if(state.is(Modulo.State.TO_BE_SON)){
-						if(this==Tree.getMestre())return;	//MESTRE NÃO PODE SER SON
-						this.state=state;							//UNSELECTED -> TO_BE_SON
-					}else if(state.is(Modulo.State.TO_BE_PAI)){
-						this.state=state;							//UNSELECTED -> TO_BE_PAI
-					}else if(state.is(Modulo.State.TO_BE_DELETED)){
-						if(this==Tree.getMestre())return;	//MESTRE NÃO PODE SER DEL
-						this.state=state;							//UNSELECTED -> TO_BE_DELETED
-						for(Conexao cox:getConexoes())cox.setState(Conexao.State.TO_BE_DELETED);
-					}
-				break;
-				case SELECTED:
-					if(state.is(Modulo.State.UNSELECTED)){
-						for(Conexao cox:getConexoes())if(cox.getState().is(Conexao.State.SELECTED)){
-							this.state=Modulo.State.HIGHLIGHTED;	//SELECTED -> HIGHLIGHTED
-							break;
-						}
-						if(getState().is(Modulo.State.SELECTED)){
-							this.state=state;						//SELECTED -> UNSELECTED
-						}
-						for(Conexao cox:getConexoes())if(cox.getState().is(Conexao.State.HIGHLIGHTED))cox.setState(Conexao.State.UNSELECTED);
-						if(!getState().is(Modulo.State.UNSELECTED))for(Conexao cox:getConexoes())if(cox.getState().is(Conexao.State.HIGHLIGHTED)){
-							this.state=Modulo.State.HIGHLIGHTED;	//SELECTED -> HIGHLIGHTED
-							break;
-						}
-					}
-				break;
-				case HIGHLIGHTED:
-					if(state.is(Modulo.State.SELECTED)){
-						this.state=state;							//HIGHLIGHTED -> SELECTED
-						for(Conexao cox:getConexoes())cox.setState(Conexao.State.HIGHLIGHTED);
-					}else if(state.is(Modulo.State.UNSELECTED)){
-						this.state=state;							//HIGHLIGHTED -> UNSELECTED
-						for(Conexao cox:getConexoes())if(cox.getState().is(Conexao.State.SELECTED,Conexao.State.HIGHLIGHTED)){
-							this.state=Modulo.State.HIGHLIGHTED;	//UNSELECTED -> HIGHLIGHTED
-							break;
-						}
-					}
-				break;
-				case TO_BE_CREATOR:
-					if(state.is(Modulo.State.UNSELECTED)){
-						this.state=state;							//TO_BE_CREATOR -> UNSELECTED
-					}
-				break;
-				case TO_BE_SON:
-					if(state.is(Modulo.State.UNSELECTED)){
-						this.state=state;							//TO_BE_SON -> UNSELECTED
-					}
-				break;
-				case TO_BE_PAI:
-					if(state.is(Modulo.State.UNSELECTED)){
-						this.state=state;							//TO_BE_PAI -> UNSELECTED
-					}
-				break;
-				case TO_BE_DELETED:
-					if(state.is(Modulo.State.UNSELECTED)){
-						this.state=state;							//TO_BE_DELETED -> UNSELECTED
-						for(Conexao cox:getConexoes())cox.setState(Conexao.State.UNSELECTED);
-					}
-				break;
-			}
-		}
-//VAR GLOBAIS
-	public static int getRoundValue(int unit){return unit;}
-	public static class Cores{
-		public static Cor FUNDO=new Cor(215,215,215);
-		public static Cor SELECT=new Cor(120,120,120);
-		public static Cor CREATE=new Cor(65,231,82);
-		public static Cor PAI=new Cor(117,132,236);
-		public static Cor SON=new Cor(236,220,117);
-		public static Cor DELETE=new Cor(170,45,45);
-	}
 //LOCAL
 	private int xIndex;
 		public int getXIndex(){return xIndex;}
@@ -166,7 +75,7 @@ public class Modulo extends Objeto{
 		final Graphics imagemEdit=new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB).getGraphics();
 	//WIDTH
 		widthIndex=0;
-		if(Tree.Fonte.FONTE!=null)imagemEdit.setFont(Modulo.getFont(unit));
+		if(TreeUI.Fonte.FONTE!=null)imagemEdit.setFont(Modulo.getFont(unit));
 		int width=0;
 		for(String linha:titulo){
 			width=Math.max(width,imagemEdit.getFontMetrics().stringWidth(linha));
@@ -214,7 +123,7 @@ public class Modulo extends Objeto{
 			}
 		}
 //COR
-	private Cor cor=Modulo.Cores.FUNDO;
+	private Cor cor=ModuloUI.Cores.FUNDO;
 		public Cor getCor(){return cor;}
 		public void setCor(Cor cor){this.cor=cor;}
 //BORDA
@@ -253,7 +162,7 @@ public class Modulo extends Objeto{
 		}
 		public boolean isIconified(){return !icones.isEmpty();}
 //TITULO
-	private String[]titulo;
+	protected String[]titulo;
 		public String getTitle(){return String.join("\n",titulo);}
 		public void justSetTitle(String titulo){	//EVITA BOUNDS_LISTENER
 			this.titulo=titulo.split("\n",-1);
@@ -295,7 +204,7 @@ public class Modulo extends Objeto{
 		justSetTitle(titulo);
 	}
 	public static Font getFont(int unit){
-		return new Font(Tree.Fonte.FONTE.getName(),Tree.Fonte.FONTE.getStyle(),(int)(unit*0.1f*Tree.Fonte.FONTE.getSize()));
+		return new Font(TreeUI.Fonte.FONTE.getName(),TreeUI.Fonte.FONTE.getStyle(),(int)(unit*0.1f*TreeUI.Fonte.FONTE.getSize()));
 	}
 	public Font getRelativeFont(int unit){
 		final Graphics imagemEdit=new BufferedImage(1,1,BufferedImage.TYPE_INT_RGB).getGraphics();
@@ -320,7 +229,7 @@ public class Modulo extends Objeto{
 	public int hashCode(){
 		final int prime=31;
 		int result=super.hashCode();
-		result=prime*result+((state==null)?0:state.hashCode());
+		result=prime*result+((ST==null)?0:ST.hashCode());
 //		result=prime*result+Arrays.hashCode(conexoes);
 		result=prime*result+((cor==null)?0:cor.hashCode());
 		result=prime*result+((borda==null)?0:borda.hashCode());
@@ -341,7 +250,7 @@ public class Modulo extends Objeto{
 		if(!super.equals(obj))return false;
 		if(getClass()!=obj.getClass())return false;
 		final Modulo mod=(Modulo)obj;
-		if(state!=mod.state)return false;
+		if(ST!=mod.ST)return false;
 		if(conexoes!=mod.conexoes)return false;
 		if(cor!=mod.cor)return false;
 		if(borda!=mod.borda)return false;
@@ -354,128 +263,6 @@ public class Modulo extends Objeto{
 		if(widthIndex!=mod.widthIndex)return false;
 		if(heightIndex!=mod.heightIndex)return false;
 		return true;
-	}
-//DRAW
-	public void draw(Graphics2D imagemEdit,int unit){
-		if(this==Tree.getGhost())return;
-		final int round=Modulo.getRoundValue(unit);
-		final float borda=Tree.getBordaValue(unit);
-		drawBrilho(imagemEdit,unit,round,borda);
-		drawFundo(imagemEdit,unit,round);
-		drawBorda(imagemEdit,unit,round,borda);
-		if(!getTitle().isEmpty())drawTitulo(imagemEdit,unit);
-		drawIcone(imagemEdit,unit);
-	}
-		private void drawBrilho(Graphics2D imagemEdit,int unit,int round,float borda){
-			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
-			if(getState().equals(Modulo.State.UNSELECTED)||getState().equals(Modulo.State.HIGHLIGHTED))return;
-			imagemEdit.setColor(getBrilhoCor(getState()));
-			final float x=getX(unit)-borda*2.6f;
-			final float y=getY(unit)-borda*2.6f;
-			final float width=getWidth(unit)+((borda*2.6f)*2);
-			final float height=getHeight(unit)+((borda*2.6f)*2);
-			round*=1.6;
-			if(this==Tree.getMestre()){
-				imagemEdit.fill(new Rectangle2D.Float(x,y,width,height));
-			}else imagemEdit.fill(new RoundRectangle2D.Float(x,y,width,height,round,round));
-		}
-		private void drawFundo(Graphics2D imagemEdit,int unit,int round){
-			imagemEdit.setColor(getFundoCor(getState()));
-			if(this==Tree.getMestre()){
-				imagemEdit.fill(new Rectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit)));
-			}else imagemEdit.fill(new RoundRectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit),round,round));
-		}
-		private void drawBorda(Graphics2D imagemEdit,int unit,int round,float borda){
-			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
-			imagemEdit.setStroke(getBorda().getVisual(borda));
-			imagemEdit.setColor(getBordaCor(getState()));
-			if(this==Tree.getMestre()){
-				imagemEdit.setStroke(new BasicStroke(Tree.getBordaValue(unit),BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));	//BORDAS RETAS
-				imagemEdit.draw(new Rectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit)));
-			}else imagemEdit.draw(new RoundRectangle2D.Float(getX(unit),getY(unit),getWidth(unit),getHeight(unit),round,round));
-		}
-		private void drawTitulo(Graphics2D imagemEdit,int unit){
-			switch(getState()){
-				case UNSELECTED:default:
-				case SELECTED:
-				case HIGHLIGHTED:			imagemEdit.setColor(getCor().isDark()?Tree.Fonte.LIGHT:Tree.Fonte.DARK);break;
-				case TO_BE_CREATOR:		
-				case TO_BE_PAI:
-				case TO_BE_SON:
-				case TO_BE_DELETED:			imagemEdit.setColor(Tree.Fonte.DARK);break;
-			}
-			if(unit<=3){		//EM ZOOM<=3, É ILEGÍVEL, TROCA POR LINHA
-				imagemEdit.setStroke(new BasicStroke(1));
-				final int borda=1*unit;
-				final int linhasQtd=(unit<=2?Math.max(1,titulo.length/2):titulo.length);	//LINHAS MUITO JUNTAS FORMAM BLOCOS
-				final float linhaHeight=(float)(getHeight(unit))/linhasQtd;
-				final int width=Math.max(1,getWidth(unit)-borda-borda);	//DEVE APARECER PELO MENOS 1 PÍXEL
-				final int x=getX(unit)+borda;
-				float y=getY(unit)+linhaHeight/2;
-				for(int i=0;i<linhasQtd;i++){
-					imagemEdit.drawLine(x,(int)Math.round(y),x+width,(int)Math.round(y));
-					y+=linhaHeight;
-				}
-			}else{
-				imagemEdit.setFont(getRelativeFont(unit));
-				final int height=imagemEdit.getFontMetrics().getHeight();
-//				final double heightUnit=((double)getHeight()/titulo.length);	//DESCENTRALIZA COM O TITULO 
-				double y=getY(unit)+(isIconified()?unit*2:0)+height;
-				for(String linha:titulo){
-					imagemEdit.drawString(linha,getX(unit)+(getWidth(unit)-imagemEdit.getFontMetrics().stringWidth(linha))/2,(int)y);
-					y+=height;
-				}
-			}
-		}
-		private void drawIcone(Graphics2D imagemEdit,int unit){
-			if(unit<=2)return;		//EM ZOOM<=2, É IRRELEVANTE
-			if(!isIconified())return;
-			final int iconsWidth=Icone.getSize(unit)*getIcones().size();
-			for(int i=0,size=getIcones().size(),x=getX(unit)+((getWidth(unit)-iconsWidth)/2),y=getY(unit);i<size;i++,x+=Icone.getSize(unit)){
-				getIcones().get(i).draw(imagemEdit,unit,x,y);
-			}
-		}
-	public Cor getBrilhoCor(Modulo.State state){
-		final float transparency=0.4f;
-		switch(state){
-			case SELECTED:default:		return Cor.getTransparent(Cor.getChanged(Modulo.Cores.SELECT,0.8f),transparency);
-			case TO_BE_CREATOR:			return Cor.getTransparent(Cor.getChanged(Modulo.Cores.CREATE,0.8f),transparency);
-			case TO_BE_PAI:				return Cor.getTransparent(Cor.getChanged(Modulo.Cores.PAI,0.8f),transparency);
-			case TO_BE_SON:				return Cor.getTransparent(Cor.getChanged(Modulo.Cores.SON,0.8f),transparency);
-			case TO_BE_DELETED:			return Cor.getTransparent(Cor.getChanged(Modulo.Cores.DELETE,0.8f),transparency);
-		}
-	}
-	public Cor getFundoCor(Modulo.State state){
-		switch(state){
-			case UNSELECTED:default:	return getCor();
-			case SELECTED:
-			case HIGHLIGHTED:
-				Cor corHigh=Cor.getChanged(getCor(),60);										//FUNDO MAIS CLARO
-				if(corHigh.getRed()==255&&corHigh.getGreen()==255&&corHigh.getBlue()==255){		//SE CLARO DEMAIS
-					corHigh=Cor.getChanged(getCor(),-30);										//FUNDO MAIS ESCURO
-				}
-				return corHigh;
-			case TO_BE_CREATOR:			return Modulo.Cores.CREATE;
-			case TO_BE_PAI:				return Modulo.Cores.PAI;
-			case TO_BE_SON:				return Modulo.Cores.SON;
-			case TO_BE_DELETED:			return Modulo.Cores.DELETE;
-		}
-	}
-	public Cor getBordaCor(Modulo.State state){
-		switch(state){
-			case UNSELECTED:default:
-				Cor corUnSelec=Cor.getChanged(getCor(),-30);										//BORDA MAIS ESCURA QUE O FUNDO
-				if(corUnSelec.getRed()==0&&corUnSelec.getGreen()==0&&corUnSelec.getBlue()==0){		//SE ESCURO DEMAIS
-					corUnSelec=Cor.getChanged(getCor(),(int)((255-getCor().getBrilho())/2));		//ESCLARECE
-				}
-				return Cor.getContraste(Tree.FUNDO,corUnSelec,false);
-			case SELECTED:				return Cor.getContraste(Tree.FUNDO,Cor.getInverted(getCor()),false);
-			case HIGHLIGHTED:			return Cor.getContraste(Tree.FUNDO,getCor(),false);
-			case TO_BE_CREATOR:			return Cor.getContraste(Tree.FUNDO,Cor.getChanged(Modulo.Cores.CREATE,0.8f),false);
-			case TO_BE_PAI:				return Cor.getContraste(Tree.FUNDO,Cor.getChanged(Modulo.Cores.PAI,0.8f),false);
-			case TO_BE_SON:				return Cor.getContraste(Tree.FUNDO,Cor.getChanged(Modulo.Cores.SON,0.8f),false);
-			case TO_BE_DELETED:			return Cor.getContraste(Tree.FUNDO,Cor.getChanged(Modulo.Cores.DELETE,0.8f),false);
-		}
 	}
 //TAG -> MOD
 	public static Modulo getModulo(Element modTag)throws Exception{

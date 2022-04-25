@@ -1,5 +1,5 @@
 package element.tree.propriedades;
-import element.tree.Tree;
+import element.tree.main.TreeUI;
 public class Grossura{
 //GROSSURAS
 	public static final int MEDIUM=0;
@@ -22,10 +22,10 @@ public class Grossura{
 //NOME
 	public String getNome(){
 		switch(index){
-			case MEDIUM:default:	return Tree.getLang().get("T_Pop_G_M","Medium");
-			case THIN:				return Tree.getLang().get("T_Pop_G_F","Thin");
-			case WIDE:				return Tree.getLang().get("T_Pop_G_G","Thin");
-			case ULTRA_WIDE:		return Tree.getLang().get("T_Pop_G_EG","Extra Wide");
+			case MEDIUM:default:	return TreeUI.getLang().get("T_Pop_G_M","Medium");
+			case THIN:				return TreeUI.getLang().get("T_Pop_G_F","Thin");
+			case WIDE:				return TreeUI.getLang().get("T_Pop_G_G","Thin");
+			case ULTRA_WIDE:		return TreeUI.getLang().get("T_Pop_G_EG","Extra Wide");
 		}
 	}
 //MAIN

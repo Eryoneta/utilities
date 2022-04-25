@@ -2,8 +2,9 @@ package element.tree.popup;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JMenuItem;
-import element.tree.Tree;
-import element.tree.objeto.modulo.Modulo;
+import element.tree.main.Tree;
+import element.tree.main.TreeUI;
+import element.tree.objeto.modulo.ModuloUI;
 @SuppressWarnings("serial")
 public class Item extends JMenuItem{
 //TREE
@@ -18,8 +19,8 @@ public class Item extends JMenuItem{
 		super(titulo);
 		setTree(tree);
 		setOpaque(true);
-		setBackground(Tree.Menu.FUNDO);
-		setForeground(Tree.Menu.FONTE);
+		setBackground(TreeUI.Menu.FUNDO);
+		setForeground(TreeUI.Menu.FONTE);
 		addMouseListener(new MouseAdapter(){
 			public void mousePressed(MouseEvent m){
 				focus(item);
@@ -31,8 +32,8 @@ public class Item extends JMenuItem{
 	public void setEnabled(boolean enabled){
 		super.setEnabled(enabled);
 		if(enabled){
-			item.setForeground(Tree.Menu.FONTE);
-		}else item.setForeground(Tree.Menu.FONTE_DISABLED);
+			item.setForeground(TreeUI.Menu.FONTE);
+		}else item.setForeground(TreeUI.Menu.FONTE_DISABLED);
 	}
 //FOCO
 	private Runnable focusDelayed(Item item){
@@ -63,15 +64,15 @@ public class Item extends JMenuItem{
 					Popup.setFocus(focusDelayed(item));
 				}
 				if(isEnabled()){
-					setBackground(Tree.Menu.SELECT);
-				}else setBackground(Tree.Menu.SELECT_DISABLED);
+					setBackground(TreeUI.Menu.SELECT);
+				}else setBackground(TreeUI.Menu.SELECT_DISABLED);
 			break;
 			case MouseEvent.MOUSE_EXITED:
 				Popup.showTooltip(true);
 				unfocusAll();
 				repaint();
 				Popup.setFocus(null);
-				setBackground(Modulo.Cores.FUNDO);
+				setBackground(ModuloUI.Cores.FUNDO);
 			break;
 			default:
 				Popup.showTooltip(true);

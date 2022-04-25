@@ -9,13 +9,12 @@ import java.awt.Stroke;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-
 import javax.swing.JColorChooser;
-
 import element.tree.propriedades.Cor;
 import element.tree.Cursor;
-import element.tree.Tree;
+import element.tree.main.TreeUI;
 import element.tree.objeto.modulo.Modulo;
+import element.tree.objeto.modulo.ModuloUI;
 import element.tree.popup.Bloco;
 import element.tree.popup.Popup;
 @SuppressWarnings("serial")
@@ -76,7 +75,7 @@ public class CorBloco extends Bloco{
 				}else if(Cursor.match(m,Cursor.RIGHT)){
 					if(!getBounds().contains(mouse))return;
 					final Color cor=JColorChooser.showDialog(null,
-							Tree.getLang().get("T_Pop_C_Es","Choose a color"),
+							TreeUI.getLang().get("T_Pop_C_Es","Choose a color"),
 							getCor());
 					if(cor==null)return;
 					if(bloco==pick.getBlocoPrincipal()){
@@ -104,7 +103,7 @@ public class CorBloco extends Bloco{
 //DRAW
 	public void draw(Graphics imagemEdit){
 		if(isFocused()){
-			imagemEdit.setColor(Cor.getChanged(Modulo.Cores.FUNDO,1.5f));
+			imagemEdit.setColor(Cor.getChanged(ModuloUI.Cores.FUNDO,1.5f));
 			imagemEdit.fillRect((int)getX(),(int)getY(),(int)getWidth(),(int)getHeight());
 		}
 		((Graphics2D)imagemEdit).setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);

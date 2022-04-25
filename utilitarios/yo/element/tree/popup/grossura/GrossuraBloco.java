@@ -13,7 +13,7 @@ import element.tree.propriedades.Cor;
 import element.tree.Cursor;
 import element.tree.propriedades.Grossura;
 import element.tree.objeto.conexao.Conexao;
-import element.tree.objeto.modulo.Modulo;
+import element.tree.objeto.modulo.ModuloUI;
 import element.tree.popup.Bloco;
 import element.tree.popup.Popup;
 @SuppressWarnings("serial")
@@ -77,7 +77,7 @@ public class GrossuraBloco extends Bloco{
 //DRAW
 	public void draw(Graphics imagemEdit){
 		if(isFocused()){
-			imagemEdit.setColor(Cor.getChanged(Modulo.Cores.FUNDO,1.5f));
+			imagemEdit.setColor(Cor.getChanged(ModuloUI.Cores.FUNDO,1.5f));
 			imagemEdit.fillRect((int)getX(),(int)getY(),(int)getWidth(),(int)getHeight());
 		}
 		imagemEdit.setColor(Color.BLACK);
