@@ -1,6 +1,5 @@
 package utilitarios.visual.text.java.mindmarkdown;
 import java.awt.Font;
-import java.util.List;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -9,6 +8,7 @@ import javax.swing.text.Element;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
+import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo.AtributeList;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MMCitationAtributo;
 import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMHighlightAtributo;
 import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMItalicAtributo;
@@ -136,32 +136,33 @@ public class MindMarkDocumento extends DefaultStyledDocument{
 //		System.out.println("MMD-SHOW UPDATE!");
 
 		int index=selecStart;
+		final Element rootElement=getDefaultRootElement();
+		final int startElemIndex=rootElement.getElementIndex(index);
+		int endElemIndex=rootElement.getElementIndex(selecEnd);
+		if(endElemIndex<startElemIndex)endElemIndex=startElemIndex;
 		switch(viewMode){
 			case MindMarkTexto.SHOW_ALL_FORMAT:default:
 				setAllMarkdownToVisible();
 			break;
 			case MindMarkTexto.SHOW_FORMAT_ON_LINE:
 				setAllMarkdownToInvisible();
-				do{
-					final Element paragraph=getParagraphElement(index);
-					final List<MindMarkDocumento.FormatSection>sections=
-							(List<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
+				for(int i=startElemIndex;i<=endElemIndex;i++){
+					final Element paragraph=rootElement.getElement(i);
+					final AtributeList<MindMarkDocumento.FormatSection>sections=
+					(AtributeList<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
 					if(sections!=null){
-						for(MindMarkDocumento.FormatSection section:(List<MindMarkDocumento.FormatSection>)sections){
-							setToVisible(section);
-						}
+						for(MindMarkDocumento.FormatSection section:sections)setToVisible(section);
 					}
-					index=paragraph.getEndOffset()+1;
-				}while(index<selecEnd);
+				}
 			break;
 			case MindMarkTexto.SHOW_FORMAT_ON_WORD:
 				setAllMarkdownToInvisible();
-				do{
-					final Element paragraph=getParagraphElement(index);
-					final List<MindMarkDocumento.FormatSection>sections=
-							(List<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
+				for(int i=startElemIndex;i<=endElemIndex;i++){
+					final Element paragraph=rootElement.getElement(i);
+					final AtributeList<MindMarkDocumento.FormatSection>sections=
+					(AtributeList<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
 					if(sections!=null){
-						for(MindMarkDocumento.FormatSection section:(List<MindMarkDocumento.FormatSection>)sections){
+						for(MindMarkDocumento.FormatSection section:sections){
 							final int formatStartIndex=section.getStartTagIndex();
 							final int formatRealEndIndex=section.getEndTagIndex()+section.getEndTagLength();
 						//TS SS-SE TE: O SELEC FICA ENTRE TAG_START E TAG_END
@@ -174,17 +175,16 @@ public class MindMarkDocumento extends DefaultStyledDocument{
 							if(selecStart<=formatStartIndex&&formatRealEndIndex<=selecEnd)setToVisible(section);
 						}
 					}
-					index=paragraph.getEndOffset()+1;
-				}while(index<selecEnd);
+				}
 			break;
 			case MindMarkTexto.SHOW_FORMAT_ON_CHAR:
 				setAllMarkdownToInvisible();
-				do{
-					final Element paragraph=getParagraphElement(index);
-					final List<MindMarkDocumento.FormatSection>sections=
-							(List<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
+				for(int i=startElemIndex;i<=endElemIndex;i++){
+					final Element paragraph=rootElement.getElement(i);
+					final AtributeList<MindMarkDocumento.FormatSection>sections=
+					(AtributeList<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
 					if(sections!=null){
-						for(MindMarkDocumento.FormatSection section:(List<MindMarkDocumento.FormatSection>)sections){
+						for(MindMarkDocumento.FormatSection section:sections){
 							final int formatStartIndex=section.getStartTagIndex();
 							final int formatStartLength=section.getStartTagLength();
 							final int formatEndIndex=section.getEndTagIndex();
@@ -208,8 +208,7 @@ public class MindMarkDocumento extends DefaultStyledDocument{
 							if(hasEndTag)if(selecStart>=formatEndIndex&&formatEndIndex+formatEndLength>=selecStart)setToVisible(section);
 						}
 					}
-					index=paragraph.getEndOffset()+1;
-				}while(index<selecEnd);
+				}
 			break;
 			case MindMarkTexto.SHOW_NO_FORMAT:
 				setAllMarkdownToInvisible();

@@ -174,9 +174,9 @@ public class Tree extends Elemento{
 				case MODULO:
 					final Modulo mod=(Modulo)obj;
 					if(mod==getMestre())return false;		//MESTRE NÃO PODE SER DEL
-					while(!mod.getConexoes().isEmpty()){
-						del(mod.getConexoes().get(0));
-					}
+					final List<Conexao>coxs=new ArrayList<>(mod.getConexoes());
+					for(Conexao cox:coxs)del(cox);
+					mod.getConexoes().clear();
 					getObjetos().del(mod);
 					delDeChunk(mod,getChunksIndexes(mod.getFormIndex()));
 					return true;
@@ -188,9 +188,9 @@ public class Tree extends Elemento{
 					cox.getSon().delConexao(cox);
 					delDeChunk(cox,getChunksIndexes(cox.getFormIndex().getBounds()));
 					getObjetos().del(cox);		//RETIRA, IMPEDINDO QUE OS NODS O RECOLOQUEM
-					while(!cox.getNodulos().isEmpty()){
-						del(cox.getNodulos().get(0));
-					}
+					final List<Nodulo>nods=new ArrayList<>(cox.getNodulos());
+					for(Nodulo nod:nods)del(nod);
+					cox.getNodulos().clear();
 					return true;
 				case NODULO:
 					final Nodulo nod=(Nodulo)obj;
@@ -432,10 +432,26 @@ public class Tree extends Elemento{
 				case SEGMENTO:break;
 			}
 		}
-		public void unSelectAllMods(){while(!getSelectedObjetos().getModulos().isEmpty())unSelect(getSelectedObjetos().getModulos().get(0));}
-		public void unSelectAllCoxs(){while(!getSelectedObjetos().getConexoes().isEmpty())unSelect(getSelectedObjetos().getConexoes().get(0));}
-		public void unSelectAllNods(){while(!getSelectedObjetos().getNodulos().isEmpty())unSelect(getSelectedObjetos().getNodulos().get(0));}
-		public void unSelectAll(){while(!getSelectedObjetos().getAll().isEmpty())unSelect((Objeto)getSelectedObjetos().getAll().values().toArray()[0]);}
+		public void unSelectAllMods(){
+			final List<Modulo>mods=new ArrayList<>(getSelectedObjetos().getModulos());
+			for(Modulo mod:mods)unSelect(mod);
+			getSelectedObjetos().getModulos().clear();
+		}
+		public void unSelectAllCoxs(){
+			final List<Conexao>coxs=new ArrayList<>(getSelectedObjetos().getConexoes());
+			for(Conexao cox:coxs)unSelect(cox);
+			getSelectedObjetos().getConexoes().clear();
+		}
+		public void unSelectAllNods(){
+			final List<Nodulo>nods=new ArrayList<>(getSelectedObjetos().getNodulos());
+			for(Nodulo nod:nods)unSelect(nod);
+			getSelectedObjetos().getNodulos().clear();
+		}
+		public void unSelectAll(){
+			final List<Objeto>objs=new ArrayList<Objeto>(getSelectedObjetos().getAll().values());
+			for(Objeto obj:objs)unSelect(obj);
+			getSelectedObjetos().getAll().clear();
+		}
 //VISIBLE OBJETOS
 		private HashMap<Integer,Modulo>visibleMods=new HashMap<>();
 			public HashMap<Integer,Modulo>getVisibleMods(){return visibleMods;}

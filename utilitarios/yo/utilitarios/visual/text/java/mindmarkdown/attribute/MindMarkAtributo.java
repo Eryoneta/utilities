@@ -2,7 +2,6 @@ package utilitarios.visual.text.java.mindmarkdown.attribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import javax.swing.text.Element;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -65,6 +64,27 @@ public class MindMarkAtributo extends SimpleAttributeSet implements RegexBuilder
 			length=-1;
 		}
 	}
+//ATRIBUTE_LIST
+	public static class AtributeList<T> extends ArrayList<T>{
+	//INDEX
+		private int index=0;
+	//MAIN
+		public void setKey(int index){this.index=index;}
+	@Override
+		public int hashCode(){
+			final int prime=31;
+			int result=super.hashCode();
+			result=prime*result+index;
+			return result;
+		}
+	@Override
+		public boolean equals(Object obj){
+			if(!super.equals(obj))return false;
+			final AtributeList<T>list=(AtributeList<T>)obj;
+			if(index!=list.index)return false;
+			return true;
+		}
+	}
 //MAIN
 	public MindMarkAtributo(){}
 //FUNCS: ESCAPE
@@ -120,19 +140,23 @@ public class MindMarkAtributo extends SimpleAttributeSet implements RegexBuilder
 //FUNCS
 	protected static void registerAtributo(MindMarkDocumento doc,MindMarkDocumento.FormatSection section){
 		int index=section.getStartTagIndex();
-		do{
-			final Element paragraph=doc.getParagraphElement(index);
-			List<MindMarkDocumento.FormatSection>sections=
-					(List<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
+		final Element rootElement=doc.getDefaultRootElement();
+		final int startElemIndex=rootElement.getElementIndex(index);
+		int endElemIndex=rootElement.getElementIndex(section.getEndTagIndex());
+		if(endElemIndex<startElemIndex)endElemIndex=startElemIndex;
+		for(int i=startElemIndex;i<=endElemIndex;i++){
+			final Element paragraph=rootElement.getElement(i);
+			final AtributeList<MindMarkDocumento.FormatSection>sections=
+					(AtributeList<MindMarkDocumento.FormatSection>)paragraph.getAttributes().getAttribute(MindMarkAtributo.SECTION_FORMAT);
 			if(sections==null){
-				sections=new ArrayList<MindMarkDocumento.FormatSection>();
-				sections.add(section);
+				final AtributeList<MindMarkDocumento.FormatSection>newSections=new AtributeList<>();
+				newSections.setKey(i);
+				newSections.add(section);
 				final MindMarkAtributo formatAtributo=new MindMarkAtributo();
-				MindMarkAtributo.setSectionFormat(formatAtributo,sections);
-				doc.setParagraphAttributes(index,0,formatAtributo,false);
+				MindMarkAtributo.setSectionFormat(formatAtributo,newSections);
+				doc.setParagraphAttributes(paragraph.getStartOffset(),0,formatAtributo,false);
 			}else sections.add(section);
-			index=paragraph.getEndOffset();
-		}while(index<=section.getEndTagIndex()&&index<doc.getLength());
+		}
 	}
 	protected static boolean isStyledSpecial(MindMarkDocumento doc,int index){
 		final Boolean isStyled=(Boolean)doc.getCharacterElement(index).getAttributes().getAttribute(SPECIAL_FORMAT);

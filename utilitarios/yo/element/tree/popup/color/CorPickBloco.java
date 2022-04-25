@@ -33,8 +33,8 @@ public class CorPickBloco extends Bloco{
 			public void mouseReleased(MouseEvent m){
 				final Point mouse=m.getPoint();
 				if(Cursor.match(m,Cursor.LEFT)){
-					setCor(mouse);
 					janela.dispose();
+					setCor(mouse);
 				}
 			}
 		});
@@ -72,6 +72,7 @@ public class CorPickBloco extends Bloco{
 	private CorPick pick;
 	private Robot bot;
 		private void setCor(Point local){
+			if(pick.getSelectedMods().isEmpty())return;
 			final Cor cor=new Cor(bot.getPixelColor(local.x,local.y));
 			boolean changed=false;
 			final Cor[]oldCores=new Cor[pick.getSelectedMods().size()];

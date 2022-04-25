@@ -7,16 +7,18 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 @SuppressWarnings("serial")
 public class MMCitationAtributo extends MindMarkAtributo{
 //VAR GLOBAIS
-	public final static Color BACKGROUND_COLOR_1=new Color(230,230,230);
-	public final static Color BACKGROUND_COLOR_2=new Color(220,220,220);
-	public final static Color BACKGROUND_COLOR_3=new Color(210,210,210);
-	public final static int MAX_LEVEL=3;
+	public final static Color[]BACKGROUND_COLOR=new Color[]{
+			new Color(230,230,230),
+			new Color(220,220,220),
+			new Color(210,210,210)
+	};
+	public final static int MAX_LEVEL=3;	//SE QUISER MUDAR: ADICIONAR COR EM BACKGROUND_COLOR, E ADICIONAR CAMADA EM getCitationType()
 //SYMBOLS
-	private final static String START=">";
-	private final static String EXTEND="|>";
+	public final static String START=">";
+	public final static String EXTEND="|>";
 //TAGS
-	private final static String START_TAG=Pattern.quote(START);
-	private final static String EXTEND_TAG=Pattern.quote(EXTEND);
+	public final static String START_TAG=Pattern.quote(START);
+	public final static String EXTEND_TAG=Pattern.quote(EXTEND);
 //DEFINITIONS
 	private String definition="";
 	private void buildDefinition(int maxLevel){

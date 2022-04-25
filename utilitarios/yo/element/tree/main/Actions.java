@@ -1031,9 +1031,9 @@ public class Actions{
 		public void relateToGhost(Modulo mod){relateToGhost(Arrays.asList(mod));}
 	//DELETE
 		public void deleteGhostCoxs(){
-			while(!Tree.getGhost().getConexoes().isEmpty()){
-				tree.del(Tree.getGhost().getConexoes().get(0));
-			}
+			final List<Conexao>coxs=new ArrayList<>(Tree.getGhost().getConexoes());
+			for(Conexao cox:coxs)tree.del(cox);
+			Tree.getGhost().getConexoes().clear();
 			tree.draw();
 		}
 }

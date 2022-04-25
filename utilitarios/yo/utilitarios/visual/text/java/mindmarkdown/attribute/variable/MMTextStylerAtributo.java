@@ -1,9 +1,14 @@
 package utilitarios.visual.text.java.mindmarkdown.attribute.variable;
 import java.awt.Color;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.text.Element;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.StyleConstants;
+import utilitarios.ferramenta.color.ColorGallery;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
+import utilitarios.visual.text.java.mindmarkdown.attribute.MMCitationAtributo;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MMLineAtributo;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MMListAtributo;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
@@ -15,7 +20,7 @@ import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMStrikeThroug
 import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMSubscriptAtributo;
 import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMSuperscriptAtributo;
 import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMUnderlineAtributo;
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial","unchecked"})
 public class MMTextStylerAtributo extends MindMarkVariableAtributo{
 //SYMBOLS
 	private final static String FONT_VAR=":";
@@ -30,7 +35,7 @@ public class MMTextStylerAtributo extends MindMarkVariableAtributo{
 	private final static String LINE_BACKGROUND_VAR_TAG=Pattern.quote(LINE_BACKGROUND_VAR);
 //DEFINITION
 	private final String variablesDefinition=(
-		//(?:(?:(?<fontTag>:)(?<fontValue>`|[a-zA-Z0-9-_ ]+))|(?:(?<colorTag>###|##|#)(?<colorValue>[`@>=*+-. ]|[0-9A-Fa-f]{6}))|(?:(?<tag>[`*´~_$%@])))?
+		//(?:(?:(?<fontTag>:)(?<fontValue>`|[a-zA-Z0-9-_ ]+))|(?:(?<colorTag>###|##|#)(?<colorValue>[`@=*+-. ]|>+|[0-9A-Fa-f]{6}|\w+))|(?:(?<tag>[`*´~_$%@])))?
 			pseudoGroup(oneOrOther(
 					pseudoGroup(
 							namedGroup("fontTag",FONT_VAR_TAG)+
@@ -49,7 +54,9 @@ public class MMTextStylerAtributo extends MindMarkVariableAtributo{
 									oneOrOther(
 											characters(MMHighlightAtributo.TAG,MMHiddenAtributo.TAG,MMLineAtributo.TAG,
 													MMListAtributo.CHEFE_TAG,MMListAtributo.PAI_TAG,MMListAtributo.SON_0_TAG,MMListAtributo.SON_1_TAG,MMListAtributo.SON_2_TAG),
-											characters(range(0,9),range("A","F"),range("a","f"))+occurs(6)
+											MMCitationAtributo.START_TAG+oneOrMore(),
+											characters(range(0,9),range("A","F"),range("a","f"))+occurs(6),
+											word()+oneOrMore()
 									)
 							)
 					),
@@ -106,14 +113,7 @@ public class MMTextStylerAtributo extends MindMarkVariableAtributo{
 						setAtributo(atributo,colorTag,colorValue);
 					break;
 					case LINE_BACKGROUND_VAR:	//###
-						final  MindMarkAtributo colorAtributo=new MindMarkAtributo();
-						try{
-							final Color cor=getCor(colorValue);
-							if(cor!=null){
-								colorAtributo.addAttribute(LINE_COLOR,new ColorSection(indexTexto,indexTexto+texto.length(),cor));
-								doc.setParagraphAttributes(indexTexto,texto.length(),colorAtributo,false);
-							}
-						}catch(NumberFormatException error){}//TODO
+						setParagraphAtributo(indexTexto,texto,colorValue);
 					break;
 				}
 			}else if(match.group("tag")!=null){			//SHORTCUT
@@ -121,6 +121,31 @@ public class MMTextStylerAtributo extends MindMarkVariableAtributo{
 			}
 		}
 	}
+		private void setParagraphAtributo(int indexTexto,String texto,String colorValue){
+			try{
+				final Color cor=getCor(colorValue);
+				if(cor!=null){
+					final ColorSection sectionCor=new ColorSection(indexTexto,indexTexto+texto.length(),cor);
+					final Element rootElement=doc.getDefaultRootElement();
+					final int startElemIndex=rootElement.getElementIndex(indexTexto);
+					int endElemIndex=rootElement.getElementIndex(indexTexto+texto.length()-1);
+					if(endElemIndex<startElemIndex)endElemIndex=startElemIndex;
+					for(int i=startElemIndex;i<=endElemIndex;i++){
+						final Element paragraph=rootElement.getElement(i);
+						final MutableAttributeSet paragraphAtrrs=(MutableAttributeSet)paragraph.getAttributes();
+						final AtributeList<MMTextStylerAtributo.ColorSection>cores=(AtributeList<MMTextStylerAtributo.ColorSection>)paragraphAtrrs.getAttribute(MMTextStylerAtributo.LINE_COLOR);
+						if(cores==null){
+							final AtributeList<MMTextStylerAtributo.ColorSection>newCores=new AtributeList<>();
+							newCores.setKey(i);
+							newCores.add(sectionCor);
+							final MindMarkAtributo colorAtributo=new MindMarkAtributo();
+							colorAtributo.addAttribute(LINE_COLOR,newCores);
+							doc.setParagraphAttributes(paragraph.getStartOffset(),0,colorAtributo,false);
+						}else cores.add(sectionCor);
+					}
+				}
+			}catch(NumberFormatException error){}//TODO
+		}
 		private void setAtributo(MindMarkAtributo atributo,String var,String valor){
 			if(var==null||valor==null)return;
 			switch(var){
@@ -173,11 +198,24 @@ public class MMTextStylerAtributo extends MindMarkVariableAtributo{
 				case MMListAtributo.CHEFE:case MMListAtributo.PAI:case MMListAtributo.SON_0:case MMListAtributo.SON_1:case MMListAtributo.SON_2:
 					return MMListAtributo.COLOR;
 				default:
-					try{
-						return Color.decode("#"+valor);
-					}catch(NumberFormatException error){
-						return null;
+				//CITATION
+					if(valor.matches(startOfText()+MMCitationAtributo.START+oneOrMore()+endOfText())){
+						int level=(valor.length()/MMCitationAtributo.START.length())-1;
+						if(level<0||level>=MMCitationAtributo.BACKGROUND_COLOR.length){
+							return MMCitationAtributo.BACKGROUND_COLOR[MMCitationAtributo.BACKGROUND_COLOR.length-1];
+						}
+						return MMCitationAtributo.BACKGROUND_COLOR[level];
+				//HEX_COLOR
+					}else if(valor.matches(startOfText()+characters(range(0,9),range("A","F"),range("a","f"))+occurs(6)+endOfText())){	//^[0-9A-Fa-f]{6}$
+						try{
+							return Color.decode("#"+valor);
+						}catch(NumberFormatException error){}
+				//NAMED_COLOR
+					}else{
+						final List<ColorGallery.NamedColor>cores=ColorGallery.search(valor);
+						if(!cores.isEmpty())return cores.get(0).getCor();
 					}
+					return null;
 			}
 		}
 }

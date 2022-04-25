@@ -20,7 +20,6 @@ public class MMParagraphListView{
 		final float spaceAbove=(float)paragraphView.getAttributes().getAttribute(StyleConstants.SpaceAbove);
 		area.y+=spaceAbove;
 		area.height-=spaceAbove;
-	//BULLET
 		g.setColor(MMListAtributo.COLOR);
 		final Graphics2D g2D=(Graphics2D)g;
 		final Stroke oldStroke=g2D.getStroke();
@@ -33,16 +32,19 @@ public class MMParagraphListView{
 				size
 		);
 		g2D.setStroke(new BasicStroke(1));
+	//LINHA VERTICAL
 		for(int i=0;i<list.getIndentationLevel()-1;i++){
 			final int x=(int)(area.x+(MMListAtributo.LEFT_INDENT*i));
 			g.drawLine(x,(int)(area.y-spaceAbove),
-					x,(int)(area.y+area.height+spaceAbove));
+					x,(int)(area.y+area.height));
 		}
+	//TOPO DA LINHA VERTICAL
 		if(list.isImmediateSon()){
 			final int x=(int)(area.x+(MMListAtributo.LEFT_INDENT*(list.getIndentationLevel()-1-1)));
 			g.drawLine(x+((size+MMListAtributo.LINE_AREA)/2),(int)(area.y-spaceAbove),
 					x,(int)(area.y-spaceAbove));
 		}
+	//BULLET
 		final float sizeSmall=size/6;
 		if(!list.isExtension()){
 			switch(list.getBulletType()){
@@ -89,7 +91,7 @@ public class MMParagraphListView{
 		}
 		g2D.setStroke(new BasicStroke(MMListAtributo.LINE_WIDTH));
 		final int x=(int)(area.x+leftIndent-(MMListAtributo.LINE_AREA/2));
-	//LINHA
+	//LINHA ENTRE BULLET E TEXTO
 		if(!list.isExtension()){
 			g.drawLine(x,(int)(area.y+size),
 					x,(int)(area.y+area.height-size));

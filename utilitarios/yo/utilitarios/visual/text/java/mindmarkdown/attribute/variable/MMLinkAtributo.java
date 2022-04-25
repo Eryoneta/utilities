@@ -144,7 +144,16 @@ public class MMLinkAtributo extends MindMarkVariableAtributo{
 			}
 		});
 		texto.addMouseListener(new MouseAdapter(){
-			public void mouseClicked(MouseEvent m){
+			private int index=0;
+			public void mousePressed(MouseEvent m){
+				final Point mouse=m.getPoint();
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override public void run(){
+						index=findIndex(mouse);
+					}
+				});
+			}
+			public void mouseReleased(MouseEvent m){
 				final Point mouse=m.getPoint();
 				SwingUtilities.invokeLater(new Runnable(){
 					@Override public void run(){
@@ -152,16 +161,17 @@ public class MMLinkAtributo extends MindMarkVariableAtributo{
 					}
 				});
 			}
+			private synchronized int findIndex(Point mouse){return texto.viewToModel(mouse);}
 			private synchronized void updateInterface(Point mouse){
-				final int index=texto.viewToModel(mouse);
-				if(index>=0){
+				final int index=findIndex(mouse);
+				if(index>=0&&index==this.index){
 					final MindMarkDocumento doc=(MindMarkDocumento)texto.getDocument();
 					final Element character=doc.getCharacterElement(index);
 					final Link link=(Link)character.getAttributes().getAttribute(LINK);
 					if(link!=null)openLink(link.getLink());
+					setTooltip(texto,null);
+					setCursorToHand(texto,false);
 				}
-				setTooltip(texto,null);
-				setCursorToHand(texto,false);
 			}
 		});
 	}

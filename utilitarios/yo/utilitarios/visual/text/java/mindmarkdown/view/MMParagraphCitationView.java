@@ -24,11 +24,7 @@ public class MMParagraphCitationView {
 		for(int l=0;l<totalLevel;l++){
 			final float leftIndent=(MMCitationAtributo.LEFT_INDENT*l);
 			final float spacedAbove=(citation.getLevels()[l].getType()==Citation.Level.Type.HEAD?spaceAbove:0f);
-			switch(l){
-				case 0:	g.setColor(MMCitationAtributo.BACKGROUND_COLOR_1);	break;
-				case 1:	g.setColor(MMCitationAtributo.BACKGROUND_COLOR_2);	break;
-				case 2:	g.setColor(MMCitationAtributo.BACKGROUND_COLOR_3);	break;
-			}
+			g.setColor(MMCitationAtributo.BACKGROUND_COLOR[l]);
 			g.fillRect(
 					(int)(area.x+leftIndent),
 					(int)(area.y+spacedAbove),

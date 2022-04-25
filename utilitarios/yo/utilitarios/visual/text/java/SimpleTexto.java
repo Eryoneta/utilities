@@ -84,20 +84,12 @@ public class SimpleTexto extends JTextPane{
 	public void deleteLine(){
 		try{
 			final int selecStart=getSelectionStart();
-			int selecEnd=getSelectionEnd();
-			final List<Element>linhas=new ArrayList<>();
-			int i=selecStart;
-		//PARA CADA LINHA
-			do{
-				final Element linha=getStyledDocument().getParagraphElement(i);
-			//O ANOTA PARA DEL
-				linhas.add(linha);
-				i=linha.getEndOffset();
-			}while(i<selecEnd);
+			final int selecEnd=getSelectionEnd();
+			final int startDel=getStyledDocument().getParagraphElement(selecStart).getStartOffset();
+			int endDel=getStyledDocument().getParagraphElement(selecEnd).getEndOffset();
+			if(endDel>=getStyledDocument().getLength())endDel--;
 		//DELETA LINHAS
-			for(Element linha:linhas){
-				getDocument().remove(linha.getStartOffset(),linha.getEndOffset()-linha.getStartOffset());
-			}
+			getDocument().remove(startDel,endDel-startDel);
 		}catch(BadLocationException erro){}
 	}
 	public void addTab(KeyEvent k){
@@ -106,12 +98,15 @@ public class SimpleTexto extends JTextPane{
 			int selecEnd=getSelectionEnd();
 			final List<Integer>tabs=new ArrayList<>();
 		//PARA CADA LINHA
-			for(int i=selecStart;i<selecEnd;){
-				final Element linha=getStyledDocument().getParagraphElement(i);
+			int prevIndex=-1;
+			int index=selecStart;
+			do{
+				final Element linha=getStyledDocument().getParagraphElement(index);
 			//ANOTA O INDEX DE SEU INÍCIO
 				tabs.add(linha.getStartOffset()+tabs.size());
-				i=linha.getEndOffset();
-			}
+				prevIndex=index;
+				index=linha.getEndOffset();
+			}while(index<selecEnd&&index!=prevIndex);
 			if(tabs.size()<=1)return;	//IGNORA SE APENAS 1 LINHA
 		//ADICIONA TABS
 			for(int tab:tabs)getDocument().insertString(tab,"\t",null);
@@ -124,16 +119,19 @@ public class SimpleTexto extends JTextPane{
 			final int selecStart=getSelectionStart();
 			int selecEnd=getSelectionEnd();
 		//PARA CADA LINHA
-			for(int i=selecStart;i<selecEnd;){
-				final Element linha=getStyledDocument().getParagraphElement(i);
+			int prevIndex=-1;
+			int index=selecStart;
+			do{
+				final Element linha=getStyledDocument().getParagraphElement(index);
 				final int start=linha.getStartOffset();
 			//REMOVE TAB
 				if(getDocument().getText(start,1).equals("\t")){
 					getDocument().remove(start,1);
 					selecEnd--;	//RECUA COM OS TABS
 				}
-				i=linha.getEndOffset();
-			}
+				prevIndex=index;
+				index=linha.getEndOffset()+1;
+			}while(index<selecEnd&&index!=prevIndex);
 		}catch(BadLocationException erro){}
 	}
 	private void addTabbedEnter(KeyEvent k){
@@ -143,7 +141,7 @@ public class SimpleTexto extends JTextPane{
 			final Element linha=getStyledDocument().getParagraphElement(cursor);
 			final int start=linha.getStartOffset();
 			int tabQtd=0;
-			for(int i=0;true;i++){
+			for(int i=0;i<linha.getEndOffset()+1;i++){
 				if(getDocument().getText(start+i,1).equals("\t")){
 					tabQtd++;
 				}else break;

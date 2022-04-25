@@ -9,20 +9,21 @@ public class MMListAtributo extends MindMarkAtributo{
 //VAR GLOBAIS
 	public final static int TOTAL_BULLETS=5;
 //SYMBOLS
-	public final static String CHEFE="* ";
-	public final static String PAI="+ ";
-	public final static String SON_0="- ";
-	public final static String SON_1=". ";
-	public final static String SON_2="  ";
+	public final static String CHEFE="*";
+	public final static String PAI="+";
+	public final static String SON_0="-";
+	public final static String SON_1=".";
+	public final static String SON_2=" ";
 	public final static String EXTENSION="|";
+	public final static String SPACE=" ";
 //TAGS
-	public final static String CHEFE_TAG=Pattern.quote(CHEFE);	//INDEPENDENTE, ADD_SPACE_ABOVE
-	public final static String PAI_TAG=Pattern.quote(PAI);		//INDEPENDENTE, ADD_SPACE_ABOVE, ADD_SPACE_LEFT(SWITCH:(HAS'*')1)
-	public final static String SON_0_TAG=Pattern.quote(SON_0);	//INDEPENDENTE, ADD_SPACE_LEFT(SWITCH:(HAS'*')1,(HAS'+')1,(HAS'*'&HAS'+')2)
-	public final static String SON_1_TAG=Pattern.quote(SON_1);	//DEPENDENTE(NEEDS'-'),
-																		//ADD_SPACE_LEFT(SWITCH:(HAS'-')1,(HAS'+'&HAS'-')2,(HAS'*'&HAS'-')2,(HAS'*'&HAS'+'&HAS'-')3)
-	public final static String SON_2_TAG=Pattern.quote(SON_2);	//DEPENDENTE(NEEDS'.'),
-																		//ADD_SPACE_LEFT(SWITCH:(HAS'-'&HAS'.')2,(HAS'+'&HAS'-'&HAS'.')3,(HAS'*'&HAS'-'&HAS'.')3,
+	public final static String CHEFE_TAG=Pattern.quote(CHEFE+SPACE);	//INDEPENDENTE, ADD_SPACE_ABOVE
+	public final static String PAI_TAG=Pattern.quote(PAI+SPACE);		//INDEPENDENTE, ADD_SPACE_ABOVE, ADD_SPACE_LEFT(SWITCH:(HAS'*')1)
+	public final static String SON_0_TAG=Pattern.quote(SON_0+SPACE);	//INDEPENDENTE, ADD_SPACE_LEFT(SWITCH:(HAS'*')1,(HAS'+')1,(HAS'*'&HAS'+')2)
+	public final static String SON_1_TAG=Pattern.quote(SON_1+SPACE);	//DEPENDENTE(NEEDS'-'),
+																				//ADD_SPACE_LEFT(SWITCH:(HAS'-')1,(HAS'+'&HAS'-')2,(HAS'*'&HAS'-')2,(HAS'*'&HAS'+'&HAS'-')3)
+	public final static String SON_2_TAG=Pattern.quote(SON_2+SPACE);	//DEPENDENTE(NEEDS'.'),
+																				//ADD_SPACE_LEFT(SWITCH:(HAS'-'&HAS'.')2,(HAS'+'&HAS'-'&HAS'.')3,(HAS'*'&HAS'-'&HAS'.')3,
 																				//(HAS'*'&HAS'+'&HAS'-'&HAS'.')4)
 	public final static String EXTENSION_TAG=Pattern.quote(EXTENSION);
 //DEFINITIONS
@@ -30,7 +31,7 @@ public class MMListAtributo extends MindMarkAtributo{
 			/*(?<=^|\n)
 				escapeDefinition()
 				(?<tag>(?:\|)?(?:\* |\+ |- |\. |  ))
-				(?<text>.+)*/
+				(?<text>.*)*/
 			precededBy(oneOrOther(startOfText(),lineBreak()))+
 			escapeDefinition()+
 			namedGroup("tag",
@@ -38,7 +39,7 @@ public class MMListAtributo extends MindMarkAtributo{
 					pseudoGroup(oneOrOther(CHEFE_TAG,PAI_TAG,SON_0_TAG,SON_1_TAG,SON_2_TAG))
 			)+
 			namedGroup("text",
-					allExceptLineBreak()+oneOrMore()
+					allExceptLineBreak()+zeroOrMore()
 			)
 	);
 //VAR GLOBAIS
@@ -143,17 +144,17 @@ public class MMListAtributo extends MindMarkAtributo{
 			boolean isImmediateSon=false;
 			int indentation=0;
 			switch(bullet){
-				case CHEFE:default:
+				case CHEFE+SPACE:default:
 					bulletType=List.BulletType.CHEFE;	//"*"
 					indentation=1;											//"* "
 				break;
-				case PAI:
+				case PAI+SPACE:
 					bulletType=List.BulletType.PAI;		//"+"
 					if(hasChefe&&!hasSon(pastLists,List.BulletType.CHEFE))isImmediateSon=true;
 					if(hasChefe)indentation=2;								//"*" -> "+"
 					else indentation=1;										//"+"
 				break;
-				case SON_0:
+				case SON_0+SPACE:
 					bulletType=List.BulletType.SON_0;	//"-"
 					if(hasChefe&&!hasSon(pastLists,List.BulletType.CHEFE))isImmediateSon=true;
 					if(hasPai&&!hasSon(pastLists,List.BulletType.PAI))isImmediateSon=true;
@@ -162,7 +163,7 @@ public class MMListAtributo extends MindMarkAtributo{
 					else if(hasPai)indentation=2;							//"+ " -> "-"
 					else indentation=1;										//"-"
 				break;
-				case SON_1:
+				case SON_1+SPACE:
 					bulletType=List.BulletType.SON_1;	//"."
 					if(hasSon0&&!hasSon(pastLists,List.BulletType.SON_0))isImmediateSon=true;
 					if(hasChefe&&hasPai&&hasSon0)indentation=4;				//"*" -> "+" -> "-" -> "."
@@ -171,7 +172,7 @@ public class MMListAtributo extends MindMarkAtributo{
 					else if(hasSon0)indentation=2;							//"-" -> "."
 					else indentation=0;										//"." = INVÁLIDO
 				break;
-				case SON_2:
+				case SON_2+SPACE:
 					bulletType=List.BulletType.SON_2;	//" "
 					if(hasSon1&&!hasSon(pastLists,List.BulletType.SON_1))isImmediateSon=true;
 					if(hasChefe&&hasPai&&hasSon0&&hasSon1)indentation=5;	//"*" -> "+" -> "-" -> "." -> " "
@@ -180,20 +181,20 @@ public class MMListAtributo extends MindMarkAtributo{
 					else if(hasSon0&&hasSon1)indentation=3;					//"-" -> "." -> " "
 					else indentation=0;										//" " = INVÁLIDO
 				break;
-				case EXTENSION+CHEFE:
+				case EXTENSION+CHEFE+SPACE:
 					bulletType=List.BulletType.CHEFE;	//"|*"
 					type=List.Type.EXTENSION;
 					if(hasChefe)indentation=1;										//"*" -> "|*"
 					else indentation=0;												//"|*" = INVÁLIDO
 				break;
-				case EXTENSION+PAI:
+				case EXTENSION+PAI+SPACE:
 					bulletType=List.BulletType.PAI;		//"|+"
 					type=List.Type.EXTENSION;
 					if(hasChefe&&hasPai)indentation=2;								//"*" -> "+" -> "|+"
 					else if(hasPai)indentation=1;									//"+" -> "|+"
 					else indentation=0;												//"|+" = INVÁLIDO
 				break;
-				case EXTENSION+SON_0:
+				case EXTENSION+SON_0+SPACE:
 					bulletType=List.BulletType.SON_0;	//"|-"
 					type=List.Type.EXTENSION;
 					if(hasChefe&&hasPai&&hasSon0)indentation=3;						//"*" -> "+" -> "-" -> "|-"
@@ -202,7 +203,7 @@ public class MMListAtributo extends MindMarkAtributo{
 					else if(hasSon0)indentation=1;									//"-" -> "|-"
 					else indentation=0;												//"|-" = INVÁLIDO
 				break;
-				case EXTENSION+SON_1:
+				case EXTENSION+SON_1+SPACE:
 					bulletType=List.BulletType.SON_1;	//"|."
 					type=List.Type.EXTENSION;
 					if(hasChefe&&hasPai&&hasSon0&&hasSon1)indentation=4;			//"*" -> "+" -> "-" -> "." -> "|."
@@ -212,7 +213,7 @@ public class MMListAtributo extends MindMarkAtributo{
 					else if(hasSon1)indentation=1;									//"." -> "|."
 					else indentation=0;												//"|." = INVÁLIDO
 				break;
-				case EXTENSION+SON_2:
+				case EXTENSION+SON_2+SPACE:
 					bulletType=List.BulletType.SON_2;	//"| "
 					type=List.Type.EXTENSION;
 					if(hasChefe&&hasPai&&hasSon0&&hasSon1&&hasSon2)indentation=5;	//"*" -> "+" -> "-" -> "." -> " " -> "| "
