@@ -1,4 +1,4 @@
-# utilitarios
+# utilities
 A series of useful components, used on various projects
 
 ### Tree
