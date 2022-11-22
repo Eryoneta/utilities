@@ -7,7 +7,16 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 @SuppressWarnings("serial")
 public class MMListAtributo extends MindMarkAtributo{
 //VAR GLOBAIS
+	public final static String LIST="list";
+	public final static float SPACE_ABOVE=8f;
+	public final static int LEFT_INDENT=8;
+//VAR GLOBAIS: BULLET
 	public final static int TOTAL_BULLETS=5;
+	public final static Color COLOR=new Color(190,190,190);
+	public final static int BULLET_SIZE=LEFT_INDENT/2;
+//VAR GLOBAIS: LINE
+	public final static float LINE_WIDTH=2;
+	public final static int LINE_AREA=(int)(2+LINE_WIDTH+2);	//SPACE + LINE + SPACE
 //SYMBOLS
 	public final static String CHEFE="*";
 	public final static String PAI="+";
@@ -42,16 +51,6 @@ public class MMListAtributo extends MindMarkAtributo{
 					allExceptLineBreak()+zeroOrMore()
 			)
 	);
-//VAR GLOBAIS
-	public final static String LIST="list";
-	public final static float SPACE_ABOVE=8f;
-	public final static int LEFT_INDENT=8;
-//VAR GLOBAIS: BULLET
-	public final static Color COLOR=new Color(190,190,190);
-	public final static int BULLET_SIZE=LEFT_INDENT/2;
-//VAR GLOBAIS: LINE
-	public final static float LINE_WIDTH=2;
-	public final static int LINE_AREA=(int)(2+LINE_WIDTH+2);	//SPACE + LINE + SPACE
 //LIST
 	public static class List{
 	//BULLET_TYPES

@@ -6,6 +6,10 @@ import javax.swing.text.StyleConstants;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 @SuppressWarnings("serial")
 public class MMLineAtributo extends MindMarkAtributo{
+//VAR GLOBAIS
+	public final static String LINE="line";
+	public final static Color COLOR=new Color(190,190,190);
+	public final static float LINE_WIDTH=4;
 //SYMBOLS
 	public final static String DEFAULT_OPTION="=";
 	public final static String OPTION_0="0";
@@ -32,10 +36,6 @@ public class MMLineAtributo extends MindMarkAtributo{
 			namedGroup("tag",COMPLETE_TAG)+
 			followedBy(oneOrOther(lineBreak(),endOfText()))
 	);
-//VAR GLOBAIS
-	public final static String LINE="line";
-	public final static Color COLOR=new Color(190,190,190);
-	public final static float LINE_WIDTH=4;
 //LINE
 	public static class Line{
 	//TYPES

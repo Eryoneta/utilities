@@ -6,6 +6,8 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
 @SuppressWarnings("serial")
 public class MMImageAtributo extends MindMarkVariableAtributo{
+//VAR GLOBAIS
+	public final static String IMAGE="image";
 //SYMBOLS
 	private final static String WIDTH_VAR="w";
 	private final static String HEIGHT_VAR="h";
@@ -23,8 +25,6 @@ public class MMImageAtributo extends MindMarkVariableAtributo{
 					)
 			)+zeroOrOne()
 	);
-//VAR GLOBAIS
-	public final static String IMAGE="image";
 //IMAGE
 	public static class Image{
 	//WIDTH

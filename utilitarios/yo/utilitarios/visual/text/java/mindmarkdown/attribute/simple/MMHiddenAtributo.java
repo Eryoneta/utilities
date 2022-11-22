@@ -4,11 +4,11 @@ import java.util.regex.Pattern;
 import javax.swing.text.StyleConstants;
 @SuppressWarnings("serial")
 public class MMHiddenAtributo extends MindMarkSimpleAtributo{
+//VAR GLOBAIS
+	public final static Color COLOR=new Color(0,0,0);
 //TAG
 	public final static String HIDDEN="@";
 	public final static String TAG=Pattern.quote(HIDDEN);
-//VAR GLOBAIS
-	public final static Color COLOR=new Color(0,0,0);
 //MAIN
 	public MMHiddenAtributo(){
 		buildDefinition(TAG,false,TAG);

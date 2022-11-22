@@ -6,12 +6,12 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
 @SuppressWarnings("serial")
 public class MindMarkVariableAtributo extends MindMarkAtributo{
+//VARS GLOBAIS
+	private boolean isMultiline=false;
 //TAGS
 	private final static String START_TAG=Pattern.quote("["),END_TAG=Pattern.quote("]");
 	private final static String START_URL_TAG=Pattern.quote("("),BAD_URL=Pattern.quote("\""),END_URL_TAG=Pattern.quote(")");
 	private final static String START_VAR_TAG=Pattern.quote("{"),END_VAR_TAG=Pattern.quote("}");
-//VARS GLOBAIS
-	private boolean isMultiline=false;
 //DEFINITIONS
 	private String definition="";
 		public void buildDefinitionWithURL(String startCondition,String specialTag,boolean isMultiline,boolean isURLOptional,String endCondition){

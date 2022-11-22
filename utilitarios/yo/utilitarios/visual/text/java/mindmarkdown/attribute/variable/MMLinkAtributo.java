@@ -23,27 +23,27 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkTexto;
 import utilitarios.visual.text.java.mindmarkdown.attribute.MindMarkAtributo;
 @SuppressWarnings("serial")
 public class MMLinkAtributo extends MindMarkVariableAtributo{
-	//SYMBOLS
-		private final static String BAD_URL="'";
-	//TAGS
-		public final static String BAD_URL_TAG=Pattern.quote(BAD_URL);
-	//DEFINITION
-		private final String paramsDefinition=(
-			//	(?:(?:(?<badURL>')(?<paramJoined>[^']+)\k<badURL>)|(?<param>[^\s]+))
-				pseudoGroup(oneOrOther(
-						pseudoGroup(
-								namedGroup("badURL",BAD_URL_TAG)+
-								namedGroup("paramJoined",allExcept(BAD_URL_TAG)+oneOrMore())+
-								matchOfGroup("badURL")
-						),
-						namedGroup("param",allExcept(space())+oneOrMore())
-				))
-		);
 //VAR GLOBAIS
 	public final static String LINK="link";
 	public final static Color COLOR=new Color(0,116,204);
 	public final static Color HOVER_COLOR=new Color(10,149,255);
 	public final static boolean SHOW_TOOLTIP=true;
+//SYMBOLS
+	private final static String BAD_URL="'";
+//TAGS
+	public final static String BAD_URL_TAG=Pattern.quote(BAD_URL);
+//DEFINITION
+	private final String paramsDefinition=(
+		//	(?:(?:(?<badURL>')(?<paramJoined>[^']+)\k<badURL>)|(?<param>[^\s]+))
+			pseudoGroup(oneOrOther(
+					pseudoGroup(
+							namedGroup("badURL",BAD_URL_TAG)+
+							namedGroup("paramJoined",allExcept(BAD_URL_TAG)+oneOrMore())+
+							matchOfGroup("badURL")
+					),
+					namedGroup("param",allExcept(space())+oneOrMore())
+			))
+	);
 //LINK
 	public static class Link{
 	//LINK

@@ -22,10 +22,10 @@ public class Elemento{
 //FORM
 	protected int width=1;
 		public int getWidth(){return width;}
-		public void setWidth(int width){this.width=width;update=true;}
+		public void setWidth(int width){this.width=width;sizeChanged=true;}
 	protected int height=1;
 		public int getHeight(){return height;}
-		public void setHeight(int height){this.height=height;update=true;}
+		public void setHeight(int height){this.height=height;sizeChanged=true;}
 	public Dimension getSize(){return new Dimension(getWidth(),getHeight());}
 	public void setSize(int width,int height){setWidth(width);setHeight(height);}
 	public Rectangle getBounds(){return new Rectangle(getX(),getY(),getWidth(),getHeight());}
@@ -36,12 +36,12 @@ public class Elemento{
 	protected Image print=new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
 		protected Image getPrint(){return print;}
 	private Image buffer=new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
-	private boolean update=false;
-		private void update(){
+	private boolean sizeChanged=false;
+		private void resizePrint(){
 			print.flush();
 			buffer=new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
 			print=new BufferedImage(getWidth(),getHeight(),BufferedImage.TYPE_INT_ARGB);
-			update=false;
+			sizeChanged=false;
 		}
 //VISIBILIDADE
 	protected boolean visible=false;
@@ -68,7 +68,7 @@ public class Elemento{
 //DRAW
 	public synchronized void draw(){
 		if(!isVisible())return;
-		if(update)update();		//RECRIA TELA
+		if(sizeChanged)resizePrint();		//RECRIA TELA
 		draw((Graphics2D)buffer.getGraphics());											//DESENHA COMPONENTES EM BUFFER
 		getPrint().getGraphics().drawImage(buffer,0,0,getWidth(),getHeight(),null);		//DESENHA TUDO EM IMAGEM
 		getPainel().getJanela().repaint();

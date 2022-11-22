@@ -7,12 +7,18 @@ import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 @SuppressWarnings("serial")
 public class MMCitationAtributo extends MindMarkAtributo{
 //VAR GLOBAIS
+	public final static String CITATION="citation";
+	public final static float SPACE_ABOVE=4f;
+	public final static int LEFT_INDENT=8;
 	public final static Color[]BACKGROUND_COLOR=new Color[]{
 			new Color(230,230,230),
 			new Color(220,220,220),
 			new Color(210,210,210)
 	};
 	public final static int MAX_LEVEL=3;	//SE QUISER MUDAR: ADICIONAR COR EM BACKGROUND_COLOR, E ADICIONAR CAMADA EM getCitationType()
+//VAR GLOBAIS: LINE
+	public final static Color LINE_COLOR=new Color(190,190,190);
+	public final static float LINE_WIDTH=4;
 //SYMBOLS
 	public final static String START=">";
 	public final static String EXTEND="|>";
@@ -46,13 +52,6 @@ public class MMCitationAtributo extends MindMarkAtributo{
 		);
 		definition=def.toString();
 	}
-//VAR GLOBAIS
-	public final static String CITATION="citation";
-	public final static float SPACE_ABOVE=4f;
-	public final static int LEFT_INDENT=8;
-//VAR GLOBAIS: LINE
-	public final static Color LINE_COLOR=new Color(190,190,190);
-	public final static float LINE_WIDTH=4;
 //CITATION
 	public static class Citation{
 	//LEVEL

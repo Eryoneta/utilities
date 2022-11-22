@@ -22,6 +22,8 @@ import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMSuperscriptA
 import utilitarios.visual.text.java.mindmarkdown.attribute.simple.MMUnderlineAtributo;
 @SuppressWarnings({"serial","unchecked"})
 public class MMTextStylerAtributo extends MindMarkVariableAtributo{
+//VAR GLOBAIS
+	public final static String LINE_COLOR="line-color";
 //SYMBOLS
 	private final static String FONT_VAR=":";
 	private final static String FOREGROUND_VAR="#";
@@ -68,8 +70,6 @@ public class MMTextStylerAtributo extends MindMarkVariableAtributo{
 					)
 			))+zeroOrOne()
 	);
-//VAR GLOBAIS
-	public final static String LINE_COLOR="line-color";
 //COLOR_SECTION
 	public class ColorSection{
 	//START

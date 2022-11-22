@@ -5,6 +5,9 @@ import javax.swing.text.StyleConstants;
 import utilitarios.visual.text.java.mindmarkdown.MindMarkDocumento;
 @SuppressWarnings("serial")
 public class MMSizeModifierAtributo extends MindMarkAtributo{
+//VAR GLOBAIS: SIZES
+	private static float[]BIGGER_SIZES=new float[]{1.5f,2.5f,4.0f};
+	private static float[]SMALLER_SIZES=new float[]{0.7f,0.4f,0.2f};
 //SYMBOLS
 	private final static String INCREASE="#";
 	private final static String DECREASE="^";
@@ -27,9 +30,6 @@ public class MMSizeModifierAtributo extends MindMarkAtributo{
 //FONTE_SIZE
 	public int DEFAULT_FONT_SIZE=12;
 		public void setDefaultFontSize(int size){DEFAULT_FONT_SIZE=size;}
-//SIZES
-	private static float[]BIGGER_SIZES=new float[]{1.5f,2.5f,4.0f};
-	private static float[]SMALLER_SIZES=new float[]{0.7f,0.4f,0.2f};
 //MAIN
 	public MMSizeModifierAtributo(){}
 //FUNCS
