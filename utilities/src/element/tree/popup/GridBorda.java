@@ -1,5 +1,5 @@
 package element.tree.popup;
 
-public class Popup {
+public class GridBorda {
 
 }

@@ -1,6 +1,23 @@
 package element.tree.objeto;
+
 import java.awt.Point;
-public class Objeto{
+
+import architecture.rrf_vp.Flow;
+import architecture.rrf_vp.Plan;
+import architecture.rrf_vp.Root;
+import architecture.rrf_vp.Rule;
+import architecture.rrf_vp.View;
+
+public abstract class Objeto extends Root{
+//RRF-VP
+	@Override
+	protected abstract Rule getRule();
+	@Override
+	protected abstract Flow getFlow();
+	@Override
+	protected abstract View getView();
+	@Override
+	protected abstract Plan getPlan();
 //TIPO
 	public enum Tipo{
 		MODULO,
@@ -24,7 +41,7 @@ public class Objeto{
 	}
 //FUNCS
 	public boolean contains(Point mouse){return false;}
-@Override
+	@Override
 	public int hashCode(){
 		final int prime=31;
 		int result=1;
@@ -32,7 +49,7 @@ public class Objeto{
 		result=prime*result+index;
 		return result;
 	}
-@Override
+	@Override
 	public boolean equals(Object objeto){
 		if(this==objeto)return true;
 		if(objeto==null)return false;
@@ -42,4 +59,7 @@ public class Objeto{
 		if(index!=obj.index)return false;
 		return true;
 	}
+//FUNCS
+	@Override
+	protected abstract void init();
 }
