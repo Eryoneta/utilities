@@ -1,11 +1,10 @@
 package element.tree.cursor;
 
 import architecture.rrf_vp.Flow;
-import architecture.rrf_vp.Root;
 
-public class CursorFlow extends Flow{
+public class CursorFlow extends Flow<Cursor>{
 //MAIN
-	public CursorFlow(Root root) {
+	public CursorFlow(Cursor root) {
 		super(root);
 	}
 //FUNCS

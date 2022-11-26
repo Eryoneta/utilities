@@ -1,10 +1,10 @@
 package architecture.rrf_vp;
 
-public abstract class Rule {
+public abstract class Rule<R> {
 //ROOT
-	protected Root root;
+	protected R root;
 //MAIN
-	public Rule(Root root) {
+	public Rule(R root) {
 		this.root=root;
 	}
 //FUNCS

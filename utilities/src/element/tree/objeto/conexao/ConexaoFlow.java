@@ -1,11 +1,10 @@
 package element.tree.objeto.conexao;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoFlow;
 
-public class ConexaoFlow extends ObjetoFlow {
+public class ConexaoFlow extends ObjetoFlow<Conexao> {
 //MAIN
-	public ConexaoFlow(Root root) {
+	public ConexaoFlow(Conexao root) {
 		super(root);
 	}
 //FUNCS

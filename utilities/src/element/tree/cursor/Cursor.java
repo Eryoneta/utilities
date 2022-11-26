@@ -1,21 +1,17 @@
 package element.tree.cursor;
 
-import architecture.rrf_vp.Flow;
-import architecture.rrf_vp.Plan;
 import architecture.rrf_vp.Root;
-import architecture.rrf_vp.Rule;
-import architecture.rrf_vp.View;
 
-public class Cursor extends Root{
-//RRF-VP
+public class Cursor extends Root<CursorRule,CursorFlow,CursorView,CursorPlan>{
+	//RRF-VP
 	@Override
-	protected Rule getRule() {return new CursorRule(this);}
+	protected CursorRule getRule() {return new CursorRule(this);}
 	@Override
-	protected Flow getFlow() {return new CursorFlow(this);}
+	protected CursorFlow getFlow() {return new CursorFlow(this);}
 	@Override
-	protected View getView() {return new CursorView(this);}
+	protected CursorView getView() {return new CursorView(this);}
 	@Override
-	protected Plan getPlan() {return new CursorPlan(this);}
+	protected CursorPlan getPlan() {return new CursorPlan(this);}
 //FUNCS
 	@Override
 	protected void init() {}

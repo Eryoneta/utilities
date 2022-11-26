@@ -1,11 +1,10 @@
 package element.tree.objeto;
 
 import architecture.rrf_vp.Flow;
-import architecture.rrf_vp.Root;
 
-public abstract class ObjetoFlow extends Flow {
+public abstract class ObjetoFlow<R> extends Flow<R> {
 //MAIN
-	public ObjetoFlow(Root root) {
+	public ObjetoFlow(R root) {
 		super(root);
 	}
 //FUNCS

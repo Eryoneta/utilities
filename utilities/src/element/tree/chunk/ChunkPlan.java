@@ -1,11 +1,10 @@
 package element.tree.chunk;
 
 import architecture.rrf_vp.Plan;
-import architecture.rrf_vp.Root;
 
-public class ChunkPlan extends Plan{
+public class ChunkPlan extends Plan<Chunk>{
 //MAIN
-	public ChunkPlan(Root root) {
+	public ChunkPlan(Chunk root) {
 		super(root);
 	}
 //FUNCS

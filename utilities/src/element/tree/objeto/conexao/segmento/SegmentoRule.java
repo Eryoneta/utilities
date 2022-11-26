@@ -1,11 +1,10 @@
 package element.tree.objeto.conexao.segmento;
 
-import architecture.rrf_vp.Root;
-import architecture.rrf_vp.Rule;
+import element.tree.objeto.ObjetoRule;
 
-public class SegmentoRule extends Rule{
+public class SegmentoRule extends ObjetoRule<Segmento>{
 //MAIN
-	public SegmentoRule(Root root) {
+	public SegmentoRule(Segmento root) {
 		super(root);
 	}
 //FUNCS

@@ -1,10 +1,10 @@
 package architecture.rrf_vp;
 
-public abstract class Flow {
+public abstract class Flow<R> {
 //ROOT
-	protected Root root;
+	protected R root;
 //MAIN
-	public Flow(Root root) {
+	public Flow(R root) {
 		this.root=root;
 	}
 //FUNCS

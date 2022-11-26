@@ -1,11 +1,10 @@
 package element.tree.objeto.conexao;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoPlan;
 
-public class ConexaoPlan extends ObjetoPlan{
+public class ConexaoPlan extends ObjetoPlan<Conexao>{
 //MAIN
-	public ConexaoPlan(Root root) {
+	public ConexaoPlan(Conexao root) {
 		super(root);
 	}
 //FUNCS

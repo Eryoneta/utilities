@@ -1,14 +1,15 @@
 package element.tree.objeto.modulo;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoRule;
 
-public class ModuloRule extends ObjetoRule {
+public class ModuloRule extends ObjetoRule<Modulo> {
 //MAIN
-	public ModuloRule(Root root) {
+	public ModuloRule(Modulo root) {
 		super(root);
 	}
 //FUNCS
 	@Override
 	protected void init() {}
+	
+	public void teste() {}
 }

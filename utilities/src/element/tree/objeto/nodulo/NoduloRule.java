@@ -1,11 +1,10 @@
 package element.tree.objeto.nodulo;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoRule;
 
-public class NoduloRule extends ObjetoRule{
+public class NoduloRule extends ObjetoRule<Nodulo>{
 //MAIN
-	public NoduloRule(Root root) {
+	public NoduloRule(Nodulo root) {
 		super(root);
 	}
 //FUNCS

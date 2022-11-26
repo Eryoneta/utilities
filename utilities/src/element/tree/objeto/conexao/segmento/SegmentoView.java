@@ -1,14 +1,19 @@
 package element.tree.objeto.conexao.segmento;
 
-import architecture.rrf_vp.Root;
+import java.awt.Point;
+
 import element.tree.objeto.ObjetoView;
 
-public class SegmentoView extends ObjetoView{
+public class SegmentoView extends ObjetoView<Segmento>{
 //MAIN
-	public SegmentoView(Root root) {
+	public SegmentoView(Segmento root) {
 		super(root);
 	}
 //FUNCS
 	@Override
 	protected void init() {}
+	@Override
+	public boolean contains(Point mouse) {
+		return false;
+	}
 }

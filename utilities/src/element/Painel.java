@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JPanel;
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial","rawtypes"})
 public class Painel extends JPanel{
 //JANELA(PAI)
 	private Window janela;

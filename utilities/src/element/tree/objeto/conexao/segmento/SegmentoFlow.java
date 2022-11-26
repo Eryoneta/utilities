@@ -1,11 +1,10 @@
 package element.tree.objeto.conexao.segmento;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoFlow;
 
-public class SegmentoFlow extends ObjetoFlow{
+public class SegmentoFlow extends ObjetoFlow<Segmento>{
 //MAIN
-	public SegmentoFlow(Root root) {
+	public SegmentoFlow(Segmento root) {
 		super(root);
 	}
 //FUNCS

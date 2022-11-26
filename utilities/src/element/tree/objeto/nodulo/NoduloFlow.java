@@ -1,11 +1,10 @@
 package element.tree.objeto.nodulo;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoFlow;
 
-public class NoduloFlow extends ObjetoFlow{
+public class NoduloFlow extends ObjetoFlow<Nodulo>{
 //MAIN
-	public NoduloFlow(Root root) {
+	public NoduloFlow(Nodulo root) {
 		super(root);
 	}
 //FUNCS

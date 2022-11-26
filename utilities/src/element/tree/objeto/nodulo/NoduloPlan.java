@@ -1,11 +1,10 @@
 package element.tree.objeto.nodulo;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoPlan;
 
-public class NoduloPlan extends ObjetoPlan{
+public class NoduloPlan extends ObjetoPlan<Nodulo>{
 //MAIN
-	public NoduloPlan(Root root) {
+	public NoduloPlan(Nodulo root) {
 		super(root);
 	}
 //FUNCS

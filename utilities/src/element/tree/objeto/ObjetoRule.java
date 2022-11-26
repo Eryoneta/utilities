@@ -1,11 +1,10 @@
 package element.tree.objeto;
 
-import architecture.rrf_vp.Root;
 import architecture.rrf_vp.Rule;
 
-public abstract class ObjetoRule extends Rule{
+public abstract class ObjetoRule<R> extends Rule<R>{
 //MAIN
-	public ObjetoRule(Root root) {
+	public ObjetoRule(R root) {
 		super(root);
 	}
 //FUNCS

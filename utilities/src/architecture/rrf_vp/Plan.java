@@ -1,10 +1,10 @@
 package architecture.rrf_vp;
 
-public abstract class Plan {
+public abstract class Plan<R> {
 //ROOT
-	protected Root root;
+	protected R root;
 //MAIN
-	public Plan(Root root) {
+	public Plan(R root) {
 		this.root=root;
 	}
 //FUNCS

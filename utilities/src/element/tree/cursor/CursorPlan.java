@@ -1,11 +1,10 @@
 package element.tree.cursor;
 
 import architecture.rrf_vp.Plan;
-import architecture.rrf_vp.Root;
 
-public class CursorPlan extends Plan{
+public class CursorPlan extends Plan<Cursor>{
 //MAIN
-	public CursorPlan(Root root) {
+	public CursorPlan(Cursor root) {
 		super(root);
 	}
 //FUNCS

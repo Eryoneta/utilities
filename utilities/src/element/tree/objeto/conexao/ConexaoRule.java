@@ -1,11 +1,10 @@
 package element.tree.objeto.conexao;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoRule;
 
-public class ConexaoRule extends ObjetoRule{
+public class ConexaoRule extends ObjetoRule<Conexao>{
 //MAIN
-	public ConexaoRule(Root root) {
+	public ConexaoRule(Conexao root) {
 		super(root);
 	}
 //FUNCS

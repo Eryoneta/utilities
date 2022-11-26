@@ -1,29 +1,30 @@
 package architecture.rrf_vp;
 
-public abstract class Root {
-//RULE
-	protected Rule rule;
-		protected abstract Rule getRule();
-//FLOW
-	protected Flow flow;
-		protected abstract Flow getFlow();
-//VIEW
-	protected View view;
-		protected abstract View getView();
-//PLAN
-	protected Plan plan;
-		protected abstract Plan getPlan();
+public abstract class Root<R,F,V,P> {
+//RRF-VP
+	public R rule;
+		protected abstract R getRule();
+	public F flow;
+		protected abstract F getFlow();
+	public V view;
+		protected abstract V getView();
+	public P plan;
+		protected abstract P getPlan();
 //MAIN
 	public Root() {
+		rule=getRule();
+		flow=getFlow();
+		view=getView();
+		plan=getPlan();
 		initAll();
 	}
 //FUNCS
-	protected abstract void init();
-	protected void initAll() {
+	private void initAll() {
 		this.init();
-		if(rule != null)rule.init();
-		if(flow != null)flow.init();
-		if(view != null)view.init();
-		if(plan != null)plan.init();
+		if(rule != null)((Rule<?>) rule).init();
+		if(flow != null)((Flow<?>) flow).init();
+		if(view != null)((View<?>) view).init();
+		if(plan != null)((Plan<?>) plan).init();
 	}
+	protected abstract void init();
 }

@@ -1,21 +1,17 @@
 package element.tree.objeto.conexao.segmento;
 
-import architecture.rrf_vp.Flow;
-import architecture.rrf_vp.Plan;
-import architecture.rrf_vp.Rule;
-import architecture.rrf_vp.View;
 import element.tree.objeto.Objeto;
 
-public class Segmento extends Objeto {
+public class Segmento extends Objeto<SegmentoRule,SegmentoFlow,SegmentoView,SegmentoPlan> {
 //RRF-VP
 	@Override
-	protected Rule getRule() {return null;}
+	protected SegmentoRule getRule() {return new SegmentoRule(this);}
 	@Override
-	protected Flow getFlow() {return null;}
+	protected SegmentoFlow getFlow() {return new SegmentoFlow(this);}
 	@Override
-	protected View getView() {return null;}
+	protected SegmentoView getView() {return new SegmentoView(this);}
 	@Override
-	protected Plan getPlan() {return null;}
+	protected SegmentoPlan getPlan() {return new SegmentoPlan(this);}
 //MAIN
 	public Segmento(Tipo tipo) {
 		super(tipo);

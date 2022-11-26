@@ -1,11 +1,10 @@
 package element.tree.objeto.conexao.segmento;
 
-import architecture.rrf_vp.Root;
 import element.tree.objeto.ObjetoPlan;
 
-public class SegmentoPlan extends ObjetoPlan{
+public class SegmentoPlan extends ObjetoPlan<Segmento>{
 //MAIN
-	public SegmentoPlan(Root root) {
+	public SegmentoPlan(Segmento root) {
 		super(root);
 	}
 //FUNCS

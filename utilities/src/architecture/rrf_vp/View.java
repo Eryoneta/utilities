@@ -1,10 +1,10 @@
 package architecture.rrf_vp;
 
-public abstract class View {
+public abstract class View<R> {
 //ROOT
-	protected Root root;
+	protected R root;
 //MAIN
-	public View(Root root) {
+	public View(R root) {
 		this.root=root;
 	}
 //FUNCS

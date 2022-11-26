@@ -1,11 +1,10 @@
 package element.tree.cursor;
 
-import architecture.rrf_vp.Root;
 import architecture.rrf_vp.View;
 
-public class CursorView extends View{
+public class CursorView extends View<Cursor>{
 //MAIN
-	public CursorView(Root root) {
+	public CursorView(Cursor root) {
 		super(root);
 	}
 //FUNCS
