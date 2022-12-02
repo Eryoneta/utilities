@@ -1,13 +1,17 @@
 package element.tree;
 
-import architecture.rrf_vp.Rule;
+import architecture.rrf_vp.rule.RuleJoint;
 
-public class TreeRule extends Rule<Tree>{
+public class TreeRule implements RuleJoint<TreeRule,Tree> {
+//ROOT
+	private Tree root;
+	@Override
+	public Tree getRoot() {return root;}
 //MAIN
 	public TreeRule(Tree root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

@@ -1,13 +1,17 @@
 package element.tree.objeto.nodulo;
 
-import element.tree.objeto.ObjetoFlow;
+import architecture.rrf_vp.flow.FlowJoint;
 
-public class NoduloFlow extends ObjetoFlow<Nodulo>{
+public class NoduloFlow implements FlowJoint<NoduloFlow,Nodulo> {
+//ROOT
+	private Nodulo root;
+	@Override
+	public Nodulo getRoot() {return root;}
 //MAIN
 	public NoduloFlow(Nodulo root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

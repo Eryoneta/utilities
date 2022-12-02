@@ -1,13 +1,17 @@
 package element.tree.cursor;
 
-import architecture.rrf_vp.Rule;
+import architecture.rrf_vp.rule.RuleJoint;
 
-public class CursorRule extends Rule<Cursor>{
+public class CursorRule implements RuleJoint<CursorRule,Cursor> {
+//ROOT
+	private Cursor root;
+	@Override
+	public Cursor getRoot() {return root;}
 //MAIN
 	public CursorRule(Cursor root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

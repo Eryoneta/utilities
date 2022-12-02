@@ -1,13 +1,17 @@
 package element.tree.objeto.conexao;
 
-import element.tree.objeto.ObjetoRule;
+import architecture.rrf_vp.rule.RuleJoint;
 
-public class ConexaoRule extends ObjetoRule<Conexao>{
+public class ConexaoRule implements RuleJoint<ConexaoRule,Conexao> {
+//ROOT
+	private Conexao root;
+	@Override
+	public Conexao getRoot() {return root;}
 //MAIN
 	public ConexaoRule(Conexao root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

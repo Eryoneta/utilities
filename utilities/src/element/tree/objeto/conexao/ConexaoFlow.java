@@ -1,13 +1,17 @@
 package element.tree.objeto.conexao;
 
-import element.tree.objeto.ObjetoFlow;
+import architecture.rrf_vp.flow.FlowJoint;
 
-public class ConexaoFlow extends ObjetoFlow<Conexao> {
+public class ConexaoFlow implements FlowJoint<ConexaoFlow,Conexao> {
+//ROOT
+	private Conexao root;
+	@Override
+	public Conexao getRoot() {return root;}
 //MAIN
 	public ConexaoFlow(Conexao root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

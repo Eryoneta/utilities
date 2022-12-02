@@ -1,13 +1,17 @@
 package element.tree.objeto.nodulo;
 
-import element.tree.objeto.ObjetoRule;
+import architecture.rrf_vp.rule.RuleJoint;
 
-public class NoduloRule extends ObjetoRule<Nodulo>{
+public class NoduloRule implements RuleJoint<NoduloRule,Nodulo> {
+//ROOT
+	private Nodulo root;
+	@Override
+	public Nodulo getRoot() {return root;}
 //MAIN
 	public NoduloRule(Nodulo root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

@@ -1,20 +1,17 @@
 package element.tree.objeto.modulo;
 
-import java.awt.Point;
+import architecture.rrf_vp.view.ViewJoint;
 
-import element.tree.objeto.ObjetoView;
-
-public class ModuloView extends ObjetoView<Modulo> {
+public class ModuloView implements ViewJoint<ModuloView,Modulo> {
+//ROOT
+	private Modulo root;
+	@Override
+	public Modulo getRoot() {return root;}
 //MAIN
 	public ModuloView(Modulo root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
-	@Override
-	public boolean contains(Point mouse) {
-		root.rule.teste();
-		return false;
-	}
+	public void init() {}
 }

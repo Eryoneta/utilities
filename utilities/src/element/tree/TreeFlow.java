@@ -1,13 +1,17 @@
 package element.tree;
 
-import architecture.rrf_vp.Flow;
+import architecture.rrf_vp.flow.FlowJoint;
 
-public class TreeFlow extends Flow<Tree>{
+public class TreeFlow implements FlowJoint<TreeFlow,Tree> {
+//ROOT
+	private Tree root;
+	@Override
+	public Tree getRoot() {return root;}
 //MAIN
 	public TreeFlow(Tree root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

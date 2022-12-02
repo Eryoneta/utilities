@@ -1,13 +1,17 @@
 package element.tree.cursor;
 
-import architecture.rrf_vp.View;
+import architecture.rrf_vp.view.ViewJoint;
 
-public class CursorView extends View<Cursor>{
+public class CursorView implements ViewJoint<CursorView,Cursor> {
+//ROOT
+	private Cursor root;
+	@Override
+	public Cursor getRoot() {return root;}
 //MAIN
 	public CursorView(Cursor root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

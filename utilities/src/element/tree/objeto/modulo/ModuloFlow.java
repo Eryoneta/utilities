@@ -1,13 +1,17 @@
 package element.tree.objeto.modulo;
 
-import element.tree.objeto.ObjetoFlow;
+import architecture.rrf_vp.flow.FlowJoint;
 
-public class ModuloFlow extends ObjetoFlow<Modulo> {
+public class ModuloFlow implements FlowJoint<ModuloFlow,Modulo> {
+//ROOT
+	private Modulo root;
+	@Override
+	public Modulo getRoot() {return root;}
 //MAIN
 	public ModuloFlow(Modulo root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

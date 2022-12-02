@@ -1,15 +1,16 @@
 package element.tree.objeto.modulo;
 
-import element.tree.objeto.ObjetoRule;
+import architecture.rrf_vp.rule.RuleJoint;
 
-public class ModuloRule extends ObjetoRule<Modulo> {
+public class ModuloRule implements RuleJoint<ModuloRule,Modulo> {
+//ROOT
+	private Modulo root;
+		@Override public Modulo getRoot() {return root;}
 //MAIN
 	public ModuloRule(Modulo root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
-	
-	public void teste() {}
+	public void init() {}
 }

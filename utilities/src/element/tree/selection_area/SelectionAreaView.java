@@ -1,13 +1,15 @@
 package element.tree.selection_area;
 
-import architecture.rrf_vp.View;
+import architecture.rrf_vp.view.ViewJoint;
 
-public class SelectionAreaView extends View<SelectionArea>{
+public class SelectionAreaView implements ViewJoint<SelectionAreaView,SelectionArea>{
+//ROOT
+	private SelectionArea root;
+		@Override public SelectionArea getRoot() {return root;}
 //MAIN
 	public SelectionAreaView(SelectionArea root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
-	@Override
-	protected void init() {}
+	@Override public void init() {}
 }

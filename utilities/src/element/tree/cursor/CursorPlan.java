@@ -1,13 +1,17 @@
 package element.tree.cursor;
 
-import architecture.rrf_vp.Plan;
+import architecture.rrf_vp.plan.PlanJoint;
 
-public class CursorPlan extends Plan<Cursor>{
+public class CursorPlan implements PlanJoint<CursorPlan,Cursor> {
+//ROOT
+	private Cursor root;
+	@Override
+	public Cursor getRoot() {return root;}
 //MAIN
 	public CursorPlan(Cursor root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

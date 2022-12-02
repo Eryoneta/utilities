@@ -1,19 +1,17 @@
 package element.tree.objeto.nodulo;
 
-import java.awt.Point;
+import architecture.rrf_vp.view.ViewJoint;
 
-import element.tree.objeto.ObjetoView;
-
-public class NoduloView extends ObjetoView<Nodulo>{
+public class NoduloView implements ViewJoint<NoduloView,Nodulo> {
+//ROOT
+	private Nodulo root;
+	@Override
+	public Nodulo getRoot() {return root;}
 //MAIN
 	public NoduloView(Nodulo root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
-	@Override
-	public boolean contains(Point mouse) {
-		return false;
-	}
+	public void init() {}
 }

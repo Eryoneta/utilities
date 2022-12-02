@@ -1,13 +1,17 @@
 package element.tree.chunk;
 
-import architecture.rrf_vp.Plan;
+import architecture.rrf_vp.plan.PlanJoint;
 
-public class ChunkPlan extends Plan<Chunk>{
+public class ChunkPlan implements PlanJoint<ChunkPlan,Chunk> {
+//ROOT
+	private Chunk root;
+	@Override
+	public Chunk getRoot() {return root;}
 //MAIN
 	public ChunkPlan(Chunk root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

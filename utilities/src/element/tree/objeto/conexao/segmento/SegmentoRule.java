@@ -1,13 +1,17 @@
 package element.tree.objeto.conexao.segmento;
 
-import element.tree.objeto.ObjetoRule;
+import architecture.rrf_vp.rule.RuleJoint;
 
-public class SegmentoRule extends ObjetoRule<Segmento>{
+public class SegmentoRule implements RuleJoint<SegmentoRule,Segmento> {
+//ROOT
+	private Segmento root;
+	@Override
+	public Segmento getRoot() {return root;}
 //MAIN
 	public SegmentoRule(Segmento root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

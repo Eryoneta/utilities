@@ -1,19 +1,17 @@
 package element.tree.objeto.conexao;
 
-import java.awt.Point;
+import architecture.rrf_vp.view.ViewJoint;
 
-import element.tree.objeto.ObjetoView;
-
-public class ConexaoView extends ObjetoView<Conexao>{
+public class ConexaoView implements ViewJoint<ConexaoView,Conexao> {
+//ROOT
+	private Conexao root;
+	@Override
+	public Conexao getRoot() {return root;}
 //MAIN
 	public ConexaoView(Conexao root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
-	@Override
-	public boolean contains(Point mouse) {
-		return false;
-	}
+	public void init() {}
 }

@@ -1,13 +1,15 @@
 package element.tree.selection_area;
 
-import architecture.rrf_vp.Plan;
+import architecture.rrf_vp.plan.PlanJoint;
 
-public class SelectionAreaPlan extends Plan<SelectionArea> {
+public class SelectionAreaPlan implements PlanJoint<SelectionAreaPlan,SelectionArea>{
+//ROOT
+	private SelectionArea root;
+		@Override public SelectionArea getRoot() {return root;}
 //MAIN
 	public SelectionAreaPlan(SelectionArea root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
-	@Override
-	protected void init() {}
+	@Override public void init() {}
 }

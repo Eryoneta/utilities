@@ -1,13 +1,17 @@
 package element.tree.objeto.conexao.segmento;
 
-import element.tree.objeto.ObjetoFlow;
+import architecture.rrf_vp.flow.FlowJoint;
 
-public class SegmentoFlow extends ObjetoFlow<Segmento>{
+public class SegmentoFlow implements FlowJoint<SegmentoFlow,Segmento> {
+//ROOT
+	private Segmento root;
+	@Override
+	public Segmento getRoot() {return root;}
 //MAIN
 	public SegmentoFlow(Segmento root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }

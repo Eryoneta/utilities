@@ -1,13 +1,17 @@
 package element.tree.objeto.modulo;
 
-import element.tree.objeto.ObjetoPlan;
+import architecture.rrf_vp.plan.PlanJoint;
 
-public class ModuloPlan extends ObjetoPlan<Modulo> {
+public class ModuloPlan implements PlanJoint<ModuloPlan,Modulo> {
+//ROOT
+	private Modulo root;
+	@Override
+	public Modulo getRoot() {return root;}
 //MAIN
 	public ModuloPlan(Modulo root) {
-		super(root);
+		this.root=root;
 	}
 //FUNCS
 	@Override
-	protected void init() {}
+	public void init() {}
 }
