@@ -26,8 +26,7 @@ public class Tree extends Elemento implements RootJoint<Tree,TreeRule,TreeFlow,T
 		Root.init(this);
 	}
 //FUNCS
-	@Override
-	protected void draw(Graphics2D imagemEdit) {
+	@Override protected void draw(Graphics2D imagemEdit) {
 		
 	}
 }

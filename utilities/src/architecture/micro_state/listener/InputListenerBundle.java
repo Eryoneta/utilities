@@ -4,6 +4,7 @@ import architecture.micro_state.listener.KeyboardListenerBundle.ActionOfKeyboard
 import architecture.micro_state.listener.MouseListenerBundle.ActionOfMouse;
 
 public class InputListenerBundle extends StateListenerBundle{
+//MOUSE_LISTENER
 	private MouseListenerBundle mouseListenerBundle=new MouseListenerBundle();
 		public ActionOfMouse getMousePressedAction(){return mouseListenerBundle.getMousePressedAction();}
 		public void setMousePressedAction(ActionOfMouse action){mouseListenerBundle.setMousePressedAction(action);}
@@ -15,6 +16,7 @@ public class InputListenerBundle extends StateListenerBundle{
 		public void setMouseDraggedAction(ActionOfMouse action){mouseListenerBundle.setMouseDraggedAction(action);}
 		public ActionOfMouse getMouseMovedAction(){return mouseListenerBundle.getMouseDraggedAction();}
 		public void setMouseMovedAction(ActionOfMouse action){mouseListenerBundle.setMouseMovedAction(action);}
+//KEYBOARD_LISTENER
 	private KeyboardListenerBundle keyboardListenerBundle=new KeyboardListenerBundle();
 		public ActionOfKeyboard getKeyPressedAction(){return keyboardListenerBundle.getKeyPressedAction();}
 		public void setKeyPressedAction(ActionOfKeyboard action){keyboardListenerBundle.setKeyPressedAction(action);}
