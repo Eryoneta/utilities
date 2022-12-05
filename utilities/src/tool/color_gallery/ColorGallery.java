@@ -1,7 +1,10 @@
 package tool.color_gallery;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import tool.color_manager.Cor;
 public class ColorGallery{
 //COR
 	public static class NamedColor{
@@ -12,7 +15,6 @@ public class ColorGallery{
 		private Color cor=new Color(0,0,0);
 			public Color getCor(){return cor;}
 	//MAIN
-		public NamedColor(){}
 		public NamedColor(String nome,Color cor){
 			this.nome=nome;
 			this.cor=cor;
@@ -164,58 +166,32 @@ public class ColorGallery{
 		new NamedColor("yellow",hexToColor("#ffff00")),
 		new NamedColor("yellowgreen",hexToColor("#9acd32"))
 	};
-		public static List<NamedColor>search(String keyWord){
-			final List<NamedColor>result=new ArrayList<>();
-			for(NamedColor cor:cores)if(cor.getNome().contains(keyWord))result.add(cor);
-			return result;
+		private static Color hexToColor(String hex) {
+			try {
+				return Cor.hexToRGB(hex);
+			} catch (Exception error) {
+				//VALORES ESTÁTICOS, NÃO DEVE OCORRER ERROS
+			}
+			return Color.BLACK;
 		}
-	//MUITA RAM E CPU É USADA...
-////SEARCH WEB
-//	private static HashWeb<NamedColor>searchWeb=new HashWeb<>();
-//		public static void generateSearchWeb(){
-//			for(NamedColor cor:cores)searchWeb.add(cor.getNome(),cor);
-//		}
-//		public static List<NamedColor>search(String keyWord){
-//			return searchWeb.get(keyWord);
-//		}
-//	private static class HashWeb<T>{
-//	//NODO
-//		private HashMap<Character,HashWeb<T>>searchWeb=new HashMap<>();
-//	//RESULTADOS
-//		private List<T>results=new ArrayList<>();
-//	//MAIN
-//		public HashWeb(){}
-//	//FUNCS
-//		public List<T>get(String keyWord){	//GET LISTA DE VALUES QUE TEM 
-//			final char letter=keyWord.charAt(0);
-//			HashWeb<T>node=searchWeb.get(letter);
-//			if(node==null||keyWord.length()<=1){	//FIM DA WEB(KEYWORD NÃO EXISTE) OU FIM DA KEYWORD(RESULTADO COM LISTA DE POSSIBILIDADES)
-//				return new ArrayList<>(results);
-//			}
-//			node.get(keyWord.substring(1));			//PROCURA MAIS
-//			return new ArrayList<>();
-//		}
-//		public void add(String keyWord,T value){
-//			for(char letter:keyWord.toCharArray()){
-//				HashWeb<T>node=searchWeb.get(letter);
-//				if(node==null){
-//					node=new HashWeb<>();
-//					searchWeb.put(letter,node);
-//				}
-//				node.results.add(value);
-//				if(keyWord.length()>1){	//AINDA HÁ LETRAS PARA MAPEAR
-//					node.add(keyWord.substring(1),value);
-//				}
-//			}
-//		}
-//	}
 //MAIN
 	public ColorGallery(){}
 //FUNCS
-	private static Color hexToColor(String hex){
-		final int r=Integer.valueOf(hex.substring(1,3),16);
-		final int g=Integer.valueOf(hex.substring(3,5),16);
-		final int b=Integer.valueOf(hex.substring(5,7),16);
-		return new Color(r,g,b);
+	public static NamedColor[] searchForAll(String keyWord){
+		final List<NamedColor>result=new ArrayList<>();
+		for(NamedColor cor:cores)if(cor.getNome().contains(keyWord))result.add(cor);
+		Collections.sort(result, (s1,s2)-> s1.getNome().length() - s2.getNome().length());	//ORDENA POR TAMANHO DE NOME
+		return result.toArray(new NamedColor[0]);
+	}
+	public static NamedColor searchForOne(String keyWord){
+		NamedColor result=null;
+		for(NamedColor cor:cores) {
+			if(cor.getNome().contains(keyWord)) {
+				if(result!=null) {
+					result=(result.getNome().length()<=cor.getNome().length()?result:cor);
+				} else result=cor;
+			}
+		}
+		return result;
 	}
 }
