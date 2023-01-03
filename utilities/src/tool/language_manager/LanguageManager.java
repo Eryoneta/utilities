@@ -9,7 +9,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-public class LanguagePackage{
+
+/** 
+ * A tool that can be used to load and store the text for multiple languages<br>
+ * It first loads the text of a .lang file, then the local can be chosen and the text can be retrieved with a keyword
+ */
+public class LanguageManager{
 //LANGS
 	private HashMap<String,Language>langs=new HashMap<>();
 	
@@ -63,7 +68,7 @@ public class LanguagePackage{
 			}
 		}
 //MAIN
-	public LanguagePackage(){}
+	public LanguageManager(){}
 //FUNCS
 	
 	/** 
