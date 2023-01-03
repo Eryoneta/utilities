@@ -177,12 +177,24 @@ public class ColorGallery{
 //MAIN
 	public ColorGallery(){}
 //FUNCS
+	
+	/** 
+	 * Returns a list of colors corresponding to a given keyword
+	 * @param keyWord - Part of a color name
+	 * @return A list of colors relevant for the keyword, ordered by name length
+	 */
 	public static NamedColor[] searchForAll(String keyWord){
 		final List<NamedColor>result=new ArrayList<>();
 		for(NamedColor cor:cores)if(cor.getNome().contains(keyWord))result.add(cor);
 		Collections.sort(result, (s1,s2)-> s1.getNome().length() - s2.getNome().length());	//ORDENA POR TAMANHO DE NOME
 		return result.toArray(new NamedColor[0]);
 	}
+
+	/** 
+	 * Returns a single color corresponding to a given keyword
+	 * @param keyWord - Part of a color name
+	 * @return A color relevant for the keyword, with the smallest name
+	 */
 	public static NamedColor searchForOne(String keyWord){
 		NamedColor result=null;
 		for(NamedColor cor:cores) {
