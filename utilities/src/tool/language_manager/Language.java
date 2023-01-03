@@ -9,8 +9,8 @@ public class Language{
 		public String getSigla(){return sigla;}
 //TEXTO
 	private HashMap<String,String>texto=new HashMap<>();
-		public String get(String index,String padrao){
-			final String linha=texto.get(index);
+		public String get(String key,String padrao){
+			final String linha=texto.get(key);
 			if(linha==null||linha.isEmpty())return padrao;
 			return linha;
 		}
