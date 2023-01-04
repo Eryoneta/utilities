@@ -51,7 +51,11 @@ public class TreeFlow implements FlowJoint<TreeFlow,Tree> {
 	private StateFlow stateFlow=new StateFlow(State.INACTIVE);
 		public long getStateId() throws Exception {return stateFlow.getStateId();}
 		public void setState(State...ids) {
-			stateFlow.setState(ids);
+			try {
+				stateFlow.setState(ids);
+			} catch (Exception error) {
+				//TODO: ERROR
+			}
 		}
 		public void setStateObjs(Objeto... objs) throws Exception {
 			((TreeFlow_StateNode)stateFlow.getStateNode()).setObjetos(objs);

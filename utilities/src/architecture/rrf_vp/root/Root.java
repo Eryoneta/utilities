@@ -2,9 +2,9 @@ package architecture.rrf_vp.root;
 
 public class Root {
 	public static void init(RootJoint<?,?,?,?,?>root) {
-		root.getRule().init();
-		root.getFlow().init();
-		root.getView().init();
-		root.getPlan().init();
+		if(root.getRule()!=null)root.getRule().init();
+		if(root.getFlow()!=null)root.getFlow().init();
+		if(root.getView()!=null)root.getView().init();
+		if(root.getPlan()!=null)root.getPlan().init();
 	}
 }

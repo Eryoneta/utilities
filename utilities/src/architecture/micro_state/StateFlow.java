@@ -59,10 +59,13 @@ public class StateFlow {
 		public long getStateId() throws Exception {
 			return StateFlow.getStateValue(stateIds);
 		}
-		public void setState(StateId...ids) {this.stateIds=ids;}
+		public void setState(StateId...ids) throws Exception{
+			if(!isAllLevelsAndIndexesDifferent(ids))throw new Exception("ERROR");		//TODO: ERROR!
+			this.stateIds=ids;
+		}
 //MAIN
-	public StateFlow(StateId...ids) {
-		this.stateIds=ids;
+	public StateFlow(StateId id) {
+		this.stateIds=new StateId[] {id};
 	}
 //FUNCS
 	public static long getStateValue(StateId... ids) throws Exception{
