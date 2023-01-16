@@ -5,12 +5,12 @@ import java.awt.Font;
 
 import javax.swing.JComponent;
 
-import architecture.rrf_vp.flow.FlowNull;
 import architecture.rrf_vp.root.Root;
 import architecture.rrf_vp.root.RootJoint;
+import tool.language_manager.LanguageManager;
 
 @SuppressWarnings("serial")
-public class FontChooser extends JComponent implements RootJoint<FontChooser, FontChooserRule, FlowNull<FontChooser>, FontChooserView, FontChooserPlan>{
+public class FontChooser extends JComponent implements RootJoint<FontChooser, FontChooserRule, FontChooserFlow, FontChooserView, FontChooserPlan>{
 //RESPOSTAS
 	public enum Option{
 		APPROVE,
@@ -21,7 +21,8 @@ public class FontChooser extends JComponent implements RootJoint<FontChooser, Fo
 	private FontChooserRule rule=new FontChooserRule(this);
 		@Override public FontChooserRule getRule() {return rule;}
 //FLOW
-	@Override public FlowNull<FontChooser> getFlow() {return null;}
+	private FontChooserFlow flow=new FontChooserFlow(this);
+		@Override public FontChooserFlow getFlow() {return flow;}
 //VIEW
 	private FontChooserView view=new FontChooserView(this);
 		@Override public FontChooserView getView() {return view;}
@@ -41,6 +42,8 @@ public class FontChooser extends JComponent implements RootJoint<FontChooser, Fo
 		super.setFont(font);
 		getView().setFont(font);
 	}
+	public void getLanguage(){getView().getLanguage();}
+	public void setLanguage(LanguageManager lang){getView().setLanguage(lang);}
 	public Option showDialog(Component janela){return getView().showDialog(janela);}
 	public Font getSelectedFont(){return getPlan().getSelectedFont();}
 	public void setSelectedFont(Font fonte){getPlan().setSelectedFont(fonte);}

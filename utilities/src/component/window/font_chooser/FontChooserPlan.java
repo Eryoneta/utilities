@@ -35,11 +35,12 @@ public class FontChooserPlan implements PlanJoint<FontChooserPlan, FontChooser> 
 	protected static final int[]STYLES={
 			Font.PLAIN,Font.BOLD,Font.ITALIC,Font.BOLD|Font.ITALIC
 	};
-	protected static final String[]SIZES={
-			"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"
+	protected static final int[]SIZES={
+			8,9,10,11,12,14,16,18,20,22,24,26,28,36,48,72
 	};
 //RESPOSTAS
-	protected Option resposta=Option.CANCEL;
+	private Option resposta=Option.CANCEL;
+		protected Option getResposta() {return resposta;}
 //LISTENER: DISPARA COM O FOCO DE TEXTO
 	protected class TextoFocusAction extends FocusAdapter{
 	//TEXTO
@@ -131,7 +132,11 @@ public class FontChooserPlan implements PlanJoint<FontChooserPlan, FontChooser> 
 				final JList<String> lista=(JList<String>)l.getSource();
 				final String selecTexto=(String)lista.getSelectedValue();
 				final String selecOldTexto=texto.getText();
-				texto.setText(selecTexto);
+				try {
+					texto.setText(selecTexto);
+				}catch (Exception error) {
+					//IMPEDE ERRO DE SET_INDEX(0) ATUALIZAR TEXTO... ENQUANTO ESTE ESTÁ SENDO GERADO...?
+				}
 				if(!selecOldTexto.equalsIgnoreCase(selecTexto)){
 					texto.selectAll();
 					texto.requestFocus();
@@ -180,6 +185,7 @@ public class FontChooserPlan implements PlanJoint<FontChooserPlan, FontChooser> 
 		protected WindowClosingAction(){}
 	//FUNCS
 		public void windowClosing(WindowEvent w){
+			if(resposta==Option.ERROR)return;
 			resposta=Option.CANCEL;
 		}
 	}

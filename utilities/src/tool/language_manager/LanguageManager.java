@@ -32,6 +32,20 @@ public class LanguageManager{
 		}
 	
 		/** 
+		 * Adds a text with a key into the current {@link Language}
+		 * @param key - The key to retrieve the text
+		 * @param text - The text associated
+		 * @return If it was successful
+		 */
+		public boolean add(String key,String text){
+			if(langs.isEmpty())return false;
+			final Language lang=langs.get(currentLang);
+			if(lang==null)return false;
+			lang.add(key,text);
+			return true;
+		}
+	
+		/** 
 		 * Returns an array listing all the locals
 		 * @return An array with the name of all the locals
 		 */
@@ -53,19 +67,29 @@ public class LanguageManager{
 		}
 
 		/** 
+		 * Defines a new, custom made, {@link Language}
+		 * @return If it was successful
+		 */
+		public boolean addLanguage(String languageSymbol,String languageName){
+			langs.put(languageSymbol,new Language(languageName,languageSymbol,new HashMap<>()));
+			return true;
+		}
+
+		/** 
 		 * Sets a locale
 		 * @param language - A symbol(Example: "EN-US") or a name of the local. 
 		 */
-		public void setLanguage(String language){
+		public boolean setLanguage(String language){
 			language=language.toUpperCase();
 			for(Language lang:langs.values()) {
 				final String nome=lang.getNome().toUpperCase();
 				final String sigla=lang.getSigla().toUpperCase();
 				if(nome.equals(language)||sigla.equals(language)){
 					currentLang=sigla;
-					return;
+					return true;
 				}
 			}
+			return false;
 		}
 //MAIN
 	public LanguageManager(){}

@@ -8,7 +8,7 @@ public class StateNode{
 	private long id;
 		public long getId() {return id;}
 //LISTENERS
-	private StateListenerBundle listenerBundle;
+	private StateListenerBundle listenerBundle=new StateListenerBundle();
 		public ActionOfState getStateLoadedAction(){return listenerBundle.getStateLoadedAction();}
 		public void setStateLoadedAction(ActionOfState action){listenerBundle.setStateLoadedAction(action);}
 		public ActionOfState getStateUnloadedAction(){return listenerBundle.getStateUnloadedAction();}

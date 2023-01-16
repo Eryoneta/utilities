@@ -25,6 +25,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 import architecture.rrf_vp.view.ViewJoint;
@@ -41,19 +42,16 @@ public class FontChooserView implements ViewJoint<FontChooserView, FontChooser>{
 			"Italic",
 			"Bold and Italic"
 	};
-	private static final String[]SIZE_OPTIONS=FontChooserPlan.SIZES;
+	private static String[]SIZE_OPTIONS=new String[] {
+			"8","9","10","11","12","14","16","18","20","22","24","26","28","36","48","72"
+	};
 	private static final String SAMPLE_TEXT="AaBbYyZz";
 //LANGUAGE
 	private LanguageManager lang=new LanguageManager();
 		public LanguageManager getLanguage() {return lang;}
 		public void setLanguage(LanguageManager lang) {
 			this.lang=lang;
-			STYLE_OPTIONS=new String[]{
-					getLanguage().get("M_Menu_C_F_S_R","Plain"),
-					getLanguage().get("M_Menu_C_F_S_B","Bold"),
-					getLanguage().get("M_Menu_C_F_S_I","Italic"),
-					getLanguage().get("M_Menu_C_F_S_BI","Bold and Italic")
-			};
+			resetInterface();
 		}
 //NAME_TEXT
 	private JTextField nomeTexto;
@@ -244,14 +242,12 @@ public class FontChooserView implements ViewJoint<FontChooserView, FontChooser>{
 		public int getSelectedTamanho(){
 			int fontSize=1;
 			String fontSizeString=getTamanhoTexto().getText();
-			while(true){	//TODO: PARA QUE SERVE???
-				try{
-					fontSize=Integer.parseInt(fontSizeString);
-					break;
-				}catch(NumberFormatException erro){
-					fontSizeString=(String)getTamanhoLista().getSelectedValue();
-					getTamanhoTexto().setText(fontSizeString);
-				}
+			try{
+				fontSize=Integer.parseInt(fontSizeString);
+			}catch(NumberFormatException erro){
+				fontSizeString=(String)getTamanhoLista().getSelectedValue();
+				getTamanhoTexto().setText(fontSizeString);
+				fontSize=Integer.parseInt(fontSizeString);
 			}
 			return fontSize;
 		}
@@ -326,6 +322,66 @@ public class FontChooserView implements ViewJoint<FontChooserView, FontChooser>{
 		protected void updateExemplo(){
 			getSampleTextField().setFont(getRoot().getPlan().getSelectedFont());
 		}
+//OK_BUTTON
+	private JButton okBotao;
+		private void generateOkButton(Action action) {
+			okBotao=new JButton(action){{
+				setFont(getRoot().getFont());
+			}};
+		}
+		protected JButton getOkBotao() {
+			if(okBotao==null)generateOkButton(null);
+			return okBotao;
+		}
+//CANCEL_BUTTON
+	private JButton cancelBotao;
+		private void generateCancelButton(Action action) {
+			cancelBotao=new JButton(action){{
+				setFont(getRoot().getFont());
+			}};
+		}
+		protected JButton getCancelBotao() {
+			if(cancelBotao==null)generateCancelButton(null);
+			return cancelBotao;
+		}
+//DIALOG
+	private JDialog dialog;
+		private JDialog generateDialog(Component janela){
+			Frame frame=null;
+			if(janela!=null) {
+				frame=(janela instanceof Frame?(Frame)SwingUtilities.getAncestorOfClass(Frame.class,janela):(Frame)janela);
+			}
+			dialog=new JDialog(frame,getLanguage().get("M_Menu_C_F_SF","Select Font"),true);
+			dialog.getContentPane().add(getRoot(),BorderLayout.CENTER);
+			dialog.getContentPane().add(new JPanel(){{
+					setLayout(new BorderLayout());
+					add(new JPanel(){{
+						setLayout(new GridLayout(2,1));
+						final ActionMap actionMap=getActionMap();
+						final InputMap inputMap=getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+						final Action okAction=getRoot().getPlan().new OKButtonAction(dialog,getLanguage().get("M_Menu_C_F_Ok","OK"));			//ATALHO DE OK
+						actionMap.put(okAction.getValue(Action.DEFAULT),okAction);
+						inputMap.put(KeyStroke.getKeyStroke("ENTER"),okAction.getValue(Action.DEFAULT));
+						generateOkButton(okAction);
+						add(getOkBotao());						//OK
+						final Action cancelAction=getRoot().getPlan().new CancelButtonAction(dialog,getLanguage().get("M_Menu_C_F_Cl","Cancel"));	//ATALHO DE CANCEL
+						actionMap.put(cancelAction.getValue(Action.DEFAULT),cancelAction);
+						inputMap.put(KeyStroke.getKeyStroke("ESCAPE"),cancelAction.getValue(Action.DEFAULT));
+						generateCancelButton(cancelAction);
+						add(getCancelBotao());					//CANCEL
+						setBorder(BorderFactory.createEmptyBorder(25,0,10,10));
+					}},BorderLayout.NORTH);
+				}},BorderLayout.EAST);
+			dialog.pack();
+			dialog.setLocationRelativeTo(frame);
+			dialog.setMinimumSize(dialog.getSize());
+			return dialog;
+		}
+		protected JDialog getDialog() {
+			if(dialog==null)generateDialog(null);
+			return dialog;
+		}
+		
 //ROOT
 	private FontChooser root;
 		@Override public FontChooser getRoot() {return root;}
@@ -336,6 +392,20 @@ public class FontChooserView implements ViewJoint<FontChooserView, FontChooser>{
 //FUNCS
 	@Override
 	public void init() {
+	//CARREGA SIZE COM O SIZE DE PLAN
+		FontChooserView.SIZE_OPTIONS=new String[FontChooserPlan.SIZES.length];
+		for(int i=0;i<FontChooserView.SIZE_OPTIONS.length;i++) {
+			FontChooserView.SIZE_OPTIONS[i]=String.valueOf(FontChooserPlan.SIZES[i]);
+		}
+	//CARREGA INTERFACE
+		try{
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch(Exception erro){
+			erro.printStackTrace();
+		}
+		generateMainPane();
+	}
+	private void generateMainPane() {
 		getRoot().setFont(new Font("Dialog",Font.PLAIN,10));
 		getRoot().setLayout(new BoxLayout(getRoot(),BoxLayout.X_AXIS));
 		getRoot().add(new JPanel(){{					//PAINEL DO FUNDO
@@ -361,44 +431,32 @@ public class FontChooserView implements ViewJoint<FontChooserView, FontChooser>{
 		getTamanhoLista().setFont(font);
 	}
 	public Option showDialog(Component janela){
-		getRoot().getPlan().resposta=Option.ERROR;
-		final JDialog dialog=createDialog(janela);
-		dialog.addWindowListener(getRoot().getPlan().new WindowClosingAction());
-		dialog.setVisible(true);
-		dialog.dispose();
-		return getRoot().getPlan().resposta;
+		generateDialog(janela);
+		getDialog().addWindowListener(getRoot().getPlan().new WindowClosingAction());
+		getDialog().setVisible(true);
+		return getRoot().getPlan().getResposta();
 	}
-	private JDialog createDialog(Component janela){
-		Frame frame=null;
-		if(janela!=null) {
-			frame=(janela instanceof Frame?(Frame)SwingUtilities.getAncestorOfClass(Frame.class,janela):(Frame)janela);
-		}
-		final JDialog dialog=new JDialog(frame,getLanguage().get("M_Menu_C_F_SF","Select Font"),true);
-		dialog.getContentPane().add(getRoot(),BorderLayout.CENTER);
-		dialog.getContentPane().add(new JPanel(){{
-			setLayout(new BorderLayout());
-			add(new JPanel(){{
-				setLayout(new GridLayout(2,1));
-				final ActionMap actionMap=getActionMap();
-				final InputMap inputMap=getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-				final Action okAction=getRoot().getPlan().new OKButtonAction(dialog,getLanguage().get("M_Menu_C_F_Ok","OK"));			//ATALHO DE OK
-				actionMap.put(okAction.getValue(Action.DEFAULT),okAction);
-				inputMap.put(KeyStroke.getKeyStroke("ENTER"),okAction.getValue(Action.DEFAULT));
-				add(new JButton(okAction){{				//OK
-					setFont(getRoot().getFont());
-				}});
-				final Action cancelAction=getRoot().getPlan().new CancelButtonAction(dialog,getLanguage().get("M_Menu_C_F_Cl","Cancel"));	//ATALHO DE CANCEL
-				actionMap.put(cancelAction.getValue(Action.DEFAULT),cancelAction);
-				inputMap.put(KeyStroke.getKeyStroke("ESCAPE"),cancelAction.getValue(Action.DEFAULT));
-				add(new JButton(cancelAction){{			//CANCEL
-					setFont(getRoot().getFont());
-				}});
-				setBorder(BorderFactory.createEmptyBorder(25,0,10,10));
-			}},BorderLayout.NORTH);
-		}},BorderLayout.EAST);
-		dialog.pack();
-		dialog.setLocationRelativeTo(frame);
-		dialog.setMinimumSize(dialog.getSize());
-		return dialog;
+	private void resetInterface() {
+		STYLE_OPTIONS=new String[]{
+				getLanguage().get("M_Menu_C_F_S_R","Plain"),
+				getLanguage().get("M_Menu_C_F_S_B","Bold"),
+				getLanguage().get("M_Menu_C_F_S_I","Italic"),
+				getLanguage().get("M_Menu_C_F_S_BI","Bold and Italic")
+		};
+		getRoot().removeAll();
+		nomeTexto=null;
+		nomeLista=null;
+		nomePainel=null;
+		estiloTexto=null;
+		estiloLista=null;
+		estiloPainel=null;
+		tamanhoTexto=null;
+		tamanhoLista=null;
+		tamanhoPainel=null;
+		exemploTexto=null;
+		exemploPainel=null;
+		okBotao=null;
+		cancelBotao=null;
+		generateMainPane();
 	}
 }

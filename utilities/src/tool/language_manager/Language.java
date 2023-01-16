@@ -14,6 +14,10 @@ public class Language{
 			if(linha==null||linha.isEmpty())return padrao;
 			return linha;
 		}
+		public boolean add(String key,String text){
+			texto.put(key,text);
+			return true;
+		}
 //MAIN
 	public Language(String nome,String sigla,HashMap<String,String>texto){
 		this.nome=nome;

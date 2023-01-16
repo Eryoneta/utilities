@@ -61,7 +61,9 @@ public class StateFlow {
 		}
 		public void setState(StateId...ids) throws Exception{
 			if(!isAllLevelsAndIndexesDifferent(ids))throw new Exception("ERROR");		//TODO: ERROR!
+			if(getStateNode().getStateUnloadedAction()!=null)getStateNode().getStateUnloadedAction().run();
 			this.stateIds=ids;
+			if(getStateNode().getStateLoadedAction()!=null)getStateNode().getStateLoadedAction().run();
 		}
 //MAIN
 	public StateFlow(StateId id) {
