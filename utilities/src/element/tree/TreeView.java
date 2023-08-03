@@ -17,7 +17,8 @@ public class TreeView implements ViewJoint<TreeView,Tree> {
 	public Point getViewLocation(){return new Point(viewX,viewY);}
 	public void setViewLocation(int x,int y){viewX=x;viewY=y;}
 //UNIT
-	public int ViewUnit=8;
+	private byte ViewUnit=8;
+	public byte getViewUnit() {return ViewUnit;}
 //CONFIGURAÇÕES
 	private int objetosLimite=100;
 		public int getObjetosLimite(){return objetosLimite;}

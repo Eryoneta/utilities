@@ -19,11 +19,18 @@ public class TreePlan implements PlanJoint<TreePlan,Tree> {
 			getRoot().getView().draw();
 		}
 		public boolean isEnabled(){return enabled;}
+//UNDO-REDO
+//LISTENER: DISPARA COM O MUDAR DE FOCO DE UM OBJETO
+//ALL OBJS
+//SELECTED OBJS
+//VISIBLE OBJETOS
 //MAIN
 	public TreePlan(Tree root) {
 		this.root=root;
 	}
 //FUNCS
-	@Override
-	public void init() {}
+	@Override public void init() {}
+//CONVERTER: TAG -> TREE
+//CONVERTER: TREE -> TAG
+//CONVERTER: TREE -> IMAGE
 }

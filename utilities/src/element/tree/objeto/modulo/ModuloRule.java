@@ -11,6 +11,5 @@ public class ModuloRule implements RuleJoint<ModuloRule,Modulo> {
 		this.root=root;
 	}
 //FUNCS
-	@Override
-	public void init() {}
+	@Override public void init() {}
 }

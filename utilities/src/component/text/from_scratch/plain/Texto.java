@@ -355,7 +355,33 @@ public class Texto{
 		}
 		if(!ctrl&&!shift&&!alt&&tecla==KeyEvent.VK_ENTER){insert("\n");redo.clear();}//ENTER
 		if(!ctrl&&!alt&&(!IF(tecla,8,10,16,17,18,19,20,27,33,34,35,36,37,38,39,40,112,113,114,115,116,117,118,119,120,121,122,123,127,155,524,525))||k.getKeyChar()=='/'||k.getKeyChar()=='?'){
-			insert(Character.toString(k.getKeyChar()));//LETRA
+			//GET_CHAR NÃO CARREGA MAIS ACENTOS...?
+			//GAMBIARRA
+			String key="";
+			switch (k.getKeyCode()) {
+				case KeyEvent.VK_6:	//54
+					if(k.getModifiersEx()==KeyEvent.SHIFT_DOWN_MASK) {
+						key="¨";
+					}else key="6";
+				break;
+				case KeyEvent.VK_DEAD_ACUTE:	//129
+					if(k.getModifiersEx()==KeyEvent.SHIFT_DOWN_MASK) {
+						key="`";
+					}else key="´";
+				break;
+				case KeyEvent.VK_DEAD_TILDE:	//131
+					if(k.getModifiersEx()==KeyEvent.SHIFT_DOWN_MASK) {
+						key="^";
+					}else key="~";
+				break;
+				default:
+					key=Character.toString(k.getKeyChar());
+				break;
+			}
+			insert(key);//LETRA
+			//GAMBIARRA - FIM
+			
+//			insert(Character.toString(k.getKeyChar()));//LETRA
 			redo.clear();
 		}
 		if(ctrl&&!shift&&!alt&&tecla==KeyEvent.VK_X){copy();if(selecao.x!=selecao.width||selecao.y!=selecao.height)delete();}//CTRL+X
@@ -395,7 +421,7 @@ public class Texto{
 	private int match(String letra,String[]lista){int index=-1;for(int i=0;i<lista.length;i++)if(letra.equals(lista[i])){index=i;break;}return index;}
 	private boolean E(String s1,String s2){return s1.equals(s2);}
 	private String acento="";
-	public void insert(String letras){//INSERE TEXTO
+	public void insert(String letras){//INSERE TEXTO^
 		if(selecao.x!=selecao.width||selecao.y!=selecao.height)delete();
 		if(letras.length()==1&&(letras.equals("´")||letras.equals("`")||letras.equals("~")||letras.equals("^")||letras.equals("¨"))){
 			acento=letras;
