@@ -2,7 +2,7 @@ package architecture.rrf_vp.plan;
 
 import architecture.rrf_vp.root.RootJoint;
 
-public interface PlanJoint<S extends PlanJoint<S, R>, R extends RootJoint<R, ?, ?, ?, S>> {
+public interface PlanJoint<R extends RootJoint<R, ?, ?, ?, J>, J extends PlanJoint<R, J>> {
 	public abstract R getRoot();
 	public abstract void init();
 }
