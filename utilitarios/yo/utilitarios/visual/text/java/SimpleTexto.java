@@ -3,11 +3,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
@@ -162,15 +165,25 @@ public class SimpleTexto extends JTextPane{
 //DRAW
 @Override
 	public void paint(Graphics imagemEdit){
+
+	final Graphics2D imagemEdit2D=(Graphics2D)imagemEdit;
+	imagemEdit2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+	imagemEdit2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+//	@SuppressWarnings("unchecked")
+//	final Map<String, String> desktopHints = (Map<String, String>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+//	if(desktopHints != null) {
+//		imagemEdit2D.addRenderingHints(desktopHints);
+//	}
+	
 	//CONFIG TEXTO
-		final Rectangle area=imagemEdit.getClipBounds();
-		final BufferedImage buffer=new BufferedImage(area.width,area.height,BufferedImage.TYPE_INT_RGB);	//A ÚNICA FORMA DE LCD FUNCIONAR
-		final Graphics2D bufferEdit=(Graphics2D)buffer.getGraphics();
-		bufferEdit.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);	//ADICIONA BORDA, CONTRASTE
-		bufferEdit.translate(-area.x,-area.y);	//ALINHA O QUE SEGUIR COM A JANELA
+//		final Rectangle area=imagemEdit.getClipBounds();
+//		final BufferedImage buffer=new BufferedImage(area.width,area.height,BufferedImage.TYPE_INT_ARGB);
+//		final Graphics2D bufferEdit=(Graphics2D)buffer.getGraphics();
+//		bufferEdit.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+//		bufferEdit.translate(-area.x,-area.y);	//ALINHA O QUE SEGUIR COM A JANELA
 	//TEXTO
-		super.paint(bufferEdit);
+		super.paint(imagemEdit2D);
 	//END
-		imagemEdit.drawImage(buffer,area.x,area.y,null);
+//		imagemEdit.drawImage(buffer,area.x,area.y,null);
 	}
 }
